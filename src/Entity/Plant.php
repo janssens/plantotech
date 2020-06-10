@@ -12,6 +12,51 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Plant
 {
+
+    const LIFE_CYCLE_UNDEFINED = 0;
+    const LIFE_CYCLE_ANNUAL = 1;
+    const LIFE_CYCLE_BIENNIAL = 2;
+    const LIFE_CYCLE_PERENNIAL = 3;
+
+    const ROOT_UNDEFINED = 0;
+    const ROOT_CREEPING = 1;
+    const ROOT_FASCICULE = 2;
+    const ROOT_MIXED = 3;
+    const ROOT_BULB = 4;
+    const ROOT_TAPROOT = 5;
+    const ROOT_TUBER = 6;
+
+    const SUCKER_YES = 1;
+    const SUCKER_VERY = 2;
+
+    const LIMESTONE_TOLERANT = 1;
+    const LIMESTONE_WARNING = 2;
+    const LIMESTONE_INDIFFERENT = 4;
+
+    const LEAF_DENSITY_LIGHT = 1;
+    const LEAF_DENSITY_MEDIUM = 2;
+    const LEAF_DENSITY_DENSE = 3;
+
+    const FOLIAGE_PERSISTANT = 1;
+    const FOLIAGE_SEMI_PERSISTANT = 2;
+    const FOLIAGE_DECIDUOUS = 3;
+
+    const PRIORITY_1 = 1;
+    const PRIORITY_2 = 2;
+
+    const DROUGHT_TOLERANCE_1 = 1;
+    const DROUGHT_TOLERANCE_2 = 2;
+    const DROUGHT_TOLERANCE_3 = 3;
+    const DROUGHT_TOLERANCE_4 = 4;
+    const DROUGHT_TOLERANCE_5 = 5;
+
+    const STRATUM_LOW = 1;
+    const STRATUM_SHRUB = 2;
+    const STRATUM_MEDIUM = 3;
+    const STRATUM_TREE = 4;
+    const STRATUM_CANOPY = 5;
+    const STRATUM_CLIMBING = 6;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -28,6 +73,11 @@ class Plant
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $name;
+
+    /**
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $life_cycle;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -170,6 +220,17 @@ class Plant
     private $diseases_and_pest;
 
     /**
+     * todo: user real user or entity
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $author;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $stratum;
+
+    /**
      * @ORM\ManyToOne(targetEntity=PlantFamily::class, inversedBy="plants")
      */
     private $family;
@@ -289,6 +350,21 @@ class Plant
     public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getLifeCycle(): ?int
+    {
+        return $this->life_cycle;
+    }
+
+    public function setLifeCycle(?int $life_cycle): self
+    {
+        if ($life_cycle>3 || $life_cycle<0){
+            $life_cycle = self::LIFE_CYCLE_UNDEFINED;
+        }
+        $this->life_cycle = $life_cycle;
 
         return $this;
     }
@@ -490,7 +566,7 @@ class Plant
         return $this->botany_root;
     }
 
-    public function setBotanyRacine(?string $botany_root): self
+    public function setBotanyRoot(?string $botany_root): self
     {
         $this->botany_root = $botany_root;
 
@@ -629,6 +705,30 @@ class Plant
         return $this;
     }
 
+    public function getAuthor(): ?string
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?string $author): self
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    public function getStratum(): ?int
+    {
+        return $this->stratum;
+    }
+
+    public function setStratum(?int $stratum): self
+    {
+        $this->stratum = $stratum;
+
+        return $this;
+    }
+
     public function getFamily(): ?PlantFamily
     {
         return $this->family;
@@ -678,6 +778,24 @@ class Plant
     public function getPorts(): Collection
     {
         return $this->ports;
+    }
+
+    public function getNaturalPorts(): Collection
+    {
+        return $this->getPortsByType(PlantsPorts::PLANT_PORT_TYPE_NATURAL);
+
+    }
+
+    public function getPossiblePorts(): Collection
+    {
+        return $this->getPortsByType(PlantsPorts::PLANT_PORT_TYPE_POSSIBLE);
+    }
+
+    public function getPortsByType(int $type): Collection
+    {
+        return $this->getPorts()->filter(function (PlantsPorts $pp) use ($type) {
+            return ($pp->getType() == $type);
+        });
     }
 
     public function addPort(PlantsPorts $port): self

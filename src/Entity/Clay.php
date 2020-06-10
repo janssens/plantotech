@@ -13,8 +13,11 @@ use phpDocumentor\Reflection\Types\Integer;
  */
 class Clay
 {
-    const SCALE_ONE  = 1;
-    const SCALE_TWO  = 2;
+    const SCALE_FIVE  = 5;
+    const SCALE_TEN  = 10;
+    const SCALE_TWENTY  = 20;
+    const SCALE_THIRTY  = 30;
+    const SCALE_MORE_THAN_THIRTY  = 31;
 
     /**
      * @ORM\Id()

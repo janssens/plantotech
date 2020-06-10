@@ -12,6 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PlantsPorts
 {
+    const PLANT_PORT_TYPE_NATURAL = 1;
+    const PLANT_PORT_TYPE_POSSIBLE = 2;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -52,6 +55,10 @@ class PlantsPorts
 
     public function setType(int $type): self
     {
+        if (!in_array($type,array(self::PLANT_PORT_TYPE_NATURAL,self::PLANT_PORT_TYPE_POSSIBLE))){
+            $type = self::PLANT_PORT_TYPE_POSSIBLE;
+        }
+
         $this->type = $type;
 
         return $this;
