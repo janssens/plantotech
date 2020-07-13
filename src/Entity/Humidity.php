@@ -12,6 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Humidity
 {
+    const HUMIDITY_DRY  = 1;
+    const HUMIDITY_WET  = 50;
+    const HUMIDITY_IMMERSED = 100;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -20,9 +24,9 @@ class Humidity
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="integer")
      */
-    private $quantity;
+    private $value;
 
     /**
      * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="humidities")
@@ -39,14 +43,14 @@ class Humidity
         return $this->id;
     }
 
-    public function getQuantity(): ?string
+    public function getValue(): ?int
     {
-        return $this->quantity;
+        return $this->value;
     }
 
-    public function setQuantity(string $quantity): self
+    public function setValue(int $value): self
     {
-        $this->quantity = $quantity;
+        $this->value = $value;
 
         return $this;
     }

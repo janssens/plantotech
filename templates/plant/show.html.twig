@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ plant.LatinName }} - {{ plant.name }}{% endblock %}
+
+{% block body %}
+
+    <h1>{{ plant.LatinName }} - {{ plant.name }}</h1>
+    <h2>{{ plant.Family.Name }}</h2>
+    <h3>Biotope</h3>
+    <h4>Conditions pédoclimatiques</h4>
+    <div>Résistance au froid (rusticité) : {{ plant.Rusticity }}°C
+        {% if plant.RusticityComment %}({{ plant.RusticityComment }}){% endif %}</div>
+    <div>Résistance au sec : <a href="{{ path('plant',{'drought_tolerance':plant.DroughtTolerance}) }}">{{ plant.DroughtTolerance | human('drought_tolerance') }}</a></div>
+    <div>Résistance au vent : </div>
+    <div>Exposition idéale : {% for insolation in plant.InsolationsByIdeal(true) %}
+            <a href="{{ path('plant',{'insolation':insolation.type}) }}">{{ insolation.type | human('insolation')  }}</a>
+        {% endfor %}</div>
+    <div>Exposition possible : {% for insolation in plant.InsolationsByIdeal(false) %}
+            <a href="{{ path('plant',{'insolation':insolation.type}) }}">{{ insolation.type | human('insolation')  }}</a>
+        {% endfor %}</div>
+    <div>Fertilité : </div>
+    <div>Aeration du sol : </div>
+    <div>Ph : </div>
+    <div>Calcaire : </div>
+    <h4>Milieu naturel et sub naturel</h4>
+    <div>Origine</div>
+    <h3>Besoins éco-systèmiques</h3>
+
+    <h3>Description</h3>
+    <div>Strate <a href="{{ path('plant',{'stratum':plant.stratum}) }}">{{ plant.stratum | human('stratum') }}</a></div>
+    <h4>Mensuration</h4>
+    <div>hauteur {{ plant.Height }} / largeur {{ plant.Width }} </div>
+    <h4>Forme</h4>
+    <div>Port : tendance naturelle</div>
+    <div>Port : possible</div>
+    <div>Tendance racinaire <a href="{{ path('plant',{'root':plant.root}) }}">{{ plant.root | human('root') }}</a></div>
+    <div>Feuillage <a href="{{ path('plant',{'foliage':plant.foliage}) }}">{{ plant.foliage | human('foliage') }}</a> densité <a href="{{ path('plant',{'leaf_density':plant.LeafDensity}) }}">{{ plant.LeafDensity | human('leaf_density') }}</a></div>
+    <img src="" alt="silhouette">
+    <h4>Cycle</h4>
+    <div>Plante <a href="{{ path('plant',{'life_cycle':plant.LifeCycle}) }}">{{ plant.LifeCycle | human('life_cycle') }}</a></div>
+    <div>Floraison</div>
+    <div>Fructification</div>
+    <h3>Services éco-systèmiques</h3>
+
+    <h3>Sources</h3>
+    <div>
+        <ul>
+        {% for source in plant.sources %}
+            <li>{{ source.name }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    Fiche détaillée type : <br>
+    <img src="/img/exe.png" alt="">
+{% endblock %}

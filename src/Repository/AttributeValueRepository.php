@@ -2,21 +2,21 @@
 
 namespace App\Repository;
 
-use App\Entity\InterestValue;
+use App\Entity\AttributeValue;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method InterestValue|null find($id, $lockMode = null, $lockVersion = null)
- * @method InterestValue|null findOneBy(array $criteria, array $orderBy = null)
- * @method InterestValue[]    findAll()
- * @method InterestValue[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method AttributeValue|null find($id, $lockMode = null, $lockVersion = null)
+ * @method AttributeValue|null findOneBy(array $criteria, array $orderBy = null)
+ * @method AttributeValue[]    findAll()
+ * @method AttributeValue[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class InterestValueRepository extends ServiceEntityRepository
+class AttributeValueRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, InterestValue::class);
+        parent::__construct($registry, AttributeValue::class);
     }
 
     // /**

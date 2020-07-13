@@ -12,6 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Insolation
 {
+    const TYPE_SUN = 10;
+    const TYPE_HALF_SHADE = 5;
+    const TYPE_SHADE = 1;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -25,12 +29,7 @@ class Insolation
     private $type;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $ideal;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="insolations")
+     * @ORM\OneToMany(targetEntity=PlantsInsolations::class, mappedBy="insolation")
      */
     private $plants;
 
@@ -56,27 +55,15 @@ class Insolation
         return $this;
     }
 
-    public function getIdeal(): ?bool
-    {
-        return $this->ideal;
-    }
-
-    public function setIdeal(?bool $ideal): self
-    {
-        $this->ideal = $ideal;
-
-        return $this;
-    }
-
     /**
-     * @return Collection|Plant[]
+     * @return Collection|PlantsInsolations[]
      */
     public function getPlants(): Collection
     {
         return $this->plants;
     }
 
-    public function addPlant(Plant $plant): self
+    public function addPlant(PlantsInsolations $plant): self
     {
         if (!$this->plants->contains($plant)) {
             $this->plants[] = $plant;
@@ -85,7 +72,7 @@ class Insolation
         return $this;
     }
 
-    public function removePlant(Plant $plant): self
+    public function removePlant(PlantsInsolations $plant): self
     {
         if ($this->plants->contains($plant)) {
             $this->plants->removeElement($plant);

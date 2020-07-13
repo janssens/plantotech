@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PlantController!{% endblock %}
+
+{% block body %}
+
+    <h1>Liste des plantes</h1>
+    {% if filters | length %}
+        {% for filter,value in filters %}
+            <span data-key="{{ filter }}">{{ value | human(filter,true) }}</span>
+        {% endfor %}
+        <br>
+        <a href="{{ path('plant') }}">Voir toutes les plantes</a>
+    {% endif %}
+    <ul>
+        {% for plant in plants %}
+            <li>
+                {% include "plant/_partial/plant_line.html.twig" %}
+            </li>
+        {% endfor %}
+    </ul>
+
+
+{% endblock %}

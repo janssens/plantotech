@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\InterestValueRepository;
+use App\Repository\AttributeValueRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=InterestValueRepository::class)
+ * @ORM\Entity(repositoryClass=AttributeValueRepository::class)
  */
-class InterestValue
+class AttributeValue
 {
     /**
      * @ORM\Id()
@@ -20,9 +20,9 @@ class InterestValue
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $value;
 
     /**
      * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="interests")
@@ -30,10 +30,10 @@ class InterestValue
     private $plants;
 
     /**
-     * @ORM\ManyToOne(targetEntity=InterestType::class, inversedBy="interestValues")
+     * @ORM\ManyToOne(targetEntity=Attribute::class, inversedBy="attributeValues")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $type;
+    private $attribute;
 
     public function __construct()
     {
@@ -45,14 +45,14 @@ class InterestValue
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getValue(): ?string
     {
-        return $this->name;
+        return $this->value;
     }
 
-    public function setName(string $name): self
+    public function setValue(string $value): self
     {
-        $this->name = $name;
+        $this->value = $value;
 
         return $this;
     }
@@ -83,14 +83,14 @@ class InterestValue
         return $this;
     }
 
-    public function getType(): ?InterestType
+    public function getAttribute(): ?Attribute
     {
-        return $this->type;
+        return $this->attribute;
     }
 
-    public function setType(?InterestType $type): self
+    public function setAttribute(?Attribute $attribute): self
     {
-        $this->type = $type;
+        $this->attribute = $attribute;
 
         return $this;
     }

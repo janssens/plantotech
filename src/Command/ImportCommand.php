@@ -2,12 +2,19 @@
 // src/Command/ImportCommand.php
 namespace App\Command;
 
+use App\Entity\Attribute;
+use App\Entity\AttributeValue;
 use App\Entity\Clay;
+use App\Entity\FloweringAndCrop;
+use App\Entity\Humidity;
 use App\Entity\Humus;
+use App\Entity\Insolation;
+use App\Entity\InterestType;
 use App\Entity\Nutrient;
 use App\Entity\Ph;
 use App\Entity\Plant;
 use App\Entity\PlantFamily;
+use App\Entity\PlantsInsolations;
 use App\Entity\PlantsPorts;
 use App\Entity\Port;
 use App\Entity\Soil;
@@ -100,7 +107,7 @@ protected static $defaultName = 'app:import-from-db';
         $db = clone $clean_db;
         $plants = $db->get('PLANTES');
 
-        $map = array (
+        $plant_map = array (
             'LIFE_CYCLE_VIVACE'=> Plant::LIFE_CYCLE_PERENNIAL,
             'LIFE_CYCLE_BISANNUELLE'=> Plant::LIFE_CYCLE_BIENNIAL,
             'LIFE_CYCLE_ANNUEL'=> Plant::LIFE_CYCLE_ANNUAL,
@@ -215,6 +222,101 @@ protected static $defaultName = 'app:import-from-db';
             $humus_map[$key] = $humus;
         }
 
+        //humidity
+        $humidity_map = array('sec'=>Humidity::HUMIDITY_DRY, 'humide'=>Humidity::HUMIDITY_WET, 'immerge'=>Humidity::HUMIDITY_IMMERSED);
+
+        //flowering_crop
+        $flowering_crop_type_map = array('récolte'=>FloweringAndCrop::TYPE_CROP, 'floraison'=>FloweringAndCrop::TYPE_FLOWERING);
+        $flowering_crop_month_map = array('janvier'=>1,'fevrier'=>2,'mars'=>3,'avril'=>4,'mai'=>5,'juin'=>6,'juillet'=>7,'aout'=>8,'septembre'=>9,'octobre'=>10,'novembre'=>11,'decembre'=>12);
+
+        //insolation
+        $insolation_ideal_map = array('tolérée'=>false,'idéale'=>true);
+        $insolation_type_map = array('MI-OMBRE'=>array(Insolation::TYPE_HALF_SHADE),'SOLEIL'=>array(Insolation::TYPE_SUN),'SOLEIL & OMBRE'=>array(Insolation::TYPE_SUN,Insolation::TYPE_SHADE),'OMBRE'=>array(Insolation::TYPE_SHADE),'"MI-OMBRE'=>array(Insolation::TYPE_HALF_SHADE),'SOLEIL"'=>array(Insolation::TYPE_SUN));
+
+        //Needs & Interest
+        $needs_map = array(
+            'besoin_brise_vent'=>'brise vent',
+            'besoin_pollinisation'=>'pollinisation',
+            'besoin_limitation_de_concurrence'=>'limitation de concurrence',
+            'besoin_azote'=>'azote',
+            'besoin_mineraux'=>'minéraux',
+            'besoin_matiere_organique'=>'matière organique',
+            'besoin_zonage'=>'zonage',
+            'besoin_protection'=>'protection',
+            'besoin_taille'=>'taille',
+            'besoin_arrosage'=>'arrosage',
+            'besoin_tuteur'=>'tuteur',
+            'besoin_conduite'=>'conduite',
+            'besoin_cultural_cueillette_ramassage'=>'mode de récolte',
+            'besoin_cultural_recolte_etalee_groupee'=>'type de récolte',
+            'besoin_cultural_precisions_recolte'=>'info récolte',
+            'besoin_cultural_exigences_particulieres'=>'exigences',
+            'besoin_cultural_entretien'=>'entretien',
+            'sol_draine_compact_profond'=>'sol',
+            );
+        $interest_map = array(
+            'interet_habitat_d_oiseaux' => 'habitat d\'oiseaux',
+            'interet_insectes_auxilliaires' => 'insectes auxilliaires',
+            'precisions_insectes_auxilliaires' => 'info insectes auxilliaires',
+            'interet_mellifere' => 'mellifère',
+            'interet_nectarifere' => 'nectarifére',
+            'interet_pollen' => 'pollen',
+            'interet_allelopathique' => 'allelopathique',
+            'interet_couvre_sol' => 'couvre sol',
+            'interet_fixateur_dazote' => 'fixateur d\'azote',
+            'interet_fixateur_de_mineraux' => 'fixateur de minéraux',
+            'precisions_fixateur_de_mineraux' => 'info fixateur de minéraux',
+            'interet_ombre_legere' => 'ombre légère',
+            'interet_anti_erosion' => 'anti érosion',
+            'interet_biomasse' => 'biomasse',
+            'interet_amelioration_du_compost' => 'amélioration du compost',
+            'interet_amelioration_structure_du_sol' => 'amélioration de la structure du sol',
+            'interet_pionnier' => 'pionnier',
+            'interet_repulsif_insectes' => 'répulsif insectes',
+            'fruit_comestible' => 'comestible',
+            'fruit_de_table' => 'fruit de table',
+            'fruit_grignotte' => 'grignote',
+            'fruit_transforme' => 'transforme',
+            'fruit_conserve_par_cuisson' => 'conservation par cuisson',
+            'fruit_boisson' => 'boisson',
+            'fruit_congelation' => 'congélation',
+            'fruit_superfood' => 'super aliment',
+            'fruit_de_garde' => 'fruit de garde',
+            'graine_comestible' => 'graine comestible',
+            'graine_grignotte' => 'graine grignote',
+            'graine_cuite' => 'graine cuite',
+            'graine_farine' => 'graine farine',
+            'graine_sechee' => 'graine séchée',
+            'graine_huile' => 'graine huile',
+            'graine_germee' => 'graine germée',
+            'petiole_feuille_comestible' => 'pétiole feuille comestible',
+            'petiole_feuille_fraiche_seche_cuite' => 'petiole feuille fraiche séche cuite',
+            'rhizome_tubercule_bulbe_comestible' => 'rhizome tubercule bulbe comestible',
+            'fleur_comestible' => 'fleur comestible',
+            'bourgeon_seve_comestible' => 'bourgeon sève comestible',
+            'usage_medicinal' => 'usage médicinal',
+            'proprietes_medicinales' => 'propriétés médicinales',
+            'usage_aromatique' => 'usage aromatique',
+            'fourrage_animal' => 'fourrage animal',
+            'fourrage_grands_herbivores' => 'fourrage grands herbivores',
+            'fourrage_basse_court' => 'fourrage basse court',
+            'precision_fourrage' => 'précision fourrage',
+            'bois_oeuvre' => 'bois d\'oeuvre',
+            'tuteur' => 'tuteur',
+            'vannerie' => 'vannerie',
+            'bois_chauffage' => 'bois de chauffage',
+            'porte_greffe' => 'porte greffe',
+            'tinctoriale' => 'tinctorial',
+            'ornementale' => 'ornementale',
+            'odorante' => 'odorante',
+            'interet_haie' => 'intérêt hair',
+            'maladies_ravageurs' => 'maladie ravageurs',
+            'multiplication' => 'multiplication',
+            'associations_culinaires' => 'associations culinaires',
+            'toxicite' => 'toxicité',);
+
+
+        $output->writeln('ready to import');
         foreach ($plants as $plant) {
 
             $new_plant = new Plant();
@@ -237,7 +339,7 @@ protected static $defaultName = 'app:import-from-db';
             foreach ($enum_keys as $key) {
                 $value = strtoupper($plant[constant('self::PLANT_KEY_' . strtoupper($key))]);
                 if (strtoupper($value)) {
-                    $local_value = $map[strtoupper($key) . '_' . strtoupper($value)];
+                    $local_value = $plant_map[strtoupper($key) . '_' . strtoupper($value)];
                     $function = self::camelCase('set_' . $key);
                     $new_plant->$function($local_value);
                 }
@@ -261,7 +363,11 @@ protected static $defaultName = 'app:import-from-db';
                     $new_plant->$function(${$v});
                 }
             }
+            $output->writeln('==============');
+            $output->writeln($new_plant->getName());
+            $output->writeln('==============');
 
+            $output->writeln('import family');
             //family
             $family_name = self::tolower($plant[SELF::PLANT_KEY_FAMILY]);
             $family = $this->entityManager->getRepository(PlantFamily::class)->findOneBy(array('name' => $family_name));
@@ -272,6 +378,7 @@ protected static $defaultName = 'app:import-from-db';
             }
             $new_plant->setFamily($family);
 
+            $output->writeln('import port');
             //port
             $db = clone $clean_db;
             $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
@@ -298,6 +405,7 @@ protected static $defaultName = 'app:import-from-db';
                 $this->entityManager->persist($my_plant_port);
             }
 
+            $output->writeln('import sources');
             // sources
             $re = '/((https*:\/\/(?:(?:(?!http).)*))|((?!http).)+)/mi';
             $str = $plant[self::PLANT_KEY_SOURCES];
@@ -311,6 +419,7 @@ protected static $defaultName = 'app:import-from-db';
                 }
             }
 
+            $output->writeln('import soil');
             //soil
             $db = clone $clean_db;
             $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
@@ -323,6 +432,7 @@ protected static $defaultName = 'app:import-from-db';
                 }
             }
 
+            $output->writeln('import ph');
             //ph
             $db = clone $clean_db;
             $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
@@ -333,6 +443,7 @@ protected static $defaultName = 'app:import-from-db';
                 }
             }
 
+            $output->writeln('import nutrient');
             //nutrient
             $db = clone $clean_db;
             $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
@@ -341,6 +452,7 @@ protected static $defaultName = 'app:import-from-db';
                 $new_plant->addNutrient($nutrients_map[$plant_nutrient[self::PLANTE_ACCUMULATRICE_NUTRIMENTS_KEY_NUTRIMENT]]);
             }
 
+            $output->writeln('import clays');
             //clays
             $db = clone $clean_db;
             $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
@@ -356,6 +468,7 @@ protected static $defaultName = 'app:import-from-db';
                 }
             }
 
+            $output->writeln('import humus');
             //humus
             $db = clone $clean_db;
             $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
@@ -368,19 +481,118 @@ protected static $defaultName = 'app:import-from-db';
                 }
             }
 
+            $output->writeln('import humidity');
+            //humidity
+            $db = clone $clean_db;
+            $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
+            $plante_humidity = $db->getOne("PLANTE_HUMIDITE","*");
+            foreach ($humidity_map as $key => $value){
+                if (isset($plante_humidity[$key])) {
+                    if ($plante_humidity[$key] == 'oui') {
+                        $humidity = new Humidity();
+                        $humidity->addPlant($new_plant);
+                        $humidity->setValue($value);
+                        $this->entityManager->persist($humidity);
+                    }
+                }
+            }
+
+            $output->writeln('import flowering & crop');
+            //Flowering & Crop
+            $db = clone $clean_db;
+            $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
+            foreach ($flowering_crop_type_map as $key_type => $type_value){
+                $db->where("floraison_ou_recolte", $key_type);
+                $values = $db->getOne("PLANTE_FLORAISONS_RECOLTES","*");
+                foreach ($flowering_crop_month_map as $month => $index){
+                    if (isset($values[$month])) {
+                        if (strlen($values[$month] ) > 0) {
+                            $flowering_crop = $this->entityManager->getRepository(FloweringAndCrop::class)
+                                ->findOneBy(array('type'=>$type_value,'month'=>$index));
+                            if (!$flowering_crop){
+                                $flowering_crop = new FloweringAndCrop();
+                                $flowering_crop->setType($type_value);
+                                $flowering_crop->setMonth($index);
+                                $this->entityManager->persist($flowering_crop);
+                            }
+                            $new_plant->addFloweringAndCrop($flowering_crop);
+                        }
+                    }
+                }
+            }
+
+            $output->writeln('import insolation');
+            //insolation
+            $db = clone $clean_db;
+            $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
+            $insolations = $db->get("PLANTE_EXPOSITIONS");
+            foreach ($insolations as $insolation){
+                $types = array();
+                $ideal = false;
+                if (isset($insolation_type_map[$insolation['exposition']])){
+                    $types = $insolation_type_map[$insolation['exposition']];
+                }
+                if (isset($insolation_ideal_map[$insolation['idéale_tolérée']])){
+                    $ideal = $insolation_ideal_map[$insolation['idéale_tolérée']];
+                }
+                if (count($types) > 0){
+                    foreach ($types as $type){
+                        $i = $this->entityManager->getRepository(Insolation::class)
+                            ->findOneBy(array('type'=>$type));
+                        if (!$i){
+                            $i = new Insolation();
+                            $i->setType($type);
+                            $this->entityManager->persist($i);
+                        }
+                        $pi = new PlantsInsolations();
+                        $pi->setPlant($new_plant);
+                        $pi->setIdeal($ideal);
+                        $pi->setInsolation($i);
+                        $this->entityManager->persist($pi);
+                    }
+                }
+            }
+
+            //association
+            //corrupted data
+
+            $output->writeln('import interest and needs');
+            //interest and needs
+            $db = clone $clean_db;
+            $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
+            $interests_and_needs = $db->getOne("PLANTE_BESOINS_INTERETS","*");
+            foreach (array(Attribute::TYPE_INTEREST => $interest_map,Attribute::TYPE_NEED => $needs_map) as $type => $map){
+                foreach ($map as $key => $value){
+
+                    if (isset($interests_and_needs[$key])){
+                        $att_value = strtolower(trim($interests_and_needs[$key]));
+                        if (strlen($att_value) >= 1 ){
+                            $attribute = $this->entityManager->getRepository(Attribute::class)
+                                ->findOneBy(array('name'=>$value,'type'=>$type));
+                            if (!$attribute){
+                                $attribute = new Attribute();
+                                $attribute->setName($value);
+                                $attribute->setType($type);
+                                $this->entityManager->persist($attribute);
+                            }
+                            $attribute_value = $this->entityManager->getRepository(AttributeValue::class)
+                                ->findOneBy(array('value'=>$att_value,'attribute'=>$attribute));
+                            if (!$attribute_value){
+                                $attribute_value = new AttributeValue();
+                                $attribute_value->setAttribute($attribute);
+                                $attribute_value->setValue($att_value);
+                            }
+                            $attribute_value->addPlant($new_plant);
+                            $this->entityManager->persist($attribute_value);
+                        }
+                    }
+                }
+            }
+            $this->entityManager->persist($new_plant);
+            $this->entityManager->flush();
         }
 
-        /**
-        private $humidities;
-        private $floweringAndCrops;
-        private $insolations;
-        private $associations;
-        private $needs;
-        private $interests;
-         */
-
         return 1;
-
     }
 
     public static function camelCase($str, array $noStrip = [])

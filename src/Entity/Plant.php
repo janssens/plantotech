@@ -281,7 +281,7 @@ class Plant
     private $floweringAndCrops;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Insolation::class, mappedBy="plants")
+     * @ORM\OneToMany(targetEntity=PlantsInsolations::class, mappedBy="plant", orphanRemoval=true)
      */
     private $insolations;
 
@@ -298,14 +298,9 @@ class Plant
     private $associations = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity=NeedValue::class, mappedBy="plants")
+     * @ORM\ManyToMany(targetEntity=AttributeValue::class, mappedBy="plants")
      */
-    private $needs;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=InterestValue::class, mappedBy="plants")
-     */
-    private $interests;
+    private $attributes;
 
     public function __construct()
     {
@@ -321,8 +316,7 @@ class Plant
         $this->insolations = new ArrayCollection();
         $this->associations1 = new ArrayCollection();
         $this->associations2 = new ArrayCollection();
-        $this->needs = new ArrayCollection();
-        $this->interests = new ArrayCollection();
+        $this->attributes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -352,6 +346,15 @@ class Plant
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getSlug(): string
+    {
+        return strtolower(trim(preg_replace('/[\s-]+/', '-',
+            preg_replace('/[^A-Za-z0-9-]+/', '-',
+                preg_replace('/[&]/', 'and',
+                    preg_replace('/[\']/', '',
+                        iconv('UTF-8', 'ASCII//TRANSLIT', $this->getName()))))), '-'));
     }
 
     public function getLifeCycle(): ?int
@@ -441,6 +444,13 @@ class Plant
         return $this;
     }
 
+    public function getHeight(): string
+    {
+        if ($this->min_height == $this->max_height)
+            return $this->min_height;
+        return $this->min_height.'-'.$this->max_height;
+    }
+
     public function getRoot(): ?int
     {
         return $this->root;
@@ -475,6 +485,13 @@ class Plant
         $this->max_width = $max_width;
 
         return $this;
+    }
+
+    public function getWidth(): string
+    {
+        if ($this->min_width == $this->max_width)
+            return $this->min_width;
+        return $this->min_width.'-'.$this->max_width;
     }
 
     public function getSucker(): ?int
@@ -1021,28 +1038,38 @@ class Plant
     }
 
     /**
-     * @return Collection|Insolation[]
+     * @return Collection|PlantsInsolations[]
      */
     public function getInsolations(): Collection
     {
         return $this->insolations;
     }
 
-    public function addInsolation(Insolation $insolation): self
+    public function getInsolationsByIdeal(bool $ideal): Collection
+    {
+        return $this->getInsolations()->filter(function (PlantsInsolations $pi) use ($ideal) {
+            return ($pi->getIdeal() == $ideal);
+        });
+    }
+
+    public function addInsolation(PlantsInsolations $insolation): self
     {
         if (!$this->insolations->contains($insolation)) {
             $this->insolations[] = $insolation;
-            $insolation->addPlant($this);
+            $insolation->setPlant($this);
         }
 
         return $this;
     }
 
-    public function removeInsolation(Insolation $insolation): self
+    public function removeInsolation(PlantsInsolations $insolation): self
     {
         if ($this->insolations->contains($insolation)) {
             $this->insolations->removeElement($insolation);
-            $insolation->removePlant($this);
+            // set the owning side to null (unless already changed)
+            if ($insolation->getPlant() === $this) {
+                $insolation->setPlant(null);
+            }
         }
 
         return $this;
@@ -1064,56 +1091,28 @@ class Plant
     }
 
     /**
-     * @return Collection|NeedValue[]
+     * @return Collection|AttributeValue[]
      */
-    public function getNeeds(): Collection
+    public function getAttributes(): Collection
     {
-        return $this->needs;
+        return $this->attributes;
     }
 
-    public function addNeed(NeedValue $need): self
+    public function addAttribute(AttributeValue $attributeValue): self
     {
-        if (!$this->needs->contains($need)) {
-            $this->needs[] = $need;
-            $need->addPlant($this);
+        if (!$this->attributes->contains($attributeValue)) {
+            $this->attributes[] = $attributeValue;
+            $attributeValue->addPlant($this);
         }
 
         return $this;
     }
 
-    public function removeNeed(NeedValue $need): self
+    public function removeAttribute(AttributeValue $attributeValue): self
     {
-        if ($this->needs->contains($need)) {
-            $this->needs->removeElement($need);
-            $need->removePlant($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|InterestValue[]
-     */
-    public function getInterests(): Collection
-    {
-        return $this->interests;
-    }
-
-    public function addInterest(InterestValue $interest): self
-    {
-        if (!$this->interests->contains($interest)) {
-            $this->interests[] = $interest;
-            $interest->addPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeInterest(InterestValue $interest): self
-    {
-        if ($this->interests->contains($interest)) {
-            $this->interests->removeElement($interest);
-            $interest->removePlant($this);
+        if ($this->attributes->contains($attributeValue)) {
+            $this->attributes->removeElement($attributeValue);
+            $attributeValue->removePlant($this);
         }
 
         return $this;
