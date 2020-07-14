@@ -276,7 +276,7 @@ class Plant
     private $humidities;
 
     /**
-     * @ORM\OneToMany(targetEntity=FloweringAndCrop::class, mappedBy="plants", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=FloweringAndCrop::class, mappedBy="plant", orphanRemoval=true)
      */
     private $floweringAndCrops;
 
@@ -1014,11 +1014,24 @@ class Plant
         return $this->floweringAndCrops;
     }
 
+    public function getFlowerings(): Collection
+    {
+        return $this->getFloweringAndCrops()->filter(function (FloweringAndCrop $f)  {
+            return ($f->getType() == FloweringAndCrop::TYPE_FLOWERING);
+        });
+    }
+
+    public function getCrops(): Collection
+    {
+        return $this->getFloweringAndCrops()->filter(function (FloweringAndCrop $c)  {
+            return ($c->getType() == FloweringAndCrop::TYPE_CROP);
+        });
+    }
     public function addFloweringAndCrop(FloweringAndCrop $floweringAndCrop): self
     {
         if (!$this->floweringAndCrops->contains($floweringAndCrop)) {
             $this->floweringAndCrops[] = $floweringAndCrop;
-            $floweringAndCrop->setPlants($this);
+            $floweringAndCrop->setPlant($this);
         }
 
         return $this;
@@ -1096,6 +1109,23 @@ class Plant
     public function getAttributes(): Collection
     {
         return $this->attributes;
+    }
+
+    public function getAttributesByType(int $type): Collection
+    {
+        return $this->getAttributes()->filter(function (AttributeValue $av) use ($type) {
+            return ($av->getAttribute()->getType() == $type);
+        });
+    }
+
+    public function getNeeds(): Collection
+    {
+        return $this->getAttributesByType(Attribute::TYPE_NEED);
+    }
+
+    public function getInterests(): Collection
+    {
+        return $this->getAttributesByType(Attribute::TYPE_INTEREST);
     }
 
     public function addAttribute(AttributeValue $attributeValue): self

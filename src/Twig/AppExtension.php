@@ -4,11 +4,21 @@ namespace App\Twig;
 
 use App\Entity\Insolation;
 use App\Entity\Plant;
+use App\Entity\PlantFamily;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class AppExtension extends AbstractExtension
 {
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     public function getFilters()
     {
         return [
@@ -29,7 +39,8 @@ class AppExtension extends AbstractExtension
                         return $prefix.'biannuelle';
                     case Plant::LIFE_CYCLE_PERENNIAL:
                         return $prefix.'vivace';
-                };
+                }
+                break;
             case 'root':
                 if ($label) $prefix = 'racines : ';
                 switch ($number){
@@ -46,6 +57,7 @@ class AppExtension extends AbstractExtension
                     case Plant::ROOT_TUBER:
                         return $prefix.'tubercules';
                 }
+                break;
             case 'stratum':
                 if ($label) $prefix = 'strate : ';
                 switch ($number){
@@ -62,6 +74,7 @@ class AppExtension extends AbstractExtension
                     case Plant::STRATUM_CLIMBING:
                         return $prefix.'grimpante';
                 }
+                break;
             case 'foliage':
                 if ($label) $prefix = 'feuillage : ';
                 switch ($number){
@@ -72,6 +85,7 @@ class AppExtension extends AbstractExtension
                     case Plant::FOLIAGE_DECIDUOUS:
                         return $prefix.'caduc';
                 }
+                break;
             case 'leaf_density':
                 if ($label) $prefix = 'Densité du feuillage : ';
                 switch ($number){
@@ -82,6 +96,7 @@ class AppExtension extends AbstractExtension
                     case Plant::LEAF_DENSITY_DENSE:
                         return $prefix.'dense';
                 }
+                break;
             case 'insolation':
                 if ($label) $prefix = 'Exposition : ';
                 switch ($number){
@@ -92,6 +107,7 @@ class AppExtension extends AbstractExtension
                     case Insolation::TYPE_SHADE:
                         return $prefix.'ombre';
                 }
+                break;
             case 'drought_tolerance':
                 if ($label) $prefix = 'Tolérance à la sécheresse : ';
                 switch ($number){
@@ -106,6 +122,13 @@ class AppExtension extends AbstractExtension
                     case Plant::DROUGHT_TOLERANCE_5:
                         return $prefix.'5/5';
                 }
+                break;
+            case 'family':
+                if ($label) $prefix = 'Famille : ';
+                $family = $this->entityManager->getRepository(PlantFamily::class)->find($number);
+                if ($family)
+                    return $prefix.$family->getName();
+                return $number;
             default:
                 return $number;
         }

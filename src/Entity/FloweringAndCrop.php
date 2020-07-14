@@ -34,7 +34,7 @@ class FloweringAndCrop
      * @ORM\ManyToOne(targetEntity=Plant::class, inversedBy="floweringAndCrops")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $plants;
+    private $plant;
 
     public function getId(): ?int
     {
@@ -65,14 +65,14 @@ class FloweringAndCrop
         return $this;
     }
 
-    public function getPlants(): ?Plant
+    public function getPlant(): ?Plant
     {
         return $this->plants;
     }
 
-    public function setPlants(?Plant $plants): self
+    public function setPlant(?Plant $plant): self
     {
-        $this->plants = $plants;
+        $this->plant = $plant;
 
         return $this;
     }

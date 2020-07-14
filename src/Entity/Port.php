@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PortRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,9 +25,14 @@ class Port
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity=PlantsPorts::class, inversedBy="port")
+     * @ORM\ManyToMany(targetEntity=PlantsPorts::class, inversedBy="ports")
      */
     private $plants;
+
+    public function __construct()
+    {
+        $this->plants = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -44,15 +51,29 @@ class Port
         return $this;
     }
 
-    public function getPlants(): ?PlantsPorts
+    /**
+     * @return Collection|PlantsPorts[]
+     */
+    public function getPlants(): Collection
     {
         return $this->plants;
     }
 
-    public function setPlants(?PlantsPorts $plants): self
+    public function addPlant(PlantsPorts $plant): self
     {
-        $this->plants = $plants;
-
+        if (!$this->plants->contains($plant)) {
+            $this->plants[] = $plant;
+        }
         return $this;
     }
+
+    public function removePlant(PlantsPorts $plant): self
+    {
+        if ($this->plants->contains($plant)) {
+            $this->plants->removeElement($plant);
+        }
+        return $this;
+    }
+
+
 }

@@ -34,13 +34,13 @@ class PlantsPorts
     private $plant;
 
     /**
-     * @ORM\OneToMany(targetEntity=Port::class, mappedBy="plants")
+     * @ORM\ManyToMany(targetEntity=Port::class, inversedBy="plants")
      */
-    private $port;
+    private $ports;
 
     public function __construct()
     {
-        $this->port = new ArrayCollection();
+        $this->ports = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -79,16 +79,16 @@ class PlantsPorts
     /**
      * @return Collection|Port[]
      */
-    public function getPort(): Collection
+    public function getPorts(): Collection
     {
-        return $this->port;
+        return $this->ports;
     }
 
     public function addPort(Port $port): self
     {
-        if (!$this->port->contains($port)) {
-            $this->port[] = $port;
-            $port->setPlants($this);
+        if (!$this->ports->contains($port)) {
+            $this->ports[] = $port;
+            $port->addPlant($this);
         }
 
         return $this;
@@ -96,8 +96,8 @@ class PlantsPorts
 
     public function removePort(Port $port): self
     {
-        if ($this->port->contains($port)) {
-            $this->port->removeElement($port);
+        if ($this->ports->contains($port)) {
+            $this->ports->removeElement($port);
             // set the owning side to null (unless already changed)
             if ($port->getPlants() === $this) {
                 $port->setPlants(null);

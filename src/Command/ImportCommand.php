@@ -371,10 +371,12 @@ protected static $defaultName = 'app:import-from-db';
             //family
             $family_name = self::tolower($plant[SELF::PLANT_KEY_FAMILY]);
             $family = $this->entityManager->getRepository(PlantFamily::class)->findOneBy(array('name' => $family_name));
-            if (!$family) {
+            if (!$family && $family_name) {
                 $family = new PlantFamily();
                 $family->setName($family_name);
                 $this->entityManager->persist($family);
+            }else if (!$family_name){
+                $output->writeln('NO FAMILY');
             }
             $new_plant->setFamily($family);
 
@@ -382,7 +384,7 @@ protected static $defaultName = 'app:import-from-db';
             //port
             $db = clone $clean_db;
             $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
-            $plant_ports = $db->get("PLANTE_PORTS","*");
+            $plant_ports = $db->get("PLANTE_PORTS");
             foreach ($plant_ports as $plant_port) {
                 if (!isset($plant_port['port'])){
                     var_dump($plant_port);die();
@@ -395,12 +397,10 @@ protected static $defaultName = 'app:import-from-db';
                     $this->entityManager->persist($port);
                 }
                 $type = ($plant_port[self::PLANTS_PORTS_KEY_TYPE] == 'naturel') ? PlantsPorts::PLANT_PORT_TYPE_NATURAL : PlantsPorts::PLANT_PORT_TYPE_POSSIBLE;
-                $my_plant_port = $new_plant->getPortsByType($type);
-                if (!$my_plant_port) {
-                    $my_plant_port = new PlantsPorts();
-                    $my_plant_port->setPlant($plant);
-                    $my_plant_port->setType($type);
-                }
+
+                $my_plant_port = new PlantsPorts();
+                $my_plant_port->setPlant($new_plant);
+                $my_plant_port->setType($type);
                 $my_plant_port->addPort($port);
                 $this->entityManager->persist($my_plant_port);
             }
@@ -507,14 +507,13 @@ protected static $defaultName = 'app:import-from-db';
                 foreach ($flowering_crop_month_map as $month => $index){
                     if (isset($values[$month])) {
                         if (strlen($values[$month] ) > 0) {
-                            $flowering_crop = $this->entityManager->getRepository(FloweringAndCrop::class)
-                                ->findOneBy(array('type'=>$type_value,'month'=>$index));
-                            if (!$flowering_crop){
-                                $flowering_crop = new FloweringAndCrop();
-                                $flowering_crop->setType($type_value);
-                                $flowering_crop->setMonth($index);
-                                $this->entityManager->persist($flowering_crop);
-                            }
+
+                            $flowering_crop = new FloweringAndCrop();
+                            $flowering_crop->setType($type_value);
+                            $flowering_crop->setMonth($index);
+                            $flowering_crop->setPlant($new_plant);
+                            $this->entityManager->persist($flowering_crop);
+
                             $new_plant->addFloweringAndCrop($flowering_crop);
                         }
                     }

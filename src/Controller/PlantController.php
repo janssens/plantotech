@@ -22,7 +22,13 @@ class PlantController extends AbstractController
             }
         }
         //complex filter (join)
-        // insolation,
+        //'insolation','port'
+        $complex_filters_map = array('family');
+        foreach ($complex_filters_map as $filter){
+            if ($request->query->get($filter)){
+                $filters[$filter] = $request->query->get($filter);
+            }
+        }
         $plants = $this->getDoctrine()->getRepository(Plant::class)->findBy($filters);
         return $this->render('plant/index.html.twig', [
             'controller_name' => 'PlantController',
@@ -34,8 +40,11 @@ class PlantController extends AbstractController
     /**
      * @Route("/plant/card/{id}/{slug}", name="plant_show")
      */
-    public function show(Plant $plant)
+    public function show(Plant $plant,string $slug)
     {
+        if ($plant->getSlug() != $slug){
+            return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
+        }
         return $this->render('plant/show.html.twig', [
             'plant' => $plant
         ]);
