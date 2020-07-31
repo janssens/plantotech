@@ -15,7 +15,7 @@ class PlantController extends AbstractController
     public function index(Request $request)
     {
         $filters = array();
-        $filters_map = array('life_cycle','root','stratum','drought_tolerance','foliage','leaf_density');
+        $filters_map = array('life_cycle','root','stratum','drought_tolerance','foliage','leaf_density','limestone');
         foreach ($filters_map as $filter){
             if ($request->query->get($filter)){
                 $filters[$filter] = $request->query->get($filter);

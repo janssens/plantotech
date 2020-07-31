@@ -86,6 +86,17 @@ class AppExtension extends AbstractExtension
                         return $prefix.'caduc';
                 }
                 break;
+            case 'limestone':
+                if ($label) $prefix = 'exigence calcaire : ';
+                switch ($number){
+                    case Plant::LIMESTONE_TOLERANT:
+                        return $prefix.'tolérant';
+                    case Plant::LIMESTONE_INDIFFERENT:
+                        return $prefix.'indifférent';
+                    case Plant::LIMESTONE_WARNING:
+                        return $prefix.'attention';
+                }
+                break;
             case 'leaf_density':
                 if ($label) $prefix = 'Densité du feuillage : ';
                 switch ($number){

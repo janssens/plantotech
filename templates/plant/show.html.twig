@@ -16,7 +16,7 @@
     <div>Résistance au froid (rusticité) : {{ plant.Rusticity }}°C
         {% if plant.RusticityComment %}({{ plant.RusticityComment }}){% endif %}</div>
     <div>Résistance au sec : <a href="{{ path('plant',{'drought_tolerance':plant.DroughtTolerance}) }}">{{ plant.DroughtTolerance | human('drought_tolerance') }}</a></div>
-    <div>Résistance au vent : </div>
+    <div>Résistance au vent : <span style="color:red;">cette info n'existe pas dans la base de donnée initiale</span></div>
     <div>Exposition idéale : {% for insolation in plant.InsolationsByIdeal(true) %}
             <a href="{{ path('plant',{'insolation':insolation.type}) }}">{{ insolation.type | human('insolation')  }}</a>
         {% endfor %}</div>
@@ -26,7 +26,7 @@
     <div>Fertilité : </div>
     <div>Aeration du sol : </div>
     <div>Ph : {% for ph in plant.phs %}{{ ph.name }},{% endfor %}</div>
-    <div>Calcaire : </div>
+    <div>Calcaire : <a href="{{ path('plant',{'limestone':plant.limestone}) }}">{{ plant.limestone | human('limestone') }}</a></div>
     <h4>Milieu naturel et sub naturel</h4>
     <div>Origine: {{ plant.NativePlace }}</div>
     <h3>Besoins éco-systèmiques</h3>
