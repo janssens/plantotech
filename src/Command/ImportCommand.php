@@ -579,7 +579,7 @@ protected static $defaultName = 'app:import-from-db';
                             if (!$attribute_value){
                                 $attribute_value = new AttributeValue();
                                 $attribute_value->setAttribute($attribute);
-                                $attribute_value->setValue($att_value);
+                                $attribute_value->setValue(substr($att_value,0,255));
                             }
                             $attribute_value->addPlant($new_plant);
                             $this->entityManager->persist($attribute_value);
