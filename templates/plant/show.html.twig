@@ -3,6 +3,23 @@
 {% block head %}
     <link rel="canonical" href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}" />
 {% endblock %}
+{% block stylesheets %}
+    <style>
+        h2{
+            color: #d4f1c4;
+        }
+        h3{
+            background: #8ea937;
+        }
+        h4{
+            background: #afa152;
+        }
+        .column{
+            width: 50%;
+            float: left;
+        }
+    </style>
+{% endblock %}
 {% block title %}{{ plant.LatinName }} - {{ plant.name }}{% endblock %}
 
 {% block body %}
@@ -11,115 +28,120 @@
     {% if plant.Family %}
     <h2><a href="{{ path('plant',{'family':plant.Family.id}) }}">{{ plant.Family.Name }}</a></h2>
     {% endif %}
-    <h3>Biotope</h3>
-    <h4>Conditions pédoclimatiques</h4>
-    <div>Résistance au froid (rusticité) : {{ plant.Rusticity }}°C
-        {% if plant.RusticityComment %}({{ plant.RusticityComment }}){% endif %}</div>
-    <div>Résistance au sec : <a href="{{ path('plant',{'drought_tolerance':plant.DroughtTolerance}) }}">{{ plant.DroughtTolerance | human('drought_tolerance') }}</a></div>
-    <div>Résistance au vent : <span style="color:red;">cette info n'existe pas dans la base de donnée initiale</span></div>
-    <div>Exposition idéale : {% for insolation in plant.InsolationsByIdeal(true) %}
-            <a href="{{ path('plant',{'insolation':insolation.type}) }}">{{ insolation.type | human('insolation')  }}</a>
-        {% endfor %}</div>
-    <div>Exposition possible : {% for insolation in plant.InsolationsByIdeal(false) %}
-            <a href="{{ path('plant',{'insolation':insolation.type}) }}">{{ insolation.type | human('insolation')  }}</a>
-        {% endfor %}</div>
-    <div>Fertilité : </div>
-    <div>Aeration du sol : </div>
-    <div>Ph : {% for ph in plant.phs %}{{ ph.name }},{% endfor %}</div>
-    <div>Calcaire : <a href="{{ path('plant',{'limestone':plant.limestone}) }}">{{ plant.limestone | human('limestone') }}</a></div>
-    <h4>Milieu naturel et sub naturel</h4>
-    <div>Origine: {{ plant.NativePlace }}</div>
-    <h3>Besoins éco-systèmiques</h3>
-    <div>
-        {% for attribute_value in plant.getNeeds %}
-            <b>{{ attribute_value.attribute.name }}</b>: {{ attribute_value.value }}<br>
-        {% endfor %}
-    </div>
-    <h3>Description</h3>
-    <div>Strate <a href="{{ path('plant',{'stratum':plant.stratum}) }}">{{ plant.stratum | human('stratum') }}</a></div>
-    <h4>Mensuration</h4>
-    <div>hauteur {{ plant.Height }} / largeur {{ plant.Width }} </div>
-    <h4>Forme</h4>
-    <div>Port - tendance naturelle : {% for ports in plant.NaturalPorts() %}
-            {% for port in ports.ports %}
-                <a href="{{ path('plant',{'port':port.id}) }}">{{ port.name }}</a>
+    <div class="column">
+        {#Biotope#}
+        <h3>Biotope (environement) // secteurs du terrain</h3>
+        <h4>Conditions pédoclimatiques</h4>
+        <div>Résistance au froid (rusticité) : {{ plant.Rusticity }}°C
+            {% if plant.RusticityComment %}({{ plant.RusticityComment }}){% endif %}</div>
+        <div>Résistance au sec : <a href="{{ path('plant',{'drought_tolerance':plant.DroughtTolerance}) }}">{{ plant.DroughtTolerance | human('drought_tolerance') }}</a></div>
+        <div>Résistance au vent : <span style="color:red;">cette info n'existe pas dans la base de donnée initiale</span></div>
+        <div>Exposition idéale : {% for insolation in plant.InsolationsByIdeal(true) %}
+                <a href="{{ path('plant',{'insolation':insolation.insolation.id}) }}">{{ insolation.type | human('insolation')  }}</a>
+            {% endfor %}</div>
+        <div>Exposition possible : {% for insolation in plant.InsolationsByIdeal(false) %}
+                <a href="{{ path('plant',{'insolation':insolation.insolation.id}) }}">{{ insolation.type | human('insolation')  }}</a>
+            {% endfor %}</div>
+        <div>Fertilité : </div>
+        <div>Aeration du sol : </div>
+        <div>Ph : {% for ph in plant.phs %}{{ ph.name }},{% endfor %}</div>
+        <div>Calcaire : <a href="{{ path('plant',{'limestone':plant.limestone}) }}">{{ plant.limestone | human('limestone') }}</a></div>
+        <h4>Milieu naturel et sub naturel</h4>
+        <div>Origine: {{ plant.NativePlace }}</div>
+        <h3>Besoins éco-systèmiques</h3>
+        <div>
+            {% for attribute_value in plant.getNeeds %}
+                <b>{{ attribute_value.attribute.name }}</b>: {{ attribute_value.value }}<br>
             {% endfor %}
-        {% endfor %}</div>
-    <div>Port - possible : {% for ports in plant.getPossiblePorts(false) %}
-            {% for port in ports.ports %}
-                <a href="{{ path('plant',{'port':port.id}) }}">{{ port.name }}</a>
-            {% endfor %}        {% endfor %}</div>
-    <div>Tendance racinaire <a href="{{ path('plant',{'root':plant.root}) }}">{{ plant.root | human('root') }}</a></div>
-    <div>Feuillage <a href="{{ path('plant',{'foliage':plant.foliage}) }}">{{ plant.foliage | human('foliage') }}</a> densité <a href="{{ path('plant',{'leaf_density':plant.LeafDensity}) }}">{{ plant.LeafDensity | human('leaf_density') }}</a></div>
-    <img width="150px" src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Nandina_domestica_20101209_h.jpg" alt="silhouette">
-    <h4>Cycle</h4>
-    <div>Plante <a href="{{ path('plant',{'life_cycle':plant.LifeCycle}) }}">{{ plant.LifeCycle | human('life_cycle') }}</a></div>
-    <div>
-        {% set myFlowerings = [] %}
-        {% for flowering in plant.Flowerings %}
-            {% set myFlowerings = myFlowerings|merge([flowering.month]) %}
-        {% endfor %}
-        {% set myCrops = [] %}
-        {% for crop in plant.Crops %}
-            {% set myCrops = myCrops|merge([crop.month]) %}
-        {% endfor %}
-        {% if myFlowerings | length or myCrops | length %}
-        <table>
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Janvier</th>
-                    <th>Février</th>
-                    <th>Mars</th>
-                    <th>Avril</th>
-                    <th>Mai</th>
-                    <th>Juin</th>
-                    <th>Juillet</th>
-                    <th>Aout</th>
-                    <th>Septembre</th>
-                    <th>Octobre</th>
-                    <th>Novembre</th>
-                    <th>Décembre</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Floraison</td>
-                    {% for m in 1..12 %}
-                        <td>
-                        {% if myFlowerings[m] is defined %}🌼{% endif %}
-                        </td>
+        </div>
+    </div>
+    <div class="column">
+        <h3>Description</h3>
+        <div>Strate <a href="{{ path('plant',{'stratum':plant.stratum}) }}">{{ plant.stratum | human('stratum') }}</a></div>
+        <h4>Mensuration</h4>
+        <div>hauteur {{ plant.Height }} - largeur {{ plant.Width }} </div>
+        <h4>Forme</h4>
+        <div>Port - tendance naturelle : {% for ports in plant.NaturalPorts() %}
+                {% for port in ports.ports %}
+                    <a href="{{ path('plant',{'port':port.id}) }}">{{ port.name }}</a>
+                {% endfor %}
+            {% endfor %}</div>
+        <div>Port - possible : {% for ports in plant.getPossiblePorts(false) %}
+                {% for port in ports.ports %}
+                    <a href="{{ path('plant',{'port':port.id}) }}">{{ port.name }}</a>
+                {% endfor %}        {% endfor %}</div>
+        <div>Tendance racinaire <a href="{{ path('plant',{'root':plant.root}) }}">{{ plant.root | human('root') }}</a></div>
+        <div>Feuillage <a href="{{ path('plant',{'foliage':plant.foliage}) }}">{{ plant.foliage | human('foliage') }}</a> densité <a href="{{ path('plant',{'leaf_density':plant.LeafDensity}) }}">{{ plant.LeafDensity | human('leaf_density') }}</a></div>
+        <img width="150px" src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Nandina_domestica_20101209_h.jpg" alt="silhouette">
+        <h4>Cycle</h4>
+        <div>Plante <a href="{{ path('plant',{'life_cycle':plant.LifeCycle}) }}">{{ plant.LifeCycle | human('life_cycle') }}</a></div>
+        <div>
+            {% set myFlowerings = [] %}
+            {% for flowering in plant.Flowerings %}
+                {% set myFlowerings = myFlowerings|merge([flowering.month]) %}
+            {% endfor %}
+            {% set myCrops = [] %}
+            {% for crop in plant.Crops %}
+                {% set myCrops = myCrops|merge([crop.month]) %}
+            {% endfor %}
+            {% if myFlowerings | length or myCrops | length %}
+                <table>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Janvier</th>
+                        <th>Février</th>
+                        <th>Mars</th>
+                        <th>Avril</th>
+                        <th>Mai</th>
+                        <th>Juin</th>
+                        <th>Juillet</th>
+                        <th>Aout</th>
+                        <th>Septembre</th>
+                        <th>Octobre</th>
+                        <th>Novembre</th>
+                        <th>Décembre</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Floraison</td>
+                        {% for m in 1..12 %}
+                            <td>
+                                {% if myFlowerings[m] is defined %}🌼{% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Fructification</td>
+                        {% for m in 1..12 %}
+                            <td>
+                                {% if myCrops[m] is defined %}🍎{% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <h3>Services éco-systèmiques</h3>
+        <div>
+            {% for attribute_value in plant.getInterests %}
+                <b>{{ attribute_value.attribute.name }}</b>: {{ attribute_value.value }}<br>
+            {% endfor %}
+        </div>
+        {% if plant.sources | length %}
+            <h3>Sources</h3>
+            <div>
+                <ul>
+                    {% for source in plant.sources %}
+                        <li>{{ source.name }}</li>
                     {% endfor %}
-                </tr>
-                <tr>
-                    <td>Fructification</td>
-                    {% for m in 1..12 %}
-                        <td>
-                            {% if myCrops[m] is defined %}🍎{% endif %}
-                        </td>
-                    {% endfor %}
-                </tr>
-            </tbody>
-        </table>
+                </ul>
+            </div>
         {% endif %}
     </div>
-    <h3>Services éco-systèmiques</h3>
-    <div>
-        {% for attribute_value in plant.getInterests %}
-            <b>{{ attribute_value.attribute.name }}</b>: {{ attribute_value.value }}<br>
-        {% endfor %}
-    </div>
-    {% if plant.sources | length %}
-        <h3>Sources</h3>
-        <div>
-            <ul>
-            {% for source in plant.sources %}
-                <li>{{ source.name }}</li>
-            {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-
     Fiche détaillée type : <br>
-    <img src="/img/exe.png" alt="">
+    <img src="/img/exe.png" alt="" width="500px"><br>
+    <img src="/img/exe2.png" alt="" width="500px">
 {% endblock %}

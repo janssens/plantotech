@@ -5,9 +5,16 @@
 {% block body %}
 
     <h1>Liste des plantes</h1>
-    {% if filters | length %}
+    {% if filters | length or complex_filters | length %}
         {% for filter,value in filters %}
-            <span data-key="{{ filter }}">{{ value | human(filter,true) }}</span>
+            <span data-key="{{ filter }}">
+                {{ value | human(filter,true) }}
+            </span>
+        {% endfor %}
+        {% for filter,value in complex_filters %}
+            <span data-key="{{ filter }}">
+                {{ value | human(filter,true) }}
+            </span>
         {% endfor %}
         <br>
         <a href="{{ path('plant') }}">Voir toutes les plantes</a>

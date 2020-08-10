@@ -5,6 +5,7 @@ namespace App\Twig;
 use App\Entity\Insolation;
 use App\Entity\Plant;
 use App\Entity\PlantFamily;
+use App\Entity\Port;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Extension\AbstractExtension;
@@ -139,6 +140,12 @@ class AppExtension extends AbstractExtension
                 $family = $this->entityManager->getRepository(PlantFamily::class)->find($number);
                 if ($family)
                     return $prefix.$family->getName();
+                return $number;
+            case 'port':
+                if ($label) $prefix = 'Port : ';
+                $port = $this->entityManager->getRepository(Port::class)->find($number);
+                if ($port)
+                    return $prefix.$port->getName();
                 return $number;
             default:
                 return $number;

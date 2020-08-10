@@ -39,6 +39,11 @@ class Attribute
      */
     private $attributeValues;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=AttributeFamily::class, inversedBy="attributes")
+     */
+    private $family;
+
     public function __construct()
     {
         $this->attributeValues = new ArrayCollection();
@@ -100,6 +105,18 @@ class Attribute
                 $attributeValue->setAttribute(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFamily(): ?AttributeFamily
+    {
+        return $this->family;
+    }
+
+    public function setFamily(?AttributeFamily $family): self
+    {
+        $this->family = $family;
 
         return $this;
     }
