@@ -40,15 +40,19 @@ class PlantController extends AbstractController
         }
         if ($request->query->get('insolation')){
             /** @var Insolation $insolation */
-            $insolation = $this->getDoctrine()->getRepository(Insolation::class)->find($request->query->get('insolation'));
-            foreach ($insolation->getPlants() as $plant){
-                $restrict['id'][] = $plant->getPlant()->getId();
+            $insolations_id = $request->query->get('insolation');
+            $insolations = $this->getDoctrine()->getRepository(Insolation::class)->findBy(array('id'=>$insolations_id));
+            foreach ($insolations as $insolation){
+                foreach ($insolation->getPlants() as $plant){
+                    $restrict['id'][] = $plant->getPlant()->getId();
+                }
+                if (!key_exists('insolation',$complex_filters) || !is_array($complex_filters['insolation'])){
+                    $complex_filters['insolation'] = array();
+                }
+                $complex_filters['insolation'][] = $insolation->getType();
             }
-            $complex_filters['insolation'] = $insolation->getType();
         }
         array_unique($restrict['id']);
-        if (!$restrict['id'])
-            unset($restrict['id']);
 
         $complex_filters_map = array('family');
         foreach ($complex_filters_map as $filter){
@@ -56,12 +60,35 @@ class PlantController extends AbstractController
                 $filters[$filter] = $request->query->get($filter);
             }
         }
+        $s = $request->query->get('q');
+        if ($s){
+            $matched_names = $this->getDoctrine()->getRepository(Plant::class)->findByString($s);
+            $ids = array();
+            /** @var Plant $match */
+            foreach ($matched_names as $match){
+                $ids[] = $match->getId();
+            }
+            if (!$restrict['id'])
+                $restrict['id'] = $ids;
+            else
+                $restrict['id'] = array_intersect($restrict['id'],$ids);
+        }
+
+        if (!$restrict['id'])
+            unset($restrict['id']);
+
         $plants = $this->getDoctrine()->getRepository(Plant::class)->findBy(array_merge($filters,$restrict));
+
+
+        $insolations = $this->getDoctrine()->getRepository(Insolation::class)->findAll();
+
         return $this->render('plant/index.html.twig', [
             'controller_name' => 'PlantController',
             'plants' => $plants,
             'filters' => $filters,
-            'complex_filters' => $complex_filters
+            'query_string' => $s,
+            'complex_filters' => $complex_filters,
+            'insolations' => $insolations
         ]);
     }
 

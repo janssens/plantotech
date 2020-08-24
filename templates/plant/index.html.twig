@@ -4,21 +4,16 @@
 
 {% block body %}
 
+    <hr>
     <h1>Liste des plantes</h1>
-    {% if filters | length or complex_filters | length %}
-        {% for filter,value in filters %}
-            <span data-key="{{ filter }}">
-                {{ value | human(filter,true) }}
-            </span>
-        {% endfor %}
-        {% for filter,value in complex_filters %}
-            <span data-key="{{ filter }}">
-                {{ value | human(filter,true) }}
-            </span>
-        {% endfor %}
-        <br>
-        <a href="{{ path('plant') }}">Voir toutes les plantes</a>
-    {% endif %}
+    <hr>
+
+    {% include "plant/_partial/filters.html.twig" %}
+
+    <hr>
+    <h2>Plantes</h2>
+
+    {% if plants | length %}
     <ul>
         {% for plant in plants %}
             <li>
@@ -26,6 +21,9 @@
             </li>
         {% endfor %}
     </ul>
+    {% else %}
+    <div>Aucune plante répértoriée ne correspond à ces critères</div>
+    {% endif %}
 
 
 {% endblock %}

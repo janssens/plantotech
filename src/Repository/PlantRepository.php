@@ -19,6 +19,18 @@ class PlantRepository extends ServiceEntityRepository
         parent::__construct($registry, Plant::class);
     }
 
+    public function findByString($value): ?array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('concat(p.latin_name,p.name) like :val')
+            ->setParameter('val', '%'.$value.'%')
+            ->orderBy('p.id', 'ASC')
+            //->setMaxResults(20)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return Plant[] Returns an array of Plant objects
     //  */

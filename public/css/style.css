@@ -1,0 +1,6 @@
+span.tag span.close:before {
+  content: "x";
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=style.css.map */
