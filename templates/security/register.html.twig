@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block title %}Register!{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <form class="form-signin" method="post">
+                    <h1>Register</h1>
+                    <label for="inputUsername">Username</label>
+                    <input type="text" name="username" id="inputUsername" placeholder="username" required autofocus>
+                    <label for="inputEmail">Email address</label>
+                    <input type="email" name="email" id="inputEmail" placeholder="Email address" required>
+                    <label for="inputPassword" class="sr-only">Password</label>
+                    <input type="password" name="password" id="inputPassword" placeholder="Password" required>
+                    <button type="submit">
+                        Register
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

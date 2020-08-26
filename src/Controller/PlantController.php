@@ -4,16 +4,22 @@ namespace App\Controller;
 
 use App\Entity\Insolation;
 use App\Entity\Plant;
-use App\Entity\PlantsInsolations;
 use App\Entity\Port;
+use App\Form\PlantType;
+use App\Repository\PlantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/plant")
+ */
 class PlantController extends AbstractController
 {
     /**
-     * @Route("/plant", name="plant")
+     * @Route("/index", name="plant")
      */
     public function index(Request $request)
     {
@@ -93,7 +99,31 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/plant/card/{id}/{slug}", name="plant_show")
+     * @Route("/new", name="plant_new", methods={"GET","POST"})
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function new(Request $request): Response
+    {
+        $plant = new Plant();
+        $form = $this->createForm(PlantType::class, $plant);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($plant);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('plant_index');
+        }
+
+        return $this->render('plant/new.html.twig', [
+            'plant' => $plant,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/card/{id}/{slug}", name="plant_show")
      */
     public function show(Plant $plant,string $slug)
     {
@@ -103,5 +133,39 @@ class PlantController extends AbstractController
         return $this->render('plant/show.html.twig', [
             'plant' => $plant
         ]);
+    }
+
+    /**
+     * @Route("/{id}/edit", name="plant_edit", methods={"GET","POST"})
+     */
+    public function edit(Request $request, Plant $plant): Response
+    {
+        $form = $this->createForm(PlantType::class, $plant);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('plant_index');
+        }
+
+        return $this->render('plant/edit.html.twig', [
+            'plant' => $plant,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/{id}", name="plant_delete", methods={"DELETE"})
+     */
+    public function delete(Request $request, Plant $plant): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$plant->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($plant);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('plant_index');
     }
 }
