@@ -1,2 +1,3 @@
 <a href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}">{{ plant.name }}</a>
 - <i>{{ plant.LatinName }}</i>
+{% if is_granted('ROLE_EDIT') %}- <a href="{{ path('plant_edit',{'id':plant.id}) }}">editer </a>{% endif %}

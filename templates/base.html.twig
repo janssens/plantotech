@@ -9,12 +9,18 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
-        <a href="/">home</a> / <a href="{{ path('plant') }}">plant</a> |
-        {% if is_granted('ROLE_USER') %}
-            <a href="{{ path('app_logout') }}">Logout</a>
-        {% else %}
-            <a href="{{ path('app_login') }}">Login</a> | <a href="{{ path('app_register') }}">Register</a>
-        {% endif %}
+        <div class="grid">
+            <div>
+                <a href="/">🏠 Accueil</a> > <a href="{{ path('plant_index') }}">🌿 plantes</a>
+            </div>
+            <div>
+                {% if is_granted('ROLE_USER') %}
+                   <b> 🧘 {{ app.user.username }} </b> |  🔓<a href="{{ path('app_logout') }}">déconnection</a>
+                {% else %}
+                    <a href="{{ path('app_login') }}">connexion</a> | <a href="{{ path('app_register') }}">s'inscrire</a>
+                {% endif %}
+            </div>
+        </div>
 
         {% block body %}{% endblock %}
         <script src="/js/jquery-3.5.1.min.js"></script>

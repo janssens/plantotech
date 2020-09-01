@@ -5,8 +5,10 @@
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
+/public/uploads/
 /var/
 /vendor/
+/*.sql
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###

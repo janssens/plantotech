@@ -431,7 +431,6 @@ protected static $defaultName = 'app:import-from-db';
                     }
                 }
             }
-
             $output->writeln('import ph');
             //ph
             $db = clone $clean_db;
@@ -499,9 +498,9 @@ protected static $defaultName = 'app:import-from-db';
 
             $output->writeln('import flowering & crop');
             //Flowering & Crop
-            $db = clone $clean_db;
-            $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
             foreach ($flowering_crop_type_map as $key_type => $type_value){
+                $db = clone $clean_db;
+                $db->where("nom_latin", $plant[SELF::PLANT_KEY_LATIN_NAME]);
                 $db->where("floraison_ou_recolte", $key_type);
                 $values = $db->getOne("PLANTE_FLORAISONS_RECOLTES","*");
                 foreach ($flowering_crop_month_map as $month => $index){
@@ -511,7 +510,7 @@ protected static $defaultName = 'app:import-from-db';
                             $flowering_crop = new FloweringAndCrop();
                             $flowering_crop->setType($type_value);
                             $flowering_crop->setMonth($index);
-                            $flowering_crop->setPlant($new_plant);
+                            //$flowering_crop->setPlant($new_plant);
                             $this->entityManager->persist($flowering_crop);
 
                             $new_plant->addFloweringAndCrop($flowering_crop);

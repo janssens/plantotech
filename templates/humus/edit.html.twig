@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Humus{% endblock %}
+
+{% block body %}
+    <h1>Edit Humus</h1>
+
+    {{ include('humus/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('humus_index') }}">back to list</a>
+
+    {{ include('humus/_delete_form.html.twig') }}
+{% endblock %}

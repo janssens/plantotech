@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Humidity{% endblock %}
+
+{% block body %}
+    <h1>Humidity</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ humidity.id }}</td>
+            </tr>
+            <tr>
+                <th>Value</th>
+                <td>{{ humidity.value }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('humidity_index') }}">back to list</a>
+
+    <a href="{{ path('humidity_edit', {'id': humidity.id}) }}">edit</a>
+
+    {{ include('humidity/_delete_form.html.twig') }}
+{% endblock %}

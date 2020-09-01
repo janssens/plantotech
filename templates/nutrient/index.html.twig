@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nutrient index{% endblock %}
+
+{% block body %}
+    <h1>Nutrient index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Symbol</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for nutrient in nutrients %}
+            <tr>
+                <td>{{ nutrient.id }}</td>
+                <td>{{ nutrient.name }}</td>
+                <td>{{ nutrient.symbol }}</td>
+                <td>
+                    <a href="{{ path('nutrient_show', {'id': nutrient.id}) }}">show</a>
+                    <a href="{{ path('nutrient_edit', {'id': nutrient.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('nutrient_new') }}">Create new</a>
+{% endblock %}

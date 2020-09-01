@@ -67,7 +67,7 @@ class FloweringAndCrop
 
     public function getPlant(): ?Plant
     {
-        return $this->plants;
+        return $this->plant;
     }
 
     public function setPlant(?Plant $plant): self

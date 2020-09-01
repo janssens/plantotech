@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Plantotech{% endblock %}
+
+{% block body %}
+
+    <br>
+    Bonjour {% if is_granted('ROLE_USER') %}{{ app.user.username }} 👋{% endif %} !
+
+{% endblock %}

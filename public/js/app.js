@@ -6,7 +6,7 @@ jQuery(function ($){
         let v = $tag.data('value');
         // console.log(k);
         // console.log(v);
-        $('#filter_'+k+' option[data-f-value='+v+']').removeAttr("selected");
+        $('#filter_'+k+' option[data-f-value="'+v+'"]').removeAttr("selected");
         $('#filters_form').submit();
     })
 });

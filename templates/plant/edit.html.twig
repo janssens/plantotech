@@ -1,9 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Plant{% endblock %}
+{% block title %}🖊️ {{ plant.name }}{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/images.js') }}"></script>
+{% endblock %}
 
 {% block body %}
-    <h1>Edit Plant</h1>
+    <h1>Edition <a href="{{ path('plant_redirect_to_show',{id:plant.id}) }}">{{ plant.name }}</a></h1>
 
     {{ include('plant/_form.html.twig', {'button_label': 'Update'}) }}
 

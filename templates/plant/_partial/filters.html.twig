@@ -33,6 +33,56 @@
                     </select>
                 </div>
                 <div class="col">
+                    <h4>Ph</h4>
+                    <select name="ph[]" id="filter_ph" multiple="multiple">
+                        {% for ph in phs %}
+                            <option value="{{ ph.id }}" data-f-value="{{ ph.id }}" {% if ( complex_filters['ph'] is defined and (ph.id in complex_filters['ph'])) %} selected="selected" {% endif %} >
+                                {{ ph.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <h4>Fertilité</h4>
+                    <select name="humuses[]" id="filter_humuses" multiple="multiple">
+                        {% for h in humuses %}
+                            <option value="{{ h.id }}" data-f-value="{{ h.quantity }}" {% if ( complex_filters['humuses'] is defined and (h.quantity in complex_filters['humuses'])) %} selected="selected" {% endif %} >
+                                sol {{ h.quantity | human('humuses',false) }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <h4>Aeration du sol</h4>
+                    <select name="soils[]" id="filter_soils" multiple="multiple">
+                        {% for soil in soils %}
+                            <option value="{{ soil.id }}" data-f-value="{{ soil.name }}" {% if ( complex_filters['soils'] is defined and (soil.name in complex_filters['soils'])) %} selected="selected" {% endif %} >
+                                sol {{ soil.name | human('soils',false) }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <h4>Floraison</h4>
+                    <select name="flowerings[]" id="filter_flowerings" multiple="multiple">
+                        {% for m in 1..12 %}
+                            <option value="{{ m }}" data-f-value="{{ m }}" {% if ( complex_filters['flowerings'] is defined and (m in complex_filters['flowerings'])) %} selected="selected" {% endif %} >
+                                {{ m | human('flowerings',false) }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <h4>Récolte</h4>
+                    <select name="crops[]" id="filter_crops" multiple="multiple">
+                        {% for m in 1..12 %}
+                            <option value="{{ m }}" data-f-value="{{ m }}" {% if ( complex_filters['crops'] is defined and (m in complex_filters['crops'])) %} selected="selected" {% endif %} >
+                                {{ m | human('crops',false) }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
                     <h4>Strate</h4>
                     <select name="stratum[]" id="filter_stratum" multiple="multiple">
                         {% for stratum in 1..6 %}
@@ -107,6 +157,6 @@
             {% endif %}
         {% endfor %}
         <br>
-        <a href="{{ path('plant') }}">Supprimer tous les filtres</a>
+        <a href="{{ path('plant_index') }}">Supprimer tous les filtres</a>
     {% endif %}
 </div>

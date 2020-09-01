@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Clay{% endblock %}
+
+{% block body %}
+    <h1>Edit Clay</h1>
+
+    {{ include('clay/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('clay_index') }}">back to list</a>
+
+    {{ include('clay/_delete_form.html.twig') }}
+{% endblock %}

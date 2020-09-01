@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=PlantRepository::class)
+ * @ORM\Table(name="plant", indexes={@ORM\Index(columns={"latin_name", "name"}, flags={"fulltext"})})
  */
 class Plant
 {
@@ -50,6 +51,7 @@ class Plant
     const DROUGHT_TOLERANCE_4 = 4;
     const DROUGHT_TOLERANCE_5 = 5;
 
+    const STRATUM_UNDEFINED = 0;
     const STRATUM_LOW = 1;
     const STRATUM_SHRUB = 2;
     const STRATUM_MEDIUM = 3;
@@ -302,6 +304,11 @@ class Plant
      */
     private $attributes;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Image::class, mappedBy="Plant", orphanRemoval=true,cascade={"persist"})
+     */
+    private $images;
+
     public function __construct()
     {
         $this->sources = new ArrayCollection();
@@ -317,6 +324,7 @@ class Plant
         $this->associations1 = new ArrayCollection();
         $this->associations2 = new ArrayCollection();
         $this->attributes = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1143,6 +1151,37 @@ class Plant
         if ($this->attributes->contains($attributeValue)) {
             $this->attributes->removeElement($attributeValue);
             $attributeValue->removePlant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Image[]
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setPlant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getPlant() === $this) {
+                $image->setPlant(null);
+            }
         }
 
         return $this;
