@@ -35,7 +35,7 @@ class AppExtension extends AbstractExtension
     public function autolink($text)
     {
         $re = '/http(s{0,1}):\/\/([\S]+)/im';
-        return preg_replace($re, '<a rel="nofollow" href="http${1}://${2}">${2}</a>', $text);
+        return preg_replace($re, '<a rel="nofollow" target="_blank" href="http${1}://${2}">${2}</a>', $text);
     }
 
     public function humanize($number, $type, $label = false)

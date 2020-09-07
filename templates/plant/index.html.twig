@@ -11,7 +11,7 @@
     {% include "plant/_partial/filters.html.twig" %}
 
     <hr>
-    <h2>Plantes</h2>
+    <h2>Plantes {% if plants | length %}({{plants | length }}){% endif %}</h2>
 
     {% if plants | length %}
     <ul>
