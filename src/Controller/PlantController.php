@@ -44,93 +44,132 @@ class PlantController extends AbstractController
         if (!isset($restrict['id']))
             $restrict['id'] = array();
         if ($request->query->get('port')){
-            $restricted = true;
+            $local_restrict = array();
             /** @var Port $port */
             $port = $this->getDoctrine()->getRepository(Port::class)->find($request->query->get('port'));
             foreach ($port->getPlants() as $plant){
-                $restrict['id'][] = $plant->getPlant()->getId();
+                $local_restrict[] = $plant->getPlant()->getId();
             }
             $complex_filters['port'] = $request->query->get('port');
+            if ($restricted){
+                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
+            }else{
+                $restrict['id'] = $local_restrict;
+            }
+            $restricted = true;
         }
         if ($request->query->get('flowerings')){
-            $restricted = true;
+            $local_restrict = array();
             /** @var FloweringAndCrop $flowering */
             $flowerings_month = $request->query->get('flowerings');
             $flowerings = $this->getDoctrine()->getRepository(FloweringAndCrop::class)->findBy(array('month'=>$flowerings_month,'type'=>FloweringAndCrop::TYPE_FLOWERING));
             foreach ($flowerings as $flowering){
-                $restrict['id'][] = $flowering->getPlant()->getId();
+                $local_restrict[] = $flowering->getPlant()->getId();
             }
             $complex_filters['flowerings'] = $flowerings_month;
-        }
+            if ($restricted){
+                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
+            }else{
+                $restrict['id'] = $local_restrict;
+            }
+            $restricted = true;        }
         if ($request->query->get('crops')){
-            $restricted = true;
+            $local_restrict = array();
             /** @var FloweringAndCrop $crop */
             $crops_month = $request->query->get('crops');
             $crops = $this->getDoctrine()->getRepository(FloweringAndCrop::class)->findBy(array('month'=>$crops_month,'type'=>FloweringAndCrop::TYPE_CROP));
             foreach ($crops as $crop){
-                $restrict['id'][] = $crop->getPlant()->getId();
+                $local_restrict[] = $crop->getPlant()->getId();
             }
             $complex_filters['crops'] = $crops_month;
-        }
+            if ($restricted){
+                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
+            }else{
+                $restrict['id'] = $local_restrict;
+            }
+            $restricted = true;        }
         if ($request->query->get('ph')){
-            $restricted = true;
+            $local_restrict = array();
             /** @var Ph $ph */
             $phs_id = $request->query->get('ph');
             $phs = $this->getDoctrine()->getRepository(Ph::class)->findBy(array('id'=>$phs_id));
             foreach ($phs as $ph){
                 foreach ($ph->getPlants() as $plant){
-                    $restrict['id'][] = $plant->getId();
+                    $local_restrict[] = $plant->getId();
                 }
                 if (!key_exists('ph',$complex_filters) || !is_array($complex_filters['ph'])){
                     $complex_filters['ph'] = array();
                 }
                 $complex_filters['ph'][] = $ph->getId();
             }
-        }
+            if ($restricted){
+                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
+            }else{
+                $restrict['id'] = $local_restrict;
+            }
+            $restricted = true;        }
         if ($request->query->get('insolation')){
-            $restricted = true;
+            $local_restrict = array();
             /** @var Insolation $insolation */
             $insolations_id = $request->query->get('insolation');
             $insolations = $this->getDoctrine()->getRepository(Insolation::class)->findBy(array('id'=>$insolations_id));
             foreach ($insolations as $insolation){
                 foreach ($insolation->getPlants() as $plant){
-                    $restrict['id'][] = $plant->getPlant()->getId();
+                    $local_restrict[] = $plant->getPlant()->getId();
                 }
                 if (!key_exists('insolation',$complex_filters) || !is_array($complex_filters['insolation'])){
                     $complex_filters['insolation'] = array();
                 }
                 $complex_filters['insolation'][] = $insolation->getType();
             }
+            if ($restricted){
+                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
+            }else{
+                $restrict['id'] = $local_restrict;
+            }
+            $restricted = true;
         }
         if ($request->query->get('soils')){
-            $restricted = true;
+            $local_restrict = array();
             /** @var Soil $soil */
             $soils_id = $request->query->get('soils');
             $soils = $this->getDoctrine()->getRepository(Soil::class)->findBy(array('id'=>$soils_id));
             foreach ($soils as $soil){
                 foreach ($soil->getPlants() as $plant){
-                    $restrict['id'][] = $plant->getId();
+                    $local_restrict[] = $plant->getId();
                 }
                 if (!key_exists('soils',$complex_filters) || !is_array($complex_filters['soils'])){
                     $complex_filters['soils'] = array();
                 }
                 $complex_filters['soils'][] = $soil->getName();
             }
+            if ($restricted){
+                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
+            }else{
+                $restrict['id'] = $local_restrict;
+            }
+            $restricted = true;
         }
         if ($request->query->get('humuses')){
-            $restricted = true;
+            $local_restrict = array();
             /** @var Humus $humus */
             $humuses_id = $request->query->get('humuses');
             $humuses = $this->getDoctrine()->getRepository(Humus::class)->findBy(array('id'=>$humuses_id));
             foreach ($humuses as $humus){
                 foreach ($humus->getPlants() as $plant){
-                    $restrict['id'][] = $plant->getId();
+                    $local_restrict[] = $plant->getId();
                 }
                 if (!key_exists('humuses',$complex_filters) || !is_array($complex_filters['humuses'])){
                     $complex_filters['humuses'] = array();
                 }
                 $complex_filters['humuses'][] = $humus->getQuantity();
             }
+            if ($restricted){
+                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
+            }else{
+                $restrict['id'] = $local_restrict;
+            }
+            $restricted = true;
         }
         array_unique($restrict['id']);
 
