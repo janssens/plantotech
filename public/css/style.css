@@ -1,3 +1,25 @@
+[type=color], [type=date], [type=datetime-local], [type=email],
+[type=month], [type=number], [type=password], [type=search],
+[type=submit], [type=tel], [type=text], [type=time], [type=url],
+[type=week], select, textarea {
+  border-radius: 3px;
+}
+
+button {
+  height: 34px;
+}
+
+form.login [type=color], form.login [type=date], form.login [type=datetime-local], form.login [type=email],
+form.login [type=month], form.login [type=number], form.login [type=password], form.login [type=search],
+form.login [type=submit], form.login [type=tel], form.login [type=text], form.login [type=time], form.login [type=url],
+form.login [type=week], form.login select, form.login textarea, form.signin [type=color], form.signin [type=date], form.signin [type=datetime-local], form.signin [type=email],
+form.signin [type=month], form.signin [type=number], form.signin [type=password], form.signin [type=search],
+form.signin [type=submit], form.signin [type=tel], form.signin [type=text], form.signin [type=time], form.signin [type=url],
+form.signin [type=week], form.signin select, form.signin textarea {
+  width: 100%;
+  margin: 10px 0;
+}
+
 span.tag span.close:before {
   content: "x";
   cursor: pointer;

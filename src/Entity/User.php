@@ -39,6 +39,26 @@ class User implements UserInterface
      */
     private $email;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $is_active;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true, unique=true)
+     */
+    private $rp_token;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $rp_token_created_at;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true, unique=true)
+     */
+    private $confirmation_token;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -128,6 +148,65 @@ class User implements UserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->is_active;
+    }
+
+    public function setIsActive(bool $is_active): self
+    {
+        $this->is_active = $is_active;
+
+        return $this;
+    }
+
+    public function getRpToken(): ?string
+    {
+        return $this->rp_token;
+    }
+
+    public function setRpToken(?string $rp_token): self
+    {
+        $this->rp_token = $rp_token;
+
+        return $this;
+    }
+
+    public function getRpTokenCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->rp_token_created_at;
+    }
+
+    public function getRpDelay(): ?\DateTime
+    {
+        return date_add($this->rp_token_created_at,date_interval_create_from_date_string('1 day'));
+    }
+
+    public function setRpTokenCreatedAt(?\DateTimeInterface $rp_token_created_at): self
+    {
+        $this->rp_token_created_at = $rp_token_created_at;
+
+        return $this;
+    }
+
+    public function generateRpToken(){
+        $token = md5(uniqid());
+        $this->setRpToken($token);
+        $this->setRpTokenCreatedAt(new \DateTime('now'));
+    }
+
+    public function getConfirmationToken(): ?string
+    {
+        return $this->confirmation_token;
+    }
+
+    public function setConfirmationToken(?string $confirmation_token): self
+    {
+        $this->confirmation_token = $confirmation_token;
 
         return $this;
     }

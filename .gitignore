@@ -9,6 +9,7 @@
 /var/
 /vendor/
 /*.sql
+/*.zip
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###

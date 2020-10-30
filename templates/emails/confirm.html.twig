@@ -1,0 +1,6 @@
+{# templates/emails/confirm.html.twig #}
+
+Bonjour {{ user.username }}<br>
+Pour valider ton compte il suffit de cliquer
+<a href="{{ url('app_activate',{'token':user.confirmationToken}) }}">sur ce lien</a>. <br>
+A très vite

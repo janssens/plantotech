@@ -1,22 +1,17 @@
 {% extends 'base.html.twig' %}
-{% block title %}Register!{% endblock %}
+{% block title %}Je rejoins la communauté{% endblock %}
 {% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <form class="form-signin" method="post">
-                    <h1>Register</h1>
-                    <label for="inputUsername">Username</label>
-                    <input type="text" name="username" id="inputUsername" placeholder="username" required autofocus>
-                    <label for="inputEmail">Email address</label>
-                    <input type="email" name="email" id="inputEmail" placeholder="Email address" required>
-                    <label for="inputPassword" class="sr-only">Password</label>
-                    <input type="password" name="password" id="inputPassword" placeholder="Password" required>
-                    <button type="submit">
-                        Register
-                    </button>
-                </form>
-            </div>
-        </div>
+    <div class="grid-6-small-2">
+        <div class="col-2"></div>
+        <form class="signin col-2" method="post">
+            <h1>Créer mon compte</h1>
+            <input type="text" name="username" id="inputUsername" placeholder="Je choisi un nom d'utilisateur" required autofocus><br>
+            <input type="email" name="email" id="inputEmail" placeholder="Mon adresse email" required><br>
+            <input type="password" name="password" id="inputPassword" placeholder="Un mot de passe" required><br>
+            <input type="text" name="code" id="inputCode" placeholder="J'ai un code d'accès" ><br>
+            <button type="submit" class="btn--primary">
+                👥 Je rejoins la communauté
+            </button>
+        </form>
     </div>
 {% endblock %}
