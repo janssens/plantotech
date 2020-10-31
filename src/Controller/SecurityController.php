@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\ConfigService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\MailerInterface;
@@ -23,16 +24,19 @@ class SecurityController extends AbstractController
     private $userRepository;
     private $csrfTokenManager;
     private $mailer;
+    private $config;
 
     public function __construct(
         UserRepository $userRepository,
         CsrfTokenManagerInterface $csrfTokenManager,
-        MailerInterface $mailer
+        MailerInterface $mailer,
+        ConfigService $configService
     )
     {
         $this->userRepository = $userRepository;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->mailer = $mailer;
+        $this->config = $configService;
     }
 
     /**
@@ -148,25 +152,17 @@ class SecurityController extends AbstractController
                 $session->getFlashBag()->add('error', 'please provide a username or email');
                 return $this->redirectToRoute('app_forgot_password');
             }
+            $user = $this->userRepository->findOneByEmailOrUsername($email_or_username);
+            if ($user){
+                $user->generateRpToken();
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
+                $this->_sendForgotPassword($user);
+            }
             if (strpos($email_or_username,'@')===false){
-                $user = $this->userRepository->findOneByUsername($email_or_username);
-                if ($user){
-                    $user->generateRpToken();
-                    $em = $this->getDoctrine()->getManager();
-                    $em->persist($user);
-                    $em->flush();
-                    $this->_sendForgotPassword($user);
-                }
                 $session->getFlashBag()->add('success', 'Si un utilisateur est bien associé à ce pseudo, un email vient de lui être envoyé 😉');
             }else{
-                $user = $this->userRepository->findOneByEmail($email_or_username);
-                if ($user){
-                    $user->generateRpToken();
-                    $em = $this->getDoctrine()->getManager();
-                    $em->persist($user);
-                    $em->flush();
-                    $this->_sendForgotPassword($user);
-                }
                 $session->getFlashBag()->add('success', 'Si un utilisateur existe avec cet email, un email vient de lui être envoyé 😉');
             }
             return $this->redirectToRoute('app_login');
@@ -176,9 +172,9 @@ class SecurityController extends AbstractController
 
     private function _sendForgotPassword(User $user){
         $email = (new TemplatedEmail())
-            ->from('hello@example.com')
+            ->from($this->config->getValue('app/main_email'))
             ->to($user->getEmail())
-            ->subject('Mot de passe oublié ?')
+            ->subject('['.$this->config->getValue('app/website_name').'] Mot de passe oublié ?')
             ->htmlTemplate('emails/forgot_password.html.twig')
             ->textTemplate('emails/forgot_password.txt.twig')
             ->context([
@@ -189,11 +185,11 @@ class SecurityController extends AbstractController
 
     private function _sendConfirm(User $user){
         $email = (new TemplatedEmail())
-            ->from('hello@example.com')
+            ->from($this->config->getValue('app/main_email'))
             ->to($user->getEmail())
-            ->subject('Confirme ton nouveau compte')
+            ->subject('['.$this->config->getValue('app/website_name').']Confirme ton nouveau compte')
             ->htmlTemplate('emails/confirm.html.twig')
-            ->textTemplate('emails/forgot_password.txt.twig')
+            ->textTemplate('emails/confirm.txt.twig')
             ->context([
                 'user' => $user,
             ]);
@@ -206,13 +202,15 @@ class SecurityController extends AbstractController
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
 
+        $register_code = $this->config->getValue('app/register_code');
         if ($request->isMethod('POST')) {
             $user = new User();
             $user->setEmail($request->request->get('email'));
             $user->setUsername($request->request->get('username'));
             $code = $request->request->get('code');
             $session = $request->getSession();
-            if ($code === 'apis_mellifera'){
+
+            if (($register_code && $code === $register_code) || !$register_code){
                 $user->setPassword($passwordEncoder->encodePassword(
                     $user,
                     $request->request->get('password')
@@ -227,12 +225,11 @@ class SecurityController extends AbstractController
                 $this->_sendConfirm($user);
 
                 return $this->redirectToRoute('home');
-            }else{
+            }else if ($register_code){
                 $session->getFlashBag()->add('error', 'oups, ce code n\'existe pas ! 😩');
-                return $this->render('security/register.html.twig');
             }
 
         }
-        return $this->render('security/register.html.twig');
+        return $this->render('security/register.html.twig',array('use_register_code'=>($register_code!='')));
     }
 }

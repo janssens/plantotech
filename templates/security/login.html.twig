@@ -5,9 +5,7 @@
         <div class="col-2"></div>
         <form action="{{ path('app_login') }}" method="post" class="login col-2">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" >
-            {#        <label for="username">Username:</label>#}
-            <input type="text" id="username" name="_username" value="{{ last_username }}" placeholder="Nom d'utilisateur" /><br>
-            {#        <label for="password">Password:</label>#}
+            <input type="text" id="username" name="_username" value="{{ last_username }}" placeholder="Nom d'utilisateur ou email" /><br>
             <input type="password" id="password" name="_password" placeholder="Mot de passe "/><br>
             {#
             If you want to control the URL the user

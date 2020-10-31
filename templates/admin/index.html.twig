@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}App admin{% endblock %}
+
+{% block body %}
+    <h1>Admin page</h1>
+    <form action="{{ path('app_admin') }}" method="post">
+        {% for c in config %}
+            <label for="{{ c.path }}">{{ c.label }}</label><br>
+            <input type="{{ c.frontendType }}" value="{{ c.value }}" name="{{ c.path }}"> <br>
+        {% endfor %}
+        <button type="submit" class="btn--primary">Enregistrer</button>
+    </form>
+{% endblock %}

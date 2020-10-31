@@ -8,7 +8,9 @@
             <input type="text" name="username" id="inputUsername" placeholder="Je choisi un nom d'utilisateur" required autofocus><br>
             <input type="email" name="email" id="inputEmail" placeholder="Mon adresse email" required><br>
             <input type="password" name="password" id="inputPassword" placeholder="Un mot de passe" required><br>
+            {% if use_register_code %}
             <input type="text" name="code" id="inputCode" placeholder="J'ai un code d'accès" ><br>
+            {% endif %}
             <button type="submit" class="btn--primary">
                 👥 Je rejoins la communauté
             </button>
