@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}App admin{% endblock %}
+
+{% block body %}
+    <h1>Admin page</h1>
+    <a href="{{ path('app_admin') }}">configuration</a>
+    <b>users admin</b>
+    <table>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles | join(',') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

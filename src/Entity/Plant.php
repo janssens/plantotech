@@ -300,7 +300,7 @@ class Plant
     private $associations = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity=AttributeValue::class, mappedBy="plants")
+     * @ORM\ManyToMany(targetEntity=AttributeValues::class, mappedBy="plants")
      */
     private $attributes;
 
@@ -1112,41 +1112,32 @@ class Plant
     }
 
     /**
-     * @return Collection|AttributeValue[]
+     * @return Collection|AttributeValues[]
      */
     public function getAttributes(): Collection
     {
         return $this->attributes;
     }
 
-    public function getAttributesByType(int $type): Collection
-    {
-        return $this->getAttributes()->filter(function (AttributeValue $av) use ($type) {
-            return ($av->getAttribute()->getType() == $type);
+    public function getAttributesByCode(string $code){
+        return $this->attributes->filter(function ($attribute) use ($code){
+            /** @var AttributeValues $attribute */
+            return $attribute->getAttribute()->getCode() == $code;
         });
     }
 
-    public function getNeeds(): Collection
-    {
-        return $this->getAttributesByType(Attribute::TYPE_NEED);
-    }
 
-    public function getInterests(): Collection
+    public function addAttribute(AttributeValues $plantAttribute): self
     {
-        return $this->getAttributesByType(Attribute::TYPE_INTEREST);
-    }
-
-    public function addAttribute(AttributeValue $attributeValue): self
-    {
-        if (!$this->attributes->contains($attributeValue)) {
-            $this->attributes[] = $attributeValue;
-            $attributeValue->addPlant($this);
+        if (!$this->attributes->contains($plantAttribute)) {
+            $this->attributes[] = $plantAttribute;
+            $plantAttribute->addPlant($this);
         }
 
         return $this;
     }
 
-    public function removeAttribute(AttributeValue $attributeValue): self
+    public function removeAttribute(AttributeValues $attributeValue): self
     {
         if ($this->attributes->contains($attributeValue)) {
             $this->attributes->removeElement($attributeValue);

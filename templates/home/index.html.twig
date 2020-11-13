@@ -3,7 +3,9 @@
 {% block title %}Plantotech{% endblock %}
 
 {% block body %}
-
+    <div class="chapeau">
+        Bienvenu sur notre base de donnée en ligne dédiée au jardinage agro-forestier et au design de permaculture
+    </div>
     <br>
     Bonjour {% if is_granted('ROLE_USER') %}{{ app.user.username }} 👋{% endif %} !
 

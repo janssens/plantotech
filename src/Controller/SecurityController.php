@@ -204,29 +204,45 @@ class SecurityController extends AbstractController
 
         $register_code = $this->config->getValue('app/register_code');
         if ($request->isMethod('POST')) {
-            $user = new User();
-            $user->setEmail($request->request->get('email'));
-            $user->setUsername($request->request->get('username'));
-            $code = $request->request->get('code');
+
+            $em = $this->getDoctrine()->getManager();
             $session = $request->getSession();
 
-            if (($register_code && $code === $register_code) || !$register_code){
-                $user->setPassword($passwordEncoder->encodePassword(
-                    $user,
-                    $request->request->get('password')
-                ));
-                $user->setConfirmationToken(md5(uniqid()));
-                $user->setIsActive(false); //need to validate first
-                $session->getFlashBag()->add('success', 'Vérifie tes emails pour valider ton compte :)');
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($user);
-                $em->flush();
+            $username = $request->request->get('username');
+            $email = $request->request->get('email');
+            $exist = $em->getRepository(User::class)->findOneBy(array('username'=>$username));
+            if ($exist){
+                $session->getFlashBag()->add('error', 'oups, ce nom d\'utilisateur est déjà utilisé ! 😩');
+            }else{
+                $exist = $em->getRepository(User::class)->findOneBy(array('email'=>$email));
+                if ($exist){
+                    $session->getFlashBag()->add('error', 'oups, cet email est déjà utilisé ! 😩');
+                }
+            }
+            if (!$exist){
+                $user = new User();
+                $user->setEmail($email);
+                $user->setUsername($username);
+                $code = $request->request->get('code');
 
-                $this->_sendConfirm($user);
+                if (($register_code && $code === $register_code) || !$register_code){
+                    $user->setPassword($passwordEncoder->encodePassword(
+                        $user,
+                        $request->request->get('password')
+                    ));
+                    $user->setConfirmationToken(md5(uniqid()));
+                    $user->setIsActive(false); //need to validate first
+                    $session->getFlashBag()->add('success', 'Vérifie tes emails pour valider ton compte :)');
 
-                return $this->redirectToRoute('home');
-            }else if ($register_code){
-                $session->getFlashBag()->add('error', 'oups, ce code n\'existe pas ! 😩');
+                    $em->persist($user);
+                    $em->flush();
+
+                    $this->_sendConfirm($user);
+
+                    return $this->redirectToRoute('home');
+                }else if ($register_code){
+                    $session->getFlashBag()->add('error', 'oups, ce code n\'existe pas ! 😩');
+                }
             }
 
         }

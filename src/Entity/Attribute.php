@@ -13,9 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
 class Attribute
 {
 
-    const TYPE_NEED  = 1;
-    const TYPE_INTEREST  = 2;
-    const TYPE_INFO = 3;
+    const TYPE_NONE  = 1;
+    const TYPE_SINGLE  = 2;
+    const TYPE_MULTIPLE = 3;
+    const TYPE_UNIQUE = 4;
 
     /**
      * @ORM\Id()
@@ -35,18 +36,23 @@ class Attribute
     private $type;
 
     /**
-     * @ORM\OneToMany(targetEntity=AttributeValue::class, mappedBy="type", orphanRemoval=true)
-     */
-    private $attributeValues;
-
-    /**
      * @ORM\ManyToOne(targetEntity=AttributeFamily::class, inversedBy="attributes")
      */
     private $family;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AttributeValues::class, mappedBy="attribute", orphanRemoval=true)
+     */
+    private $availableValues;
+
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $code;
+
     public function __construct()
     {
-        $this->attributeValues = new ArrayCollection();
+        $this->availableValues = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -78,35 +84,14 @@ class Attribute
         return $this;
     }
 
-    /**
-     * @return Collection|AttributeValue[]
-     */
-    public function getAttributeValues(): Collection
+    public function isTypeNone() : bool
     {
-        return $this->attributeValues;
+        return $this->getType() === self::TYPE_NONE;
     }
 
-    public function addAttributeValue(AttributeValue $attributeValue): self
+    public function isTypeUnique() : bool
     {
-        if (!$this->attributeValues->contains($attributeValue)) {
-            $this->attributeValues[] = $attributeValue;
-            $attributeValue->setAttribute($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAttributeValue(AttributeValue $attributeValue): self
-    {
-        if ($this->attributeValues->contains($attributeValue)) {
-            $this->attributeValues->removeElement($attributeValue);
-            // set the owning side to null (unless already changed)
-            if ($attributeValue->getAttribute() === $this) {
-                $attributeValue->setAttribute(null);
-            }
-        }
-
-        return $this;
+        return $this->getType() === self::TYPE_UNIQUE;
     }
 
     public function getFamily(): ?AttributeFamily
@@ -117,6 +102,49 @@ class Attribute
     public function setFamily(?AttributeFamily $family): self
     {
         $this->family = $family;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AttributeValues[]
+     */
+    public function getAvailableValues(): Collection
+    {
+        return $this->availableValues;
+    }
+
+    public function addAvailableValue(AttributeValues $availableValue): self
+    {
+        if (!$this->availableValues->contains($availableValue)) {
+            $this->availableValues[] = $availableValue;
+            $availableValue->setAttribute($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvailableValue(AttributeValues $availableValue): self
+    {
+        if ($this->availableValues->contains($availableValue)) {
+            $this->availableValues->removeElement($availableValue);
+            // set the owning side to null (unless already changed)
+            if ($availableValue->getAttribute() === $this) {
+                $availableValue->setAttribute(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
 
         return $this;
     }

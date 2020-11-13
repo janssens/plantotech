@@ -35,7 +35,7 @@
             <div><b>Résistance au froid (rusticité) :</b> {{ plant.Rusticity }}°C
                 {% if plant.RusticityComment %}({{ plant.RusticityComment }}){% endif %}</div>
             <div><b>Résistance au sec :</b> <a href="{{ path('plant_index',{'drought_tolerance':plant.DroughtTolerance}) }}">{{ plant.DroughtTolerance | human('drought_tolerance') }}</a></div>
-            <div><b>Résistance au vent :</b> <span style="color:red;">cette info n'existe pas dans la base de donnée initiale</span></div>
+{#            <div><b>Résistance au vent :</b> <span style="color:red;">cette info n'existe pas dans la base de donnée initiale</span></div>#}
             <div><b>Exposition idéale :</b>
                 {% if plant.InsolationsByIdeal(true) | length %}
                     {% for insolation in plant.InsolationsByIdeal(true) %}
@@ -58,12 +58,35 @@
             <div><b>Calcaire :</b> <a href="{{ path('plant_index',{'limestone':plant.limestone}) }}">{{ plant.limestone | human('limestone') }}</a></div>
             <h4>Milieu naturel et sub naturel</h4>
             <div><b>Origine :</b> {% if plant.NativePlace %}{{ plant.NativePlace }}{% else %}<i style="color: orange">non précisé</i>{% endif %}</div>
-            <h3>Besoins éco-systèmiques</h3>
-            <div>
-                {% for attribute_value in plant.getNeeds %}
-                    <b>{{ attribute_value.attribute.name }} :</b> {{ attribute_value.value }}<br>
+            {% for family in families %}
+                <h4>{{ family.name }}</h4>
+                {% for child in family.children %}
+                    <h5>{{ child.name }}</h5>
+                    <ul>
+                        {% for attribute in child.attributes %}
+                            {% if plant.attributesByCode(attribute.code) | length %}
+                            <li data-code="{{ attribute.code }}">
+                                {% if attribute.typeNone %}
+                                    <a href="{{ path('plant_index',{('a_' ~ attribute.code ):'1'}) }}">{{ attribute.name }}</a>
+                                {% else %}
+                                    {{ attribute.name }} :
+{#                                    {% if plant.attributesByCode(attribute.code) | length > 1 or plant.attributesByCode(attribute.code).first.value is not null %} : {% endif %}#}
+                                    {% for attribute_value in plant.attributesByCode(attribute.code) %}
+                                        {% if attribute.typeUnique %}
+                                            {{ attribute_value.value }}
+                                        {% else %}
+                                            {% if attribute_value.value is not null %}<a href="{{ path('plant_index',{('a_' ~ attribute.code ):attribute_value.id}) }}">{{ attribute_value.value }}</a>{% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+
+
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
                 {% endfor %}
-            </div>
+            {% endfor %}
         </div>
         <div>
             <h3><b>Description</b></h3>
@@ -141,12 +164,6 @@
                         </tbody>
                     </table>
                 {% endif %}
-            </div>
-            <h3>Services éco-systèmiques</h3>
-            <div>
-                {% for attribute_value in plant.getInterests %}
-                    <b>{{ attribute_value.attribute.name }} :</b> {{ attribute_value.value }}<br>
-                {% endfor %}
             </div>
             {% if plant.sources | length %}
                 <h3>Sources</h3>

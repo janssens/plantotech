@@ -4,6 +4,8 @@
 
 {% block body %}
     <h1>Admin page</h1>
+    <a href="{{ path('app_admin_users') }}">users admin</a>
+    <b>configuration</b>
     <form action="{{ path('app_admin') }}" method="post">
         {% for c in config %}
             <label for="{{ c.path }}">{{ c.label }}</label><br>

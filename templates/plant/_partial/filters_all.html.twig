@@ -1,0 +1,195 @@
+<div class="filters" id="form_filter">
+    <form class="filters_form" action="?">
+        <div class="grid-6-small-3">
+            <div class="col fblock f_all">
+                <h4>Tolérance au calcaire</h4>
+                <select name="limestone[]" id="filter_limestone" multiple="multiple">
+                    {% for limestone in [1,2,4] %}
+                        <option value="{{ limestone }}" data-f-value="{{ limestone }}" {% if ( filters['limestone'] is defined and (limestone in filters['limestone'])) %} selected="selected" {% endif %} >
+                            {{ limestone | human('limestone') }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col fblock f_all f_my_climat">
+                <h4>Rusticité</h4>
+                <input type="range" id="rusticity_v" name="rusticity_v" min="-40" max="5" class="f_not_used" disabled="disabled" value="{% if ( filters['rusticity'] is defined ) %}{{filters['rusticity']}}{% endif %}">
+                <br>
+                <label for="rusticity" class="label">Rusticité <span></span>°C</label><br>
+                <input id="rusticity" name="rusticity" type="checkbox" value="" data-f-value="" {% if ( filters['rusticity'] is defined ) %}checked="checked"{% endif %} class="switch" />
+                <script>
+                    document.getElementById('rusticity_v').addEventListener('change',function (){
+                       document.getElementById('rusticity').value = this.value;
+                       document.getElementById('rusticity').setAttribute('data-f-value',this.value);
+                       document.querySelector('[for="rusticity"] span').innerHTML = this.value;
+                    });
+                    document.getElementById('rusticity').addEventListener('click',function (){
+                        console.log(this);
+                        if (this.checked)
+                            document.getElementById('rusticity_v').removeAttribute("disabled");
+                        else
+                            document.getElementById('rusticity_v').setAttribute("disabled", "disabled");
+                    });
+                    document.getElementById('rusticity_v').dispatchEvent(new Event('change'));
+                </script>
+            </div>
+            <div class="col fblock f_all f_my_climat">
+                <h4>Exposition</h4>
+{#                <select name="insolation[]" id="filter_insolation" multiple="multiple">#}
+{#                    {% for insolation in insolations %}#}
+{#                        <option value="{{ insolation.id }}" data-f-value="{{ insolation.type }}" {% if ( complex_filters['insolation'] is defined and (insolation.type in complex_filters['insolation'])) %} selected="selected" {% endif %} >#}
+{#                            {{ insolation.type | human('insolation') }}#}
+{#                        </option>#}
+{#                    {% endfor %}#}
+{#                </select>#}
+                <ul>
+                {% for insolation in insolations %}
+                    <li><label for="filter_insolation_{{ insolation.id }}">
+                        <input id="filter_insolation_{{ insolation.id }}" name="insolation[]" type="checkbox" value="{{ insolation.id }}" data-f-value="{{ insolation.type }}" {% if ( complex_filters['insolation'] is defined and (insolation.type in complex_filters['insolation'])) %} checked="checked" {% endif %} >
+                        {{ insolation.type | human('insolation') }}
+                    </label></li>
+                {% endfor %}
+                </ul>
+            </div>
+            <div class="col fblock f_all f_my_climat">
+                <h4>Tolérance à la sécheresse</h4>
+                <select name="drought_tolerance[]" id="filter_drought_tolerance" multiple="multiple">
+                    {% for drought_tolerance in 1..5 %}
+                        <option value="{{ drought_tolerance }}" data-f-value="{{ drought_tolerance }}" {% if ( filters['drought_tolerance'] is defined and (drought_tolerance in filters['drought_tolerance'])) %} selected="selected" {% endif %} >
+                            {{ drought_tolerance }}/5
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col fblock f_all f_soil">
+                <h4>Richesse</h4>
+                <select name="humuses[]" id="filter_humuses" multiple="multiple">
+                    {% for h in humuses %}
+                        <option value="{{ h.id }}" data-f-value="{{ h.quantity }}" {% if ( complex_filters['humuses'] is defined and (h.quantity in complex_filters['humuses'])) %} selected="selected" {% endif %} >
+                            sol {{ h.quantity | human('humuses',false) }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col fblock f_all f_soil">
+                <h4>Texture</h4>
+                <select name="soils[]" id="filter_soils" multiple="multiple">
+                    {% for soil in soils %}
+                        <option value="{{ soil.id }}" data-f-value="{{ soil.name }}" {% if ( complex_filters['soils'] is defined and (soil.name in complex_filters['soils'])) %} selected="selected" {% endif %} >
+                            sol {{ soil.name | human('soils',false) }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col fblock f_all f_soil">
+                <h4>Ph</h4>
+                <select name="ph[]" id="filter_ph" multiple="multiple">
+                    {% for ph in phs %}
+                        <option value="{{ ph.id }}" data-f-value="{{ ph.id }}" {% if ( complex_filters['ph'] is defined and (ph.id in complex_filters['ph'])) %} selected="selected" {% endif %} >
+                            {{ ph.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col fblock f_all f_calendar">
+                <h4>Floraison</h4>
+                <select name="flowerings[]" id="filter_flowerings" multiple="multiple">
+                    {% for m in 1..12 %}
+                        <option value="{{ m }}" data-f-value="{{ m }}" {% if ( complex_filters['flowerings'] is defined and (m in complex_filters['flowerings'])) %} selected="selected" {% endif %} >
+                            {{ m | human('flowerings',false) }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col fblock f_all f_calendar">
+                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_mellifere'] } %}
+                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_nectarifere'] } %}
+                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_pollen'] } %}
+            </div>
+            <div class="col fblock f_all f_calendar">
+                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['fruit_comestible'] } %}
+            </div>
+            <div class="col fblock f_all f_calendar">
+                <h4>Récolte</h4>
+                <select name="crops[]" id="filter_crops" multiple="multiple">
+                    {% for m in 1..12 %}
+                        <option value="{{ m }}" data-f-value="{{ m }}" {% if ( complex_filters['crops'] is defined and (m in complex_filters['crops'])) %} selected="selected" {% endif %} >
+                            {{ m | human('crops',false) }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col fblock f_all f_calendar">
+                <h4>Strate</h4>
+                <select name="stratum[]" id="filter_stratum" multiple="multiple">
+                    {% for stratum in 1..6 %}
+                        <option value="{{ stratum }}" data-f-value="{{ stratum }}" {% if ( filters['stratum'] is defined and (stratum in filters['stratum'])) %} selected="selected" {% endif %} >
+                            {{ stratum | human('stratum') }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col fblock f_all">
+                <h4>Tendance racinaire</h4>
+                <select name="root[]" id="filter_root" multiple="multiple">
+                    {% for root in 1..6 %}
+                        <option value="{{ root }}" data-f-value="{{ root }}" {% if ( filters['root'] is defined and (root in filters['root'])) %} selected="selected" {% endif %} >
+                            {{ root | human('root') }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col fblock f_all">
+                <h4>Cycle de vie</h4>
+                <select name="life_cycle[]" id="filter_life_cycle" multiple="multiple">
+                    {% for life_cycle in 1..3 %}
+                        <option value="{{ life_cycle }}" data-f-value="{{ life_cycle }}" {% if ( filters['life_cycle'] is defined and (life_cycle in filters['life_cycle'])) %} selected="selected" {% endif %} >
+                            {{ life_cycle | human('life_cycle') }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col fblock f_all f_micro_climat">
+                <h4>Brise vent</h4>
+                <span style="color: red">Info n'existe pas en base de donnée</span>
+            </div>
+            <div class="col fblock f_all f_haie">
+                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_haie'] } %}
+            </div>
+            <div class="col fblock f_all f_haie">
+                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['comestible'] } %}
+            </div>
+            <div class="col fblock f_all f_micro_climat">
+                <h4>Densité de feuillage</h4>
+                <select name="leaf_density[]" id="filter_leaf_density" multiple="multiple">
+                    {% for leaf_density in 1..3 %}
+                        <option value="{{ leaf_density }}" data-f-value="{{ leaf_density }}" {% if ( filters['leaf_density'] is defined and (leaf_density in filters['leaf_density'])) %} selected="selected" {% endif %} >
+                            {{ leaf_density | human('leaf_density') }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col fblock f_all f_micro_climat">
+                <h4>Type de feuillage</h4>
+                <select name="foliage[]" id="filter_foliage" multiple="multiple">
+                    {% for foliage in 1..3 %}
+                        <option value="{{ foliage }}" data-f-value="{{ foliage }}" {% if ( filters['foliage'] is defined and (foliage in filters['foliage'])) %} selected="selected" {% endif %} >
+                            {{ foliage | human('foliage') }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% set excluded = ['interet_nectarifere','interet_pollen','fruit_comestible','interet_haie','comestible'] %}
+            {% for code,attribute in attributes %}
+                {% if code not in excluded and not attribute.typeUnique %}
+            <div class="col fblock f_all">
+                        {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attribute } %}
+            </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <input class="fblock f_all" type="text" name="q" placeholder="recherche ..." value="{{ query_string }}"/><br>
+        <input type="submit" value="OK" />
+    </form>
+</div>

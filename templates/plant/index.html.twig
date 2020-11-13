@@ -8,7 +8,73 @@
     <h1>Liste des plantes</h1>
     <hr>
 
-    {% include "plant/_partial/filters.html.twig" %}
+    <div class="grid-12">
+        <div class="col-12">
+            <h2>Rechercher</h2>
+        </div>
+        <div class="col-3">
+            <ul id="filters_list">
+                <li><a href="#f_soil">Mon sol</a></li>
+                <li><a href="#f_my_climat">Mes conditions climatiques</a></li>
+                <li><a href="#f_micro_climat">Créer un micro climat</a></li>
+                <li><a href="#f_calendar">Selon Calendrier</a></li>
+                <li><a href="#f_haie">Pour une haie</a></li>
+                <li><a href="#f_all">Recherches avancées</a></li>
+            </ul>
+        </div>
+        <div class="f col-9">
+            {% include "plant/_partial/filters_all.html.twig" %}
+        </div>
+    </div>
+
+
+
+    {% if filters | length or complex_filters | length or attributes_values | length %}
+        {% for filter,value in filters %}
+            {% if value is iterable %}
+                {% for v in value %}
+                    <span class="tag" data-key="{{ filter }}" data-value="{{ v }}">
+                        {{ v | human(filter,true) }} <span class="close"></span>
+                    </span>
+                {% endfor %}
+            {% else %}
+                <span  class="tag" data-key="{{ filter }}" data-value="{{ value }}">
+                    {{ value | human(filter,true) }} <span class="close"></span>
+                </span>
+            {% endif %}
+        {% endfor %}
+        {% for filter,value in complex_filters %}
+            {% if value is iterable %}
+                {% for v in value %}
+                    <span class="tag" data-key="{{ filter }}" data-value="{{ v }}">
+                        {{ v | human(filter,true) }} <span class="close"></span>
+                    </span>
+                {% endfor %}
+            {% else %}
+                <span class="tag" data-key="{{ filter }}" data-value="{{ value }}">
+                    {{ value | human(filter,true) }} <span class="close"></span>
+                </span>
+            {% endif %}
+        {% endfor %}
+        {% for code,values in attributes_values %}
+            {% for value in values %}
+                <span class="tag" data-key="a_{{ code }}" data-value="{% if not value.attribute.typeNone %}{{ value.id }}{% else %}1{% endif %}" {% if excluded_attributes[code] is defined %} style="background: red" {% endif %}>
+                    {{ value.attribute.name }} {% if not value.attribute.typeNone %}: {{ value.value }}{% endif %}
+                    <span class="close"></span>
+                </span>
+            {% endfor %}
+        {% endfor %}
+        <br>
+        {% if excluded_attributes | length %}
+            {% for code in excluded_attributes %}
+                {% if attributes[code] is defined %}
+                    ⚠️  L'attribut {{ attributes[code].name }} n'a pas été pris en compte car il n'est défini pour aucune plante
+                    <br>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <a href="{{ path('plant_index') }}">Supprimer tous les filtres</a>
+    {% endif %}
 
     <hr>
     <h2>Plantes {% if plants | length %}({{plants | length }}){% endif %}</h2>
@@ -22,7 +88,7 @@
         {% endfor %}
     </ul>
     {% else %}
-    <div>Aucune plante répértoriée ne correspond à ces critères</div>
+    <div>Aucune plante répertoriée ne correspond à tes critères <br>Essaye une requête plus simple.</div>
     {% endif %}
 
 

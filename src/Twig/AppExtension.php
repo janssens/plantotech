@@ -178,6 +178,9 @@ class AppExtension extends AbstractExtension
                 if ($family)
                     return $prefix.$family->getName();
                 return $number;
+            case 'rusticity':
+                if ($label) $prefix = 'Rusticité : ';
+                return $prefix.$number.'°C';
             case 'port':
                 if ($label) $prefix = 'Port : ';
                 /** @var Port $port */

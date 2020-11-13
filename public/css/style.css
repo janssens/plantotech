@@ -20,6 +20,22 @@ form.signin [type=week], form.signin select, form.signin textarea {
   margin: 10px 0;
 }
 
+body {
+  padding: 5px;
+}
+
+select {
+  background-image: none;
+}
+
+.fblock {
+  display: none;
+}
+
+#form_filter [type=submit] {
+  display: none;
+}
+
 span.tag span.close:before {
   content: "x";
   cursor: pointer;

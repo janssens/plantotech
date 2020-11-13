@@ -30,6 +30,15 @@ class PlantRepository extends ServiceEntityRepository
             ->getResult()
             ;
     }
+    public function findByRusticity($value): ?array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.rusticity <= :val')
+            ->setParameter('val', intval($value))
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 
     // /**
     //  * @return Plant[] Returns an array of Plant objects

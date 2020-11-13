@@ -1,6 +1,18 @@
 @import "forms";
 
+body{
+  padding: 5px;
+}
+select{
+  background-image: none;
+}
 //filter
+.fblock{
+  display: none;
+}
+#form_filter [type=submit]{
+  display: none;
+}
 span.tag{
   span.close{
     &:before{

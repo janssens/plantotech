@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Attribute;
-use App\Entity\AttributeValue;
+use App\Entity\PlantAttribute;
 use App\Entity\Clay;
 use App\Entity\FloweringAndCrop;
 use App\Entity\Humidity;

@@ -19,5 +19,7 @@
 ###< symfony/phpunit-bridge ###
 
 /TODO.md
+/reset.sh
 /.idea
+/.env
 /docs/schema/

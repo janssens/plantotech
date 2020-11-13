@@ -2,21 +2,21 @@
 
 namespace App\Repository;
 
-use App\Entity\AttributeValue;
+use App\Entity\PlantAttribute;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method AttributeValue|null find($id, $lockMode = null, $lockVersion = null)
- * @method AttributeValue|null findOneBy(array $criteria, array $orderBy = null)
- * @method AttributeValue[]    findAll()
- * @method AttributeValue[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method PlantAttribute|null find($id, $lockMode = null, $lockVersion = null)
+ * @method PlantAttribute|null findOneBy(array $criteria, array $orderBy = null)
+ * @method PlantAttribute[]    findAll()
+ * @method PlantAttribute[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AttributeValueRepository extends ServiceEntityRepository
+class PlantAttributeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, AttributeValue::class);
+        parent::__construct($registry, PlantAttribute::class);
     }
 
     // /**

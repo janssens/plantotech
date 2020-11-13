@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\AttributeValueRepository;
+use App\Repository\AttributeValuesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=AttributeValueRepository::class)
+ * @ORM\Entity(repositoryClass=AttributeValuesRepository::class)
  */
-class AttributeValue
+class AttributeValues
 {
     /**
      * @ORM\Id()
@@ -20,20 +20,20 @@ class AttributeValue
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity=Attribute::class, inversedBy="availableValues")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $attribute;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $value;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="interests")
+     * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="attributes")
      */
     private $plants;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Attribute::class, inversedBy="attributeValues")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $attribute;
 
     public function __construct()
     {
@@ -45,12 +45,24 @@ class AttributeValue
         return $this->id;
     }
 
+    public function getAttribute(): ?Attribute
+    {
+        return $this->attribute;
+    }
+
+    public function setAttribute(?Attribute $attribute): self
+    {
+        $this->attribute = $attribute;
+
+        return $this;
+    }
+
     public function getValue(): ?string
     {
         return $this->value;
     }
 
-    public function setValue(string $value): self
+    public function setValue(?string $value): self
     {
         $this->value = $value;
 
@@ -69,6 +81,7 @@ class AttributeValue
     {
         if (!$this->plants->contains($plant)) {
             $this->plants[] = $plant;
+            $plant->addAttribute($this);
         }
 
         return $this;
@@ -78,20 +91,10 @@ class AttributeValue
     {
         if ($this->plants->contains($plant)) {
             $this->plants->removeElement($plant);
+            $plant->removeAttribute($this);
         }
 
         return $this;
     }
 
-    public function getAttribute(): ?Attribute
-    {
-        return $this->attribute;
-    }
-
-    public function setAttribute(?Attribute $attribute): self
-    {
-        $this->attribute = $attribute;
-
-        return $this;
-    }
 }

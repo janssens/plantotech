@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Config;
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,5 +35,13 @@ class AdminController extends AbstractController
             $em->flush();
         }
         return $this->render('admin/index.html.twig',array('config'=>$config));
+    }
+
+    /**
+     * @Route("/users/", name="app_admin_users")
+     */
+    public function user(Request $request){
+        $users = $this->getDoctrine()->getRepository(User::class)->findAll();
+        return $this->render('admin/users.html.twig',array('users'=>$users));
     }
 }
