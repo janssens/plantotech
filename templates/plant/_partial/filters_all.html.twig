@@ -103,9 +103,15 @@
                 </select>
             </div>
             <div class="col fblock f_all f_calendar">
-                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_mellifere'] } %}
-                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_nectarifere'] } %}
-                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_pollen'] } %}
+                {% if attributes['interet_mellifere'] is defined %}
+                    {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_mellifere'] } %}
+                {% endif %}
+                {% if attributes['interet_nectarifere'] is defined %}
+                    {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_nectarifere'] } %}
+                {% endif %}
+                {% if attributes['interet_pollen'] is defined %}
+                    {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_pollen'] } %}
+                {% endif %}
             </div>
             <div class="col fblock f_all f_calendar">
                 {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['fruit_comestible'] } %}
@@ -151,14 +157,19 @@
                 </select>
             </div>
             <div class="col fblock f_all f_micro_climat">
-                <h4>Brise vent</h4>
-                <span style="color: red">Info n'existe pas en base de donnée</span>
+                {% if attributes['brise_vent'] is defined %}
+                    {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['brise_vent'] } %}
+                {% endif %}
             </div>
             <div class="col fblock f_all f_haie">
-                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_haie'] } %}
+                {% if attributes['interet_haie'] is defined %}
+                    {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['interet_haie'] } %}
+                {% endif %}
             </div>
             <div class="col fblock f_all f_haie">
-                {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['comestible'] } %}
+                {% if attributes['comestible'] is defined %}
+                    {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['comestible'] } %}
+                {% endif %}
             </div>
             <div class="col fblock f_all f_micro_climat">
                 <h4>Densité de feuillage</h4>

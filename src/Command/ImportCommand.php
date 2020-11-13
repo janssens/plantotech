@@ -89,17 +89,17 @@ protected static $defaultName = 'app:import-from-db';
         $this->attribute_values = array();
         $this->attribute_family = array();
         $this->attribute_map = $attribute_map = array(
-            'besoin_brise_vent'=> array('name' => 'brise vent','type' => Attribute::TYPE_NONE),
+            'besoin_brise_vent'=> array('name' => 'a protéger du vent','type' => Attribute::TYPE_NONE),
             'besoin_pollinisation'=> array('name' => 'pollinisation','type' => Attribute::TYPE_UNIQUE),
-            'besoin_limitation_de_concurrence'=> array('name' => 'limitation de concurrence','type' => Attribute::TYPE_MULTIPLE),
-            'besoin_azote'=> array('name' => 'azote','type' => Attribute::TYPE_NONE),
-            'besoin_mineraux'=> array('name' => 'minéraux','type' => Attribute::TYPE_SINGLE),
-            'besoin_matiere_organique'=> array('name' => 'matière organique','type' => Attribute::TYPE_SINGLE),
+            'besoin_limitation_de_concurrence'=> array('name' => 'limiter la concurrence','type' => Attribute::TYPE_MULTIPLE),
+            'besoin_azote'=> array('name' => 'Besoin en azote','type' => Attribute::TYPE_NONE),
+            'besoin_mineraux'=> array('name' => 'Besoin en minéraux','type' => Attribute::TYPE_SINGLE),
+            'besoin_matiere_organique'=> array('name' => 'Besoin en matière organique','type' => Attribute::TYPE_SINGLE),
             'besoin_zonage'=> array('name' => 'zonage','type' => Attribute::TYPE_MULTIPLE),
             'besoin_protection'=> array('name' => 'protection','type' => Attribute::TYPE_MULTIPLE),
             'besoin_taille'=> array('name' => 'taille','type' => Attribute::TYPE_MULTIPLE),
             'besoin_arrosage'=> array('name' => 'arrosage','type' => Attribute::TYPE_SINGLE),
-            'besoin_tuteur'=> array('name' => 'tuteur','type' => Attribute::TYPE_NONE),
+            'besoin_tuteur'=> array('name' => 'Besoin tuteur','type' => Attribute::TYPE_NONE),
             'besoin_conduite'=> array('name' => 'conduite','type' => Attribute::TYPE_MULTIPLE),
             'besoin_cultural_cueillette_ramassage'=> array('name' => 'mode de récolte','type' => Attribute::TYPE_SINGLE),
             'besoin_cultural_recolte_etalee_groupee'=> array('name' => 'type de récolte','type' => Attribute::TYPE_SINGLE),
@@ -170,6 +170,7 @@ protected static $defaultName = 'app:import-from-db';
             'toxicite' => array('name' =>  'toxicité','type' => Attribute::TYPE_SINGLE),
             'toxicite_info' => array('name' =>  'info toxicité','type' => Attribute::TYPE_UNIQUE),
             'comestible' => array('name' =>  'comestible','type' => Attribute::TYPE_NONE),
+            'brise_vent' => array('name' =>  'Brise vent','type' => Attribute::TYPE_NONE),
         );
         $this->excluded_from_auto_import = array(
             'graine_comestible','graine_grignotte','graine_cuite','graine_farine','graine_sechee','graine_huile','graine_germee',
