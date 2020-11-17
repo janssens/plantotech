@@ -248,41 +248,6 @@ class Plant
     private $ports;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Soil::class, mappedBy="plants")
-     */
-    private $soils;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Ph::class, mappedBy="plants")
-     */
-    private $phs;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Nutrient::class, mappedBy="plants")
-     */
-    private $nutrients;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Clay::class, mappedBy="plants")
-     */
-    private $clays;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Humus::class, mappedBy="plants")
-     */
-    private $humuses;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Humidity::class, mappedBy="plants")
-     */
-    private $humidities;
-
-    /**
-     * @ORM\OneToMany(targetEntity=FloweringAndCrop::class, mappedBy="plant", orphanRemoval=true)
-     */
-    private $floweringAndCrops;
-
-    /**
      * @ORM\OneToMany(targetEntity=PlantsInsolations::class, mappedBy="plant", orphanRemoval=true)
      */
     private $insolations;
@@ -300,31 +265,30 @@ class Plant
     private $associations = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity=AttributeValues::class, mappedBy="plants")
+     * @ORM\ManyToMany(targetEntity=AttributeValue::class, mappedBy="plants")
      */
-    private $attributes;
+    private $attributes_values;
 
     /**
      * @ORM\OneToMany(targetEntity=Image::class, mappedBy="Plant", orphanRemoval=true,cascade={"persist"})
      */
     private $images;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=MainValue::class, mappedBy="plants")
+     */
+    private $mainValues;
+
     public function __construct()
     {
         $this->sources = new ArrayCollection();
         $this->ports = new ArrayCollection();
-        $this->soils = new ArrayCollection();
-        $this->phs = new ArrayCollection();
-        $this->nutrients = new ArrayCollection();
-        $this->clays = new ArrayCollection();
-        $this->humuses = new ArrayCollection();
-        $this->humidities = new ArrayCollection();
-        $this->floweringAndCrops = new ArrayCollection();
         $this->insolations = new ArrayCollection();
         $this->associations1 = new ArrayCollection();
         $this->associations2 = new ArrayCollection();
-        $this->attributes = new ArrayCollection();
+        $this->attributes_values = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->mainValues = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -847,218 +811,6 @@ class Plant
     }
 
     /**
-     * @return Collection|Soil[]
-     */
-    public function getSoils(): Collection
-    {
-        return $this->soils;
-    }
-
-    public function addSoil(Soil $soil): self
-    {
-        if (!$this->soils->contains($soil)) {
-            $this->soils[] = $soil;
-            $soil->addPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSoil(Soil $soil): self
-    {
-        if ($this->soils->contains($soil)) {
-            $this->soils->removeElement($soil);
-            $soil->removePlant($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Ph[]
-     */
-    public function getPhs(): Collection
-    {
-        return $this->phs;
-    }
-
-    public function addPh(Ph $ph): self
-    {
-        if (!$this->phs->contains($ph)) {
-            $this->phs[] = $ph;
-            $ph->addPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removePh(Ph $ph): self
-    {
-        if ($this->phs->contains($ph)) {
-            $this->phs->removeElement($ph);
-            $ph->removePlant($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Nutrient[]
-     */
-    public function getNutrients(): Collection
-    {
-        return $this->nutrients;
-    }
-
-    public function addNutrient(Nutrient $nutrient): self
-    {
-        if (!$this->nutrients->contains($nutrient)) {
-            $this->nutrients[] = $nutrient;
-            $nutrient->addPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeNutrient(Nutrient $nutrient): self
-    {
-        if ($this->nutrients->contains($nutrient)) {
-            $this->nutrients->removeElement($nutrient);
-            $nutrient->removePlant($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Clay[]
-     */
-    public function getClays(): Collection
-    {
-        return $this->clays;
-    }
-
-    public function addClay(Clay $clay): self
-    {
-        if (!$this->clays->contains($clay)) {
-            $this->clays[] = $clay;
-            $clay->addPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeClay(Clay $clay): self
-    {
-        if ($this->clays->contains($clay)) {
-            $this->clays->removeElement($clay);
-            $clay->removePlant($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Humus[]
-     */
-    public function getHumuses(): Collection
-    {
-        return $this->humuses;
-    }
-
-    public function addHumus(Humus $humus): self
-    {
-        if (!$this->humuses->contains($humus)) {
-            $this->humuses[] = $humus;
-            $humus->addPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeHumus(Humus $humus): self
-    {
-        if ($this->humuses->contains($humus)) {
-            $this->humuses->removeElement($humus);
-            $humus->removePlant($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Humidity[]
-     */
-    public function getHumidities(): Collection
-    {
-        return $this->humidities;
-    }
-
-    public function addHumidity(Humidity $humidity): self
-    {
-        if (!$this->humidities->contains($humidity)) {
-            $this->humidities[] = $humidity;
-            $humidity->addPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeHumidity(Humidity $humidity): self
-    {
-        if ($this->humidities->contains($humidity)) {
-            $this->humidities->removeElement($humidity);
-            $humidity->removePlant($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|FloweringAndCrop[]
-     */
-    public function getFloweringAndCrops(): Collection
-    {
-        return $this->floweringAndCrops;
-    }
-
-    public function getFlowerings(): Collection
-    {
-        return $this->getFloweringAndCrops()->filter(function (FloweringAndCrop $f)  {
-            return ($f->getType() == FloweringAndCrop::TYPE_FLOWERING);
-        });
-    }
-
-    public function getCrops(): Collection
-    {
-        return $this->getFloweringAndCrops()->filter(function (FloweringAndCrop $c)  {
-            return ($c->getType() == FloweringAndCrop::TYPE_CROP);
-        });
-    }
-    public function addFloweringAndCrop(FloweringAndCrop $floweringAndCrop): self
-    {
-        if (!$this->floweringAndCrops->contains($floweringAndCrop)) {
-            $this->floweringAndCrops[] = $floweringAndCrop;
-            $floweringAndCrop->setPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFloweringAndCrop(FloweringAndCrop $floweringAndCrop): self
-    {
-        if ($this->floweringAndCrops->contains($floweringAndCrop)) {
-            $this->floweringAndCrops->removeElement($floweringAndCrop);
-            // set the owning side to null (unless already changed)
-            if ($floweringAndCrop->getPlants() === $this) {
-                $floweringAndCrop->setPlants(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|PlantsInsolations[]
      */
     public function getInsolations(): Collection
@@ -1112,35 +864,35 @@ class Plant
     }
 
     /**
-     * @return Collection|AttributeValues[]
+     * @return Collection|AttributeValue[]
      */
-    public function getAttributes(): Collection
+    public function getAttributesValues(): Collection
     {
-        return $this->attributes;
+        return $this->attributes_values;
     }
 
-    public function getAttributesByCode(string $code){
-        return $this->attributes->filter(function ($attribute) use ($code){
-            /** @var AttributeValues $attribute */
+    public function getAttributeValuesByCode(string $code){
+        return $this->attributes_values->filter(function ($attribute) use ($code){
+            /** @var AttributeValue $attribute */
             return $attribute->getAttribute()->getCode() == $code;
         });
     }
 
 
-    public function addAttribute(AttributeValues $plantAttribute): self
+    public function addAttributeValue(AttributeValue $attributeValue): self
     {
-        if (!$this->attributes->contains($plantAttribute)) {
-            $this->attributes[] = $plantAttribute;
-            $plantAttribute->addPlant($this);
+        if (!$this->attributes_values->contains($attributeValue)) {
+            $this->attributes_values[] = $attributeValue;
+            $attributeValue->addPlant($this);
         }
 
         return $this;
     }
 
-    public function removeAttribute(AttributeValues $attributeValue): self
+    public function removeAttributeValue(AttributeValue $attributeValue): self
     {
-        if ($this->attributes->contains($attributeValue)) {
-            $this->attributes->removeElement($attributeValue);
+        if ($this->attributes_values->contains($attributeValue)) {
+            $this->attributes_values->removeElement($attributeValue);
             $attributeValue->removePlant($this);
         }
 
@@ -1173,6 +925,33 @@ class Plant
             if ($image->getPlant() === $this) {
                 $image->setPlant(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MainValue[]
+     */
+    public function getMainValues(): Collection
+    {
+        return $this->mainValues;
+    }
+
+    public function addMainValue(MainValue $mainValue): self
+    {
+        if (!$this->mainValues->contains($mainValue)) {
+            $this->mainValues[] = $mainValue;
+            $mainValue->addPlant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMainValue(MainValue $mainValue): self
+    {
+        if ($this->mainValues->removeElement($mainValue)) {
+            $mainValue->removePlant($this);
         }
 
         return $this;

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=AttributeValuesRepository::class)
  */
-class AttributeValues
+class AttributeValue
 {
     /**
      * @ORM\Id()
@@ -34,6 +34,16 @@ class AttributeValues
      * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="attributes")
      */
     private $plants;
+
+    /**
+     * @ORM\OneToOne(targetEntity=MainValue::class, mappedBy="attribute_value", cascade={"persist", "remove"})
+     */
+    private $mainValue;
+
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $code;
 
     public function __construct()
     {
@@ -81,7 +91,7 @@ class AttributeValues
     {
         if (!$this->plants->contains($plant)) {
             $this->plants[] = $plant;
-            $plant->addAttribute($this);
+            $plant->addAttributeValue($this);
         }
 
         return $this;
@@ -91,8 +101,37 @@ class AttributeValues
     {
         if ($this->plants->contains($plant)) {
             $this->plants->removeElement($plant);
-            $plant->removeAttribute($this);
+            $plant->removeAttributeValue($this);
         }
+
+        return $this;
+    }
+
+    public function getMainValue(): ?MainValue
+    {
+        return $this->mainValue;
+    }
+
+    public function setMainValue(MainValue $mainValue): self
+    {
+        $this->mainValue = $mainValue;
+
+        // set the owning side of the relation if necessary
+        if ($mainValue->getAttributeValue() !== $this) {
+            $mainValue->setAttributeValue($this);
+        }
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
 
         return $this;
     }

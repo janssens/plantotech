@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Attribute;
 use App\Entity\AttributeFamily;
-use App\Entity\AttributeValues;
+use App\Entity\AttributeValue;
 use App\Entity\FloweringAndCrop;
 use App\Entity\Humus;
 use App\Entity\Image;
@@ -93,26 +93,6 @@ class PlantController extends AbstractController
                 $restrict['id'] = $local_restrict;
             }
             $restricted = true;        }
-        if ($request->query->get('ph')){
-            $local_restrict = array();
-            /** @var Ph $ph */
-            $phs_id = $request->query->get('ph');
-            $phs = $this->getDoctrine()->getRepository(Ph::class)->findBy(array('id'=>$phs_id));
-            foreach ($phs as $ph){
-                foreach ($ph->getPlants() as $plant){
-                    $local_restrict[] = $plant->getId();
-                }
-                if (!key_exists('ph',$complex_filters) || !is_array($complex_filters['ph'])){
-                    $complex_filters['ph'] = array();
-                }
-                $complex_filters['ph'][] = $ph->getId();
-            }
-            if ($restricted){
-                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
-            }else{
-                $restrict['id'] = $local_restrict;
-            }
-            $restricted = true;        }
         if ($request->query->get('insolation')){
             $local_restrict = array();
             /** @var Insolation $insolation */
@@ -147,27 +127,6 @@ class PlantController extends AbstractController
                     $complex_filters['soils'] = array();
                 }
                 $complex_filters['soils'][] = $soil->getName();
-            }
-            if ($restricted){
-                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
-            }else{
-                $restrict['id'] = $local_restrict;
-            }
-            $restricted = true;
-        }
-        if ($request->query->get('humuses')){
-            $local_restrict = array();
-            /** @var Humus $humus */
-            $humuses_id = $request->query->get('humuses');
-            $humuses = $this->getDoctrine()->getRepository(Humus::class)->findBy(array('id'=>$humuses_id));
-            foreach ($humuses as $humus){
-                foreach ($humus->getPlants() as $plant){
-                    $local_restrict[] = $plant->getId();
-                }
-                if (!key_exists('humuses',$complex_filters) || !is_array($complex_filters['humuses'])){
-                    $complex_filters['humuses'] = array();
-                }
-                $complex_filters['humuses'][] = $humus->getQuantity();
             }
             if ($restricted){
                 $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
@@ -232,7 +191,7 @@ class PlantController extends AbstractController
              */
             foreach ($used_attributes as $code => $attribute){
                 if ($attribute->isTypeNone()) {
-                    $av = $this->getDoctrine()->getRepository(AttributeValues::class)->findOneBy(array('value' => null, 'attribute' => $attribute));
+                    $av = $this->getDoctrine()->getRepository(AttributeValue::class)->findOneBy(array('value' => null, 'attribute' => $attribute));
                     if ($av) {
                         $av = array($av);
                     }
@@ -240,7 +199,7 @@ class PlantController extends AbstractController
                     if (!is_array($attributes_value[$code])){
                         $attributes_value[$code] = array($attributes_value[$code]);
                     }
-                    $av = $this->getDoctrine()->getRepository(AttributeValues::class)->findBy(array('id'=>$attributes_value[$code]));
+                    $av = $this->getDoctrine()->getRepository(AttributeValue::class)->findBy(array('id'=>$attributes_value[$code]));
                 }
                 $attribute_matched_plants = array();
                 if ($av){
@@ -279,9 +238,6 @@ class PlantController extends AbstractController
             }
         }
         $insolations = $this->getDoctrine()->getRepository(Insolation::class)->findAll();
-        $phs = $this->getDoctrine()->getRepository(Ph::class)->findAll();
-        $humuses = $this->getDoctrine()->getRepository(Humus::class)->findAll();
-        $soils = $this->getDoctrine()->getRepository(Soil::class)->findAll();
         $attributes_collection = $this->getDoctrine()->getRepository(Attribute::class)->findAll();
         $attributes = array();
         foreach ($attributes_collection as $attribute){
@@ -298,9 +254,6 @@ class PlantController extends AbstractController
             'query_string' => $s,
             'complex_filters' => $complex_filters,
             'insolations' => $insolations,
-            'phs' => $phs,
-            'humuses' => $humuses,
-            'soils' => $soils,
         ]);
     }
 
@@ -358,16 +311,29 @@ class PlantController extends AbstractController
 
     /**
      * @Route("/card/{id}/{slug}", name="plant_show")
+     * @param Plant $plant
+     * @param string $slug
+     * @return Response
      */
     public function show(Plant $plant,string $slug)
     {
         if ($plant->getSlug() != $slug){
             return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
         }
+        $flowerings = array();
+        foreach ($plant->getAttributeValuesByCode('flowering') as $value){
+            $flowerings[$value->getCode()] = $value;
+        }
+        $crops = array();
+        foreach ($plant->getAttributeValuesByCode('crop') as $value){
+            $crops[$value->getCode()] = $value;
+        }
         $root_families = $this->getDoctrine()->getRepository(AttributeFamily::class)->findBy(array('parent'=>null));
         return $this->render('plant/show.html.twig', [
             'families' => $root_families,
-            'plant' => $plant
+            'plant' => $plant,
+            'crops' => $crops,
+            'flowerings' => $flowerings,
         ]);
     }
 

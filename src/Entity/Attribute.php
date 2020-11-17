@@ -41,7 +41,7 @@ class Attribute
     private $family;
 
     /**
-     * @ORM\OneToMany(targetEntity=AttributeValues::class, mappedBy="attribute", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=AttributeValue::class, mappedBy="attribute", orphanRemoval=true)
      */
     private $availableValues;
 
@@ -50,9 +50,20 @@ class Attribute
      */
     private $code;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $position;
+
+    /**
+     * @ORM\OneToMany(targetEntity=MainValue::class, mappedBy="attribute", orphanRemoval=true)
+     */
+    private $mainValues;
+
     public function __construct()
     {
         $this->availableValues = new ArrayCollection();
+        $this->mainValues = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -107,14 +118,14 @@ class Attribute
     }
 
     /**
-     * @return Collection|AttributeValues[]
+     * @return Collection|AttributeValue[]
      */
     public function getAvailableValues(): Collection
     {
         return $this->availableValues;
     }
 
-    public function addAvailableValue(AttributeValues $availableValue): self
+    public function addAvailableValue(AttributeValue $availableValue): self
     {
         if (!$this->availableValues->contains($availableValue)) {
             $this->availableValues[] = $availableValue;
@@ -124,7 +135,7 @@ class Attribute
         return $this;
     }
 
-    public function removeAvailableValue(AttributeValues $availableValue): self
+    public function removeAvailableValue(AttributeValue $availableValue): self
     {
         if ($this->availableValues->contains($availableValue)) {
             $this->availableValues->removeElement($availableValue);
@@ -148,4 +159,47 @@ class Attribute
 
         return $this;
     }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): self
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MainValue[]
+     */
+    public function getMainValues(): Collection
+    {
+        return $this->mainValues;
+    }
+
+    public function addMainValue(MainValue $mainValue): self
+    {
+        if (!$this->mainValues->contains($mainValue)) {
+            $this->mainValues[] = $mainValue;
+            $mainValue->setAttribute($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMainValue(MainValue $mainValue): self
+    {
+        if ($this->mainValues->removeElement($mainValue)) {
+            // set the owning side to null (unless already changed)
+            if ($mainValue->getAttribute() === $this) {
+                $mainValue->setAttribute(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

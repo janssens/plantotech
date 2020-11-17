@@ -48,13 +48,15 @@
             <div><b>Exposition possible :</b> {% for insolation in plant.InsolationsByIdeal(false) %}
                     <a href="{{ path('plant_index',{'insolation':insolation.insolation.id}) }}">{{ insolation.type | human('insolation')  }}</a>
                 {% endfor %}</div>
-            <div><b>Fertilité :</b> {% for humuse in plant.humuses %}
-                    <a href="{{ path('plant_index',{'humuses':humuse.id}) }}">{{ humuse.quantity | human('humuses',false) }}</a>
-                {% endfor %}</div>
-            <div><b>Aeration du sol :</b> {% for soil in plant.soils %}
-                    <a href="{{ path('plant_index',{'soils':soil.id}) }}">{{ soil.name | human('soils',false) }}</a>
-                {% endfor %}</div>
-            <div><b>Ph :</b> {% for ph in plant.phs %}<a href="{{ path('plant_index',{'ph':ph.id}) }}">{{ ph.name }}</a>,{% endfor %}</div>
+            {% if plant.attributeValuesByCode('humuse') | length %}
+                <div>{% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('humuse').first.attribute,'plant' : plant } %}</div>
+            {% endif %}
+            {% if plant.attributeValuesByCode('sol') | length %}
+                <div>{% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('sol').first.attribute,'plant' : plant } %}</div>
+            {% endif %}
+            {% if plant.attributeValuesByCode('ph') | length %}
+                <div>{% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('ph').first.attribute,'plant' : plant } %}</div>
+            {% endif %}
             <div><b>Calcaire :</b> <a href="{{ path('plant_index',{'limestone':plant.limestone}) }}">{{ plant.limestone | human('limestone') }}</a></div>
             <h4>Milieu naturel et sub naturel</h4>
             <div><b>Origine :</b> {% if plant.NativePlace %}{{ plant.NativePlace }}{% else %}<i style="color: orange">non précisé</i>{% endif %}</div>
@@ -64,25 +66,7 @@
                     <h5>{{ child.name }}</h5>
                     <ul>
                         {% for attribute in child.attributes %}
-                            {% if plant.attributesByCode(attribute.code) | length %}
-                            <li data-code="{{ attribute.code }}">
-                                {% if attribute.typeNone %}
-                                    <a href="{{ path('plant_index',{('a_' ~ attribute.code ):'1'}) }}">{{ attribute.name }}</a>
-                                {% else %}
-                                    {{ attribute.name }} :
-{#                                    {% if plant.attributesByCode(attribute.code) | length > 1 or plant.attributesByCode(attribute.code).first.value is not null %} : {% endif %}#}
-                                    {% for attribute_value in plant.attributesByCode(attribute.code) %}
-                                        {% if attribute.typeUnique %}
-                                            {{ attribute_value.value }}
-                                        {% else %}
-                                            {% if attribute_value.value is not null %}<a href="{{ path('plant_index',{('a_' ~ attribute.code ):attribute_value.id}) }}">{{ attribute_value.value }}</a>{% endif %}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-
-
-                            </li>
-                            {% endif %}
+                            {% include "plant/_partial/attribute_line.html.twig" with {'attribute': attribute,'plant' : plant } %}
                         {% endfor %}
                     </ul>
                 {% endfor %}
@@ -116,16 +100,7 @@
             <h4>Cycle</h4>
             <div><b>Plante</b> <a href="{{ path('plant_index',{'life_cycle':plant.LifeCycle}) }}">{{ plant.LifeCycle | human('life_cycle') }}</a></div>
             <div>
-
-                {% set myFlowerings = [] %}
-                {% for flowering in plant.Flowerings %}
-                    {% set myFlowerings = myFlowerings|merge([flowering.month]) %}
-                {% endfor %}
-                {% set myCrops = [] %}
-                {% for crop in plant.Crops %}
-                    {% set myCrops = myCrops|merge([crop.month]) %}
-                {% endfor %}
-                {% if myFlowerings | length or myCrops | length %}
+                {% if flowerings | length or crops | length %}
                     <table>
                         <thead>
                         <tr>
@@ -149,7 +124,7 @@
                             <td>Floraison</td>
                             {% for m in 1..12 %}
                                 <td>
-                                    {% if m in myFlowerings %}<a href="{{ path('plant_index',{'flowerings':m}) }}">🌼</a>{% endif %}
+                                    {% if flowerings[m] is defined %}<a href="{{ path('plant_index',{'a_flowering[]':flowerings[m].id}) }}">🌼</a>{% endif %}
                                 </td>
                             {% endfor %}
                         </tr>
@@ -157,7 +132,7 @@
                             <td>Fructif</td>
                             {% for m in 1..12 %}
                                 <td>
-                                    {% if m in myCrops %}<a href="{{ path('plant_index',{'crops':m}) }}">🍎</a>{% endif %}
+                                    {% if crops[m] is defined %}<a href="{{ path('plant_index',{'a_crop[]':crops[m].id}) }}">🍎</a>{% endif %}
                                 </td>
                             {% endfor %}
                         </tr>

@@ -1,0 +1,17 @@
+{% if plant.attributeValuesByCode(attribute.code) | length %}
+    <li data-code="{{ attribute.code }}">
+        {% if attribute.typeNone %}
+            <b><a href="{{ path('plant_index',{('a_' ~ attribute.code ):'1'}) }}">{{ attribute.name }}</a></b>
+        {% else %}
+            <b>{{ attribute.name }}</b> :
+            {#                                    {% if plant.attributesByCode(attribute.code) | length > 1 or plant.attributesByCode(attribute.code).first.value is not null %} : {% endif %}#}
+            {% for attribute_value in plant.attributeValuesByCode(attribute.code) %}
+                {% if attribute.typeUnique %}
+                    {{ attribute_value.value }}
+                {% else %}
+                    {% if attribute_value.value is not null %}<a href="{{ path('plant_index',{('a_' ~ attribute.code ):attribute_value.id}) }}">{{ attribute_value.value }}</a>{% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </li>
+{% endif %}

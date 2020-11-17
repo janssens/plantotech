@@ -6,6 +6,7 @@ use App\Repository\AttributeFamilyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 
 /**
  * @ORM\Entity(repositoryClass=AttributeFamilyRepository::class)
@@ -26,6 +27,7 @@ class AttributeFamily
 
     /**
      * @ORM\OneToMany(targetEntity=Attribute::class, mappedBy="family")
+     * @OrderBy({"position" = "ASC"})
      */
     private $attributes;
 
@@ -49,10 +51,16 @@ class AttributeFamily
      */
     private $children;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Property::class, mappedBy="family")
+     */
+    private $properties;
+
     public function __construct()
     {
         $this->attributes = new ArrayCollection();
         $this->children = new ArrayCollection();
+        $this->properties = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -164,6 +172,36 @@ class AttributeFamily
             // set the owning side to null (unless already changed)
             if ($child->getParent() === $this) {
                 $child->setParent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Property[]
+     */
+    public function getProperties(): Collection
+    {
+        return $this->properties;
+    }
+
+    public function addProperty(Property $property): self
+    {
+        if (!$this->properties->contains($property)) {
+            $this->properties[] = $property;
+            $property->setFamily($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProperty(Property $property): self
+    {
+        if ($this->properties->removeElement($property)) {
+            // set the owning side to null (unless already changed)
+            if ($property->getFamily() === $this) {
+                $property->setFamily(null);
             }
         }
 

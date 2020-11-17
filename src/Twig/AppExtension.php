@@ -146,32 +146,6 @@ class AppExtension extends AbstractExtension
                         return $prefix.'5/5';
                 }
                 break;
-            case 'humuses':
-                if ($label) $prefix = 'Sol : ';
-                switch ($number){
-                    case 'poor':
-                        return $prefix.'pauvre';
-                    case 'correct':
-                        return $prefix.'correcte';
-                    case 'rich':
-                        return $prefix.'riche';
-                    default:
-                        return '?';
-                }
-            case 'soils':
-                if ($label) $prefix = 'Sol : ';
-                switch ($number){
-                    case 'drain+':
-                        return $prefix.'drainé+';
-                    case 'drain':
-                        return $prefix.'drainé';
-                    case 'fresh':
-                        return $prefix.'frais';
-                    case 'heavy':
-                        return $prefix.'lourd';
-                    default:
-                        return '?';
-                }
             case 'family':
                 if ($label) $prefix = 'Famille : ';
                 $family = $this->entityManager->getRepository(PlantFamily::class)->find($number);
@@ -187,13 +161,6 @@ class AppExtension extends AbstractExtension
                 $port = $this->entityManager->getRepository(Port::class)->find($number);
                 if ($port)
                     return $prefix.$port->getName();
-                return $number;
-            case 'ph':
-                if ($label) $prefix = 'Ph : ';
-                /** @var Ph $ph */
-                $ph = $this->entityManager->getRepository(Ph::class)->find($number);
-                if ($ph)
-                    return $prefix.$ph->getName();
                 return $number;
             case 'crops':
                 if ($label) $prefix = 'Recolte : ';

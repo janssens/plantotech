@@ -12,7 +12,7 @@
         <div class="col-12">
             <h2>Rechercher</h2>
         </div>
-        <div class="col-3">
+        <div class="col-3-small-all">
             <ul id="filters_list">
                 <li><a href="#f_soil">Mon sol</a></li>
                 <li><a href="#f_my_climat">Mes conditions climatiques</a></li>
@@ -22,7 +22,7 @@
                 <li><a href="#f_all">Recherches avancées</a></li>
             </ul>
         </div>
-        <div class="f col-9">
+        <div class="f col-9-small-all">
             {% include "plant/_partial/filters_all.html.twig" %}
         </div>
     </div>
@@ -59,7 +59,7 @@
         {% for code,values in attributes_values %}
             {% for value in values %}
                 <span class="tag" data-key="a_{{ code }}" data-value="{% if not value.attribute.typeNone %}{{ value.id }}{% else %}1{% endif %}" {% if excluded_attributes[code] is defined %} style="background: red" {% endif %}>
-                    {{ value.attribute.name }} {% if not value.attribute.typeNone %}: {{ value.value }}{% endif %}
+                    {{ value.attribute.name }} {% if not value.attribute.typeNone %}: {{ value.value }}{% endif %} ({{ value.plants | length }})
                     <span class="close"></span>
                 </span>
             {% endfor %}

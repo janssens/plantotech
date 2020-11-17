@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 use App\Service\ConfigService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
@@ -158,7 +159,9 @@ class SecurityController extends AbstractController
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($user);
                 $em->flush();
-                $this->_sendForgotPassword($user);
+                if (!$this->_sendForgotPassword($user,$session)){
+                    return $this->redirectToRoute('app_forgot_password');
+                }
             }
             if (strpos($email_or_username,'@')===false){
                 $session->getFlashBag()->add('success', 'Si un utilisateur est bien associé à ce pseudo, un email vient de lui être envoyé 😉');
@@ -170,7 +173,13 @@ class SecurityController extends AbstractController
         return $this->render('security/forgot_password.html.twig');
     }
 
-    private function _sendForgotPassword(User $user){
+    /**
+     * @param User $user
+     * @param SessionInterface $session
+     * @return int
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     */
+    private function _sendForgotPassword(User $user,SessionInterface $session){
         $email = (new TemplatedEmail())
             ->from($this->config->getValue('app/main_email'))
             ->to($user->getEmail())
@@ -180,10 +189,24 @@ class SecurityController extends AbstractController
             ->context([
                 'user' => $user,
             ]);
-        $this->mailer->send($email);
+        try{
+            $this->mailer->send($email);
+            return 1;
+        }catch (\Exception $e){
+            $session->getFlashBag()->add('error', 'oups, l\'email de rappel na pas pu être envoyé.'.
+                ' On réessaie dans un petit moment ?');
+            $session->getFlashBag()->add('warning', $e->getMessage());
+            return 0;
+        }
     }
 
-    private function _sendConfirm(User $user){
+    /**
+     * @param User $user
+     * @param SessionInterface $session
+     * @return int
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     */
+    private function _sendConfirm(User $user,SessionInterface $session){
         $email = (new TemplatedEmail())
             ->from($this->config->getValue('app/main_email'))
             ->to($user->getEmail())
@@ -193,7 +216,16 @@ class SecurityController extends AbstractController
             ->context([
                 'user' => $user,
             ]);
-        $this->mailer->send($email);
+        try{
+            $this->mailer->send($email);
+            return 1;
+        }catch (\Exception $e){
+            $session->getFlashBag()->add('error', 'oups, l\'email de confirmation na pas pu être envoyé.'.
+                ' On réessaie dans un moment ?');
+            $session->getFlashBag()->add('warning', $e->getMessage());
+            return 0;
+        }
+
     }
 
     /**
@@ -232,12 +264,16 @@ class SecurityController extends AbstractController
                     ));
                     $user->setConfirmationToken(md5(uniqid()));
                     $user->setIsActive(false); //need to validate first
-                    $session->getFlashBag()->add('success', 'Vérifie tes emails pour valider ton compte :)');
 
-                    $em->persist($user);
-                    $em->flush();
 
-                    $this->_sendConfirm($user);
+
+                    if ($this->_sendConfirm($user,$session)){
+                        $session->getFlashBag()->add('success', 'Vérifie tes emails pour valider ton compte :)');
+                        $em->persist($user);
+                        $em->flush();
+                    }else{
+                        return $this->redirectToRoute('app_register');
+                    }
 
                     return $this->redirectToRoute('home');
                 }else if ($register_code){
