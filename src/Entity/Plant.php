@@ -243,16 +243,6 @@ class Plant
     private $sources;
 
     /**
-     * @ORM\OneToMany(targetEntity=PlantsPorts::class, mappedBy="plant", orphanRemoval=true)
-     */
-    private $ports;
-
-    /**
-     * @ORM\OneToMany(targetEntity=PlantsInsolations::class, mappedBy="plant", orphanRemoval=true)
-     */
-    private $insolations;
-
-    /**
      * @ORM\OneToMany(targetEntity=Association::class, mappedBy="plant1", orphanRemoval=true)
      */
     private $associations1;
@@ -274,21 +264,13 @@ class Plant
      */
     private $images;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=MainValue::class, mappedBy="plants")
-     */
-    private $mainValues;
-
     public function __construct()
     {
         $this->sources = new ArrayCollection();
-        $this->ports = new ArrayCollection();
-        $this->insolations = new ArrayCollection();
         $this->associations1 = new ArrayCollection();
         $this->associations2 = new ArrayCollection();
         $this->attributes_values = new ArrayCollection();
         $this->images = new ArrayCollection();
-        $this->mainValues = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -762,93 +744,6 @@ class Plant
     }
 
     /**
-     * @return Collection|PlantsPorts[]
-     */
-    public function getPorts(): Collection
-    {
-        return $this->ports;
-    }
-
-    public function getNaturalPorts(): Collection
-    {
-        return $this->getPortsByType(PlantsPorts::PLANT_PORT_TYPE_NATURAL);
-
-    }
-
-    public function getPossiblePorts(): Collection
-    {
-        return $this->getPortsByType(PlantsPorts::PLANT_PORT_TYPE_POSSIBLE);
-    }
-
-    public function getPortsByType(int $type): Collection
-    {
-        return $this->getPorts()->filter(function (PlantsPorts $pp) use ($type) {
-            return ($pp->getType() == $type);
-        });
-    }
-
-    public function addPort(PlantsPorts $port): self
-    {
-        if (!$this->ports->contains($port)) {
-            $this->ports[] = $port;
-            $port->setPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removePort(PlantsPorts $port): self
-    {
-        if ($this->ports->contains($port)) {
-            $this->ports->removeElement($port);
-            // set the owning side to null (unless already changed)
-            if ($port->getPlant() === $this) {
-                $port->setPlant(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PlantsInsolations[]
-     */
-    public function getInsolations(): Collection
-    {
-        return $this->insolations;
-    }
-
-    public function getInsolationsByIdeal(bool $ideal): Collection
-    {
-        return $this->getInsolations()->filter(function (PlantsInsolations $pi) use ($ideal) {
-            return ($pi->getIdeal() == $ideal);
-        });
-    }
-
-    public function addInsolation(PlantsInsolations $insolation): self
-    {
-        if (!$this->insolations->contains($insolation)) {
-            $this->insolations[] = $insolation;
-            $insolation->setPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeInsolation(PlantsInsolations $insolation): self
-    {
-        if ($this->insolations->contains($insolation)) {
-            $this->insolations->removeElement($insolation);
-            // set the owning side to null (unless already changed)
-            if ($insolation->getPlant() === $this) {
-                $insolation->setPlant(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Association[]
      */
     public function getAssociations(): Collection
@@ -925,33 +820,6 @@ class Plant
             if ($image->getPlant() === $this) {
                 $image->setPlant(null);
             }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|MainValue[]
-     */
-    public function getMainValues(): Collection
-    {
-        return $this->mainValues;
-    }
-
-    public function addMainValue(MainValue $mainValue): self
-    {
-        if (!$this->mainValues->contains($mainValue)) {
-            $this->mainValues[] = $mainValue;
-            $mainValue->addPlant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMainValue(MainValue $mainValue): self
-    {
-        if ($this->mainValues->removeElement($mainValue)) {
-            $mainValue->removePlant($this);
         }
 
         return $this;

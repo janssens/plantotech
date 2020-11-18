@@ -5,12 +5,9 @@ namespace App\Command;
 use App\Entity\Attribute;
 use App\Entity\AttributeFamily;
 use App\Entity\AttributeValue;
-use App\Entity\FloweringAndCrop;
-use App\Entity\Humidity;
-use App\Entity\Humus;
 use App\Entity\Insolation;
 use App\Entity\InterestType;
-use App\Entity\Nutrient;
+use App\Entity\MainValue;
 use App\Entity\Plant;
 use App\Entity\PlantFamily;
 use App\Entity\PlantsInsolations;
@@ -77,10 +74,15 @@ protected static $defaultName = 'app:import-from-db';
     const TYPE_CROP = 1;
     const TYPE_FLOWERING = 2;
 
+    const INSOLATION_TYPE_SUN = 'sun';
+    const INSOLATION_TYPE_HALF_SHADE = 'mi-ombre';
+    const INSOLATION_TYPE_SHADE = 'ombre';
+
     private $entityManager;
     private $attribute;
     private $attribute_map;
     private $attribute_values;
+    private $attribute_main_value;
     private $attribute_family;
     private $excluded_from_auto_import;
 
@@ -89,19 +91,20 @@ protected static $defaultName = 'app:import-from-db';
         $this->entityManager = $entityManager;
         $this->attribute = array();
         $this->attribute_values = array();
+        $this->attribute_main_value = array();
         $this->attribute_family = array();
         $this->attribute_map = $attribute_map = array(
             'besoin_brise_vent'=> array('name' => 'a protéger du vent','type' => Attribute::TYPE_NONE),
             'besoin_pollinisation'=> array('name' => 'pollinisation','type' => Attribute::TYPE_UNIQUE),
             'besoin_limitation_de_concurrence'=> array('name' => 'limiter la concurrence','type' => Attribute::TYPE_MULTIPLE),
-            'besoin_azote'=> array('name' => 'Besoin en azote','type' => Attribute::TYPE_NONE),
-            'besoin_mineraux'=> array('name' => 'Besoin en minéraux','type' => Attribute::TYPE_SINGLE),
+            'besoin_azote'=> array('name' => 'besoin en azote','type' => Attribute::TYPE_NONE),
+            'besoin_mineraux'=> array('name' => 'besoin en minéraux','type' => Attribute::TYPE_SINGLE),
             'besoin_matiere_organique'=> array('name' => 'Besoin en matière organique','type' => Attribute::TYPE_SINGLE),
             'besoin_zonage'=> array('name' => 'zonage','type' => Attribute::TYPE_MULTIPLE),
             'besoin_protection'=> array('name' => 'protection','type' => Attribute::TYPE_MULTIPLE),
             'besoin_taille'=> array('name' => 'taille','type' => Attribute::TYPE_MULTIPLE),
             'besoin_arrosage'=> array('name' => 'arrosage','type' => Attribute::TYPE_SINGLE),
-            'besoin_tuteur'=> array('name' => 'Besoin tuteur','type' => Attribute::TYPE_NONE),
+            'besoin_tuteur'=> array('name' => 'besoin tuteur','type' => Attribute::TYPE_NONE),
             'besoin_conduite'=> array('name' => 'conduite','type' => Attribute::TYPE_MULTIPLE),
             'besoin_cultural_cueillette_ramassage'=> array('name' => 'mode de récolte','type' => Attribute::TYPE_SINGLE),
             'besoin_cultural_recolte_etalee_groupee'=> array('name' => 'type de récolte','type' => Attribute::TYPE_SINGLE),
@@ -157,10 +160,10 @@ protected static $defaultName = 'app:import-from-db';
             'fourrage_basse_court' => array('name' =>  'fourrage basse court','type' => Attribute::TYPE_SINGLE),
             'precision_fourrage' => array('name' =>  'précision fourrage','type' => Attribute::TYPE_UNIQUE),
             'bois_oeuvre' => array('name' =>  'bois d\'oeuvre','type' => Attribute::TYPE_NONE),
-            'tuteur' => array('name' =>  'Peut servir de tuteur','type' => Attribute::TYPE_NONE),
+            'tuteur' => array('name' =>  'peut servir de tuteur','type' => Attribute::TYPE_NONE),
             'vannerie' => array('name' =>  'vannerie','type' => Attribute::TYPE_MULTIPLE),
             'bois_chauffage' => array('name' =>  'bois de chauffage','type' => Attribute::TYPE_NONE),
-            'porte_greffe' => array('name' =>  'Peut servir de porte greffe','type' => Attribute::TYPE_NONE),
+            'porte_greffe' => array('name' =>  'peut servir de porte greffe','type' => Attribute::TYPE_NONE),
             'tinctoriale' => array('name' =>  'tinctorial','type' => Attribute::TYPE_NONE),
             'ornementale' => array('name' =>  'ornementale','type' => Attribute::TYPE_NONE),
             'odorante' => array('name' =>  'odorante','type' => Attribute::TYPE_NONE),
@@ -173,14 +176,16 @@ protected static $defaultName = 'app:import-from-db';
             'toxicite_info' => array('name' =>  'info toxicité','type' => Attribute::TYPE_UNIQUE),
             'comestible' => array('name' =>  'comestible','type' => Attribute::TYPE_NONE),
             'brise_vent' => array('name' =>  'brise vent','type' => Attribute::TYPE_NONE),
-            'sol' => array('name' =>  'Aeration du sol','type' => Attribute::TYPE_MULTIPLE),
-            'ph' => array('name' =>  'Ph du sol','type' => Attribute::TYPE_MULTIPLE),
-            'humus' => array('name' =>  'Richesse du sol','type' => Attribute::TYPE_MULTIPLE),
+            'sol' => array('name' =>  'aeration du sol','type' => Attribute::TYPE_MULTIPLE),
+            'ph' => array('name' =>  'ph du sol','type' => Attribute::TYPE_MULTIPLE),
+            'humus' => array('name' =>  'richesse du sol','type' => Attribute::TYPE_MULTIPLE),
             'argile' => array('name' =>  'argile','type' => Attribute::TYPE_MULTIPLE),
             'humidity' => array('name' =>  'humidité','type' => Attribute::TYPE_SINGLE),
             'nutrient' => array('name' =>  'nutriments','type' => Attribute::TYPE_MULTIPLE),
             'crop' => array('name' =>  'récolte','type' => Attribute::TYPE_MULTIPLE),
             'flowering' => array('name' =>  'floraison','type' => Attribute::TYPE_MULTIPLE),
+            'insolation' => array('name' =>  'exposition possible','type' => Attribute::TYPE_MULTIPLE),
+            'port' => array('name' =>  'port possible','type' => Attribute::TYPE_MULTIPLE),
         );
         $this->excluded_from_auto_import = array(
             'graine_comestible','graine_grignotte','graine_cuite','graine_farine','graine_sechee','graine_huile','graine_germee',
@@ -207,7 +212,8 @@ protected static $defaultName = 'app:import-from-db';
             'argile',
             'humidity',
             'nutrient',
-            'crop','flowering'
+            'crop','flowering',
+            'insolation','port'
         );
         parent::__construct();
     }
@@ -356,7 +362,7 @@ protected static $defaultName = 'app:import-from-db';
         $flowering_crop_type_map = array('récolte'=>self::TYPE_CROP, 'floraison'=>self::TYPE_FLOWERING);
         $flowering_crop_month_map = array('janvier'=>1,'fevrier'=>2,'mars'=>3,'avril'=>4,'mai'=>5,'juin'=>6,'juillet'=>7,'aout'=>8,'septembre'=>9,'octobre'=>10,'novembre'=>11,'decembre'=>12);
         $flowering_attribute = $this->newAttribute('flowering');;
-        $crop_attribute = $this->newAttribute('crop');;
+        $crop_attribute = $this->newAttribute('crop');
         $flowering_values = array();
         $crop_values = array();
         foreach ($flowering_crop_month_map as $name=>$code){
@@ -366,7 +372,41 @@ protected static $defaultName = 'app:import-from-db';
 
         //insolation
         $insolation_ideal_map = array('tolérée'=>false,'idéale'=>true);
-        $insolation_type_map = array('MI-OMBRE'=>array(Insolation::TYPE_HALF_SHADE),'SOLEIL'=>array(Insolation::TYPE_SUN),'SOLEIL & OMBRE'=>array(Insolation::TYPE_SUN,Insolation::TYPE_SHADE),'OMBRE'=>array(Insolation::TYPE_SHADE),'"MI-OMBRE'=>array(Insolation::TYPE_HALF_SHADE),'SOLEIL"'=>array(Insolation::TYPE_SUN));
+        $insolation_attribute = $this->newAttribute('insolation');
+        $insolation_main_value = $this->newMainValue($insolation_attribute,'exposition idéale');
+        $insolation_map = array();
+        $insolation_type_map = array(
+            'MI-OMBRE'=>array(self::INSOLATION_TYPE_HALF_SHADE),
+            '"MI-OMBRE'=>array(self::INSOLATION_TYPE_HALF_SHADE),
+            'SOLEIL'=>array(self::INSOLATION_TYPE_SUN),
+            'SOLEIL"'=>array(self::INSOLATION_TYPE_SUN ),
+            'SOLEIL & OMBRE'=>array(self::INSOLATION_TYPE_SHADE,self::INSOLATION_TYPE_SUN),
+            'OMBRE'=>array(self::INSOLATION_TYPE_SHADE),
+            );
+
+        foreach (array(self::INSOLATION_TYPE_SHADE => 'ombre',self::INSOLATION_TYPE_SUN => 'soleil',self::INSOLATION_TYPE_HALF_SHADE => 'mi-ombre') as $code => $name){
+            $insolation_map[$code] = $this->newValue($name,$insolation_attribute,$code);
+        }
+
+        //port
+        $port_attribute = $this->newAttribute('port');
+        $port_main_value = $this->newMainValue($port_attribute,'port naturel');
+        $port_map = array();
+        $port_type_map = array(
+            'ACAULE' => array('name'=>'acaule','code'=>'acaule'),
+            'ARBUSTIF ARRONDI' => array('name'=>'arbustif arrondi','code'=>'arbustif_arrondi'),
+            'ARBUSTIF ÉLANCÉ' => array('name'=>'arbustif élancé','code'=>'arbustif_elance'),
+            'ARBUSTIF TREILLE' => array('name'=>'arbustif treille','code'=>'arbustif_treille'),
+            'BUISSONNANT ARRONDI' => array('name'=>'buissonnant arrondi','code'=>'buissonnant_arrondi'),
+            'BUISSONNANT ÉLANCÉ' => array('name'=>'buissonnant élancé','code'=>'buissonnant_elance'),
+            'GRIMPANT' => array('name'=>'grimpant','code'=>'grimpant'),
+            'TAPISSANT' => array('name'=>'tapissant','code'=>'tapissant'),
+            'TIGE' => array('name'=>'tige','code'=>'tige'),
+            'TOUFFE' => array('name'=>'touffe','code'=>'touffe'),
+        );
+        foreach ($port_type_map as $key => $data){
+            $port_map[$key] = $this->newValue($data['name'],$port_attribute,$data['code']);
+        }
 
         $multivalue_custom_attributes = array();
         //'graine_comestible','graine_grignotte','graine_cuite','graine_farine','graine_sechee','graine_huile','graine_germee',
@@ -528,20 +568,16 @@ protected static $defaultName = 'app:import-from-db';
                 if (!isset($plant_port['port'])){
                     var_dump($plant_port);die();
                 }
-                $port_name = self::tolower($plant_port['port']);
-                $port = $this->entityManager->getRepository(Port::class)->findOneBy(array('name' => $port_name));
-                if (!$port) {
-                    $port = new Port();
-                    $port->setName($port_name);
-                    $this->entityManager->persist($port);
+                $port_name = $plant_port['port'];
+                if (isset($port_map[$port_name])){
+                    $new_plant->addAttributeValue($port_map[$port_name]);
+                    $natural = $plant_port[self::PLANTS_PORTS_KEY_TYPE] == 'naturel';
+                    if ($natural){
+                        /** @var AttributeValue $value */
+                        $value = $port_map[$port_name];
+                        $value->setMainValue($port_main_value);
+                    }
                 }
-                $type = ($plant_port[self::PLANTS_PORTS_KEY_TYPE] == 'naturel') ? PlantsPorts::PLANT_PORT_TYPE_NATURAL : PlantsPorts::PLANT_PORT_TYPE_POSSIBLE;
-
-                $my_plant_port = new PlantsPorts();
-                $my_plant_port->setPlant($new_plant);
-                $my_plant_port->setType($type);
-                $my_plant_port->addPort($port);
-                $this->entityManager->persist($my_plant_port);
             }
 
             $output->writeln('import sources',OutputInterface::VERBOSITY_VERBOSE);
@@ -671,6 +707,10 @@ protected static $defaultName = 'app:import-from-db';
             $db->where("nom_latin", $plant[self::PLANT_KEY_LATIN_NAME]);
             $insolations = $db->get("PLANTE_EXPOSITIONS");
             foreach ($insolations as $insolation){
+                /**
+                 * [exposition] => MI-OMBRE
+                 * [idéale_tolérée] => tolérée
+                 */
                 $types = array();
                 $ideal = false;
                 if (isset($insolation_type_map[$insolation['exposition']])){
@@ -679,21 +719,16 @@ protected static $defaultName = 'app:import-from-db';
                 if (isset($insolation_ideal_map[$insolation['idéale_tolérée']])){
                     $ideal = $insolation_ideal_map[$insolation['idéale_tolérée']];
                 }
-                if (count($types) > 0){
-                    foreach ($types as $type){
-                        $i = $this->entityManager->getRepository(Insolation::class)
-                            ->findOneBy(array('type'=>$type));
-                        if (!$i){
-                            $i = new Insolation();
-                            $i->setType($type);
-                            $this->entityManager->persist($i);
-                        }
-                        $pi = new PlantsInsolations();
-                        $pi->setPlant($new_plant);
-                        $pi->setIdeal($ideal);
-                        $pi->setInsolation($i);
-                        $this->entityManager->persist($pi);
-                    }
+                if ($ideal && count($types) > 1){
+                    die('Many ideal isolations ?!'."\n");
+                }
+                foreach ($types as $type){
+                    $new_plant->addAttributeValue($insolation_map[$type]);
+                }
+                if ($ideal){
+                    /** @var AttributeValue $value */
+                    $value = $insolation_map[$types[0]]; //only one type
+                    $value->setMainValue($insolation_main_value);
                 }
             }
 
@@ -914,6 +949,25 @@ protected static $defaultName = 'app:import-from-db';
 
     public static function tolower($string) {
         return mb_strtolower($string);
+    }
+
+    private function newMainValue(Attribute $attribute, string $label){
+        $exist = null;
+        if (isset($this->attribute_main_value[$attribute->getCode()])){
+            $exist = $this->attribute_main_value[$attribute->getCode()];
+        }
+        if (!$exist) {
+            $exist = $this->entityManager->getRepository(MainValue::class)->findOneBy(array('attribute' => $attribute));
+            if (!$exist) {
+                $main_value = new MainValue();;
+                $main_value->setLabel($label);
+                $main_value->setAttribute($attribute);
+                $this->entityManager->persist($main_value);
+                $this->attribute_main_value[$attribute->getCode()] = $main_value;
+                return $main_value;
+            }
+        }
+        return $exist;
     }
 
     /**

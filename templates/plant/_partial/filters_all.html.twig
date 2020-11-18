@@ -38,15 +38,9 @@
                 </script>
             </div>
             <div class="col-2-small-3 fblock f_all f_my_climat">
-                <h4>Exposition</h4>
-                <ul class="unstyled">
-                {% for insolation in insolations %}
-                    <li><label for="filter_insolation_{{ insolation.id }}">
-                        <input id="filter_insolation_{{ insolation.id }}" name="insolation[]" type="checkbox" value="{{ insolation.id }}" data-f-value="{{ insolation.type }}" {% if ( complex_filters['insolation'] is defined and (insolation.type in complex_filters['insolation'])) %} checked="checked" {% endif %} >
-                        {{ insolation.type | human('insolation') }}
-                    </label></li>
-                {% endfor %}
-                </ul>
+                {% if attributes['insolation'] is defined %}
+                    {% include "plant/_partial/attribute_filter.html.twig" with {'attribute': attributes['insolation'] } %}
+                {% endif %}
             </div>
             <div class="col-2-small-3 fblock f_all f_my_climat">
                 <h4>Tolérance à la sécheresse</h4>

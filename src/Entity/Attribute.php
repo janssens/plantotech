@@ -56,14 +56,13 @@ class Attribute
     private $position;
 
     /**
-     * @ORM\OneToMany(targetEntity=MainValue::class, mappedBy="attribute", orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity=MainValue::class, mappedBy="attribute", cascade={"persist", "remove"})
      */
-    private $mainValues;
+    private $mainValue;
 
     public function __construct()
     {
         $this->availableValues = new ArrayCollection();
-        $this->mainValues = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -172,31 +171,18 @@ class Attribute
         return $this;
     }
 
-    /**
-     * @return Collection|MainValue[]
-     */
-    public function getMainValues(): Collection
+    public function getMainValue(): ?MainValue
     {
-        return $this->mainValues;
+        return $this->mainValue;
     }
 
-    public function addMainValue(MainValue $mainValue): self
+    public function setMainValue(MainValue $mainValue): self
     {
-        if (!$this->mainValues->contains($mainValue)) {
-            $this->mainValues[] = $mainValue;
+        $this->mainValue = $mainValue;
+
+        // set the owning side of the relation if necessary
+        if ($mainValue->getAttribute() !== $this) {
             $mainValue->setAttribute($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMainValue(MainValue $mainValue): self
-    {
-        if ($this->mainValues->removeElement($mainValue)) {
-            // set the owning side to null (unless already changed)
-            if ($mainValue->getAttribute() === $this) {
-                $mainValue->setAttribute(null);
-            }
         }
 
         return $this;

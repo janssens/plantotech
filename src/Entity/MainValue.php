@@ -25,26 +25,20 @@ class MainValue
     private $label;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="mainValues")
-     */
-    private $plants;
-
-    /**
-     * @ORM\OneToOne(targetEntity=AttributeValue::class, inversedBy="mainValue", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $attribute_value;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Attribute::class, inversedBy="mainValues")
+     * @ORM\OneToOne(targetEntity=Attribute::class, inversedBy="mainValue", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $attribute;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AttributeValue::class, mappedBy="main_value")
+     */
+    private $attribute_values;
+
 
     public function __construct()
     {
-        $this->plants = new ArrayCollection();
+        $this->attribute_values = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -64,50 +58,44 @@ class MainValue
         return $this;
     }
 
-    /**
-     * @return Collection|Plant[]
-     */
-    public function getPlants(): Collection
-    {
-        return $this->plants;
-    }
-
-    public function addPlant(Plant $plant): self
-    {
-        if (!$this->plants->contains($plant)) {
-            $this->plants[] = $plant;
-        }
-
-        return $this;
-    }
-
-    public function removePlant(Plant $plant): self
-    {
-        $this->plants->removeElement($plant);
-
-        return $this;
-    }
-
-    public function getAttributeValue(): ?AttributeValue
-    {
-        return $this->attribute_value;
-    }
-
-    public function setAttributeValue(AttributeValue $attribute_value): self
-    {
-        $this->attribute_value = $attribute_value;
-
-        return $this;
-    }
-
     public function getAttribute(): ?Attribute
     {
         return $this->attribute;
     }
 
-    public function setAttribute(?Attribute $attribute): self
+    public function setAttribute(Attribute $attribute): self
     {
         $this->attribute = $attribute;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AttributeValue[]
+     */
+    public function getAttributeValues(): Collection
+    {
+        return $this->attribute_values;
+    }
+
+    public function addAttributeValue(AttributeValue $attributeValue): self
+    {
+        if (!$this->attribute_values->contains($attributeValue)) {
+            $this->attribute_values[] = $attributeValue;
+            $attributeValue->setMainValue($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttributeValue(AttributeValue $attributeValue): self
+    {
+        if ($this->attribute_values->removeElement($attributeValue)) {
+            // set the owning side to null (unless already changed)
+            if ($attributeValue->getMainValue() === $this) {
+                $attributeValue->setMainValue(null);
+            }
+        }
 
         return $this;
     }

@@ -36,26 +36,17 @@
                 {% if plant.RusticityComment %}({{ plant.RusticityComment }}){% endif %}</div>
             <div><b>Résistance au sec :</b> <a href="{{ path('plant_index',{'drought_tolerance':plant.DroughtTolerance}) }}">{{ plant.DroughtTolerance | human('drought_tolerance') }}</a></div>
 {#            <div><b>Résistance au vent :</b> <span style="color:red;">cette info n'existe pas dans la base de donnée initiale</span></div>#}
-            <div><b>Exposition idéale :</b>
-                {% if plant.InsolationsByIdeal(true) | length %}
-                    {% for insolation in plant.InsolationsByIdeal(true) %}
-                        <a href="{{ path('plant_index',{'insolation':insolation.insolation.id}) }}">{{ insolation.type | human('insolation')  }}</a>
-                    {% endfor %}
-                {% else %}
-                    <span style="color: orange">Aucune exposition spécifiée</span>
-                {% endif %}
-            </div>
-            <div><b>Exposition possible :</b> {% for insolation in plant.InsolationsByIdeal(false) %}
-                    <a href="{{ path('plant_index',{'insolation':insolation.insolation.id}) }}">{{ insolation.type | human('insolation')  }}</a>
-                {% endfor %}</div>
+            {% if plant.attributeValuesByCode('insolation') | length %}
+                {% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('insolation').first.attribute,'plant' : plant } %}
+            {% endif %}
             {% if plant.attributeValuesByCode('humuse') | length %}
-                <div>{% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('humuse').first.attribute,'plant' : plant } %}</div>
+                {% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('humuse').first.attribute,'plant' : plant } %}
             {% endif %}
             {% if plant.attributeValuesByCode('sol') | length %}
-                <div>{% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('sol').first.attribute,'plant' : plant } %}</div>
+                {% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('sol').first.attribute,'plant' : plant } %}
             {% endif %}
             {% if plant.attributeValuesByCode('ph') | length %}
-                <div>{% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('ph').first.attribute,'plant' : plant } %}</div>
+                {% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('ph').first.attribute,'plant' : plant } %}
             {% endif %}
             <div><b>Calcaire :</b> <a href="{{ path('plant_index',{'limestone':plant.limestone}) }}">{{ plant.limestone | human('limestone') }}</a></div>
             <h4>Milieu naturel et sub naturel</h4>
@@ -78,15 +69,9 @@
             <h4><b>Mensuration</b></h4>
             <div><b>hauteur</b> {{ plant.Height }}m - <b>largeur</b> {{ plant.Width }}m </div>
             <h4>Forme</h4>
-            <div><b>Port - tendance naturelle :</b> {% for ports in plant.NaturalPorts() %}
-                    {% for port in ports.ports %}
-                        <a href="{{ path('plant_index',{'port':port.id}) }}">{{ port.name }}</a>
-                    {% endfor %}
-                {% endfor %}</div>
-            <div><b>Port - possible :</b> {% for ports in plant.getPossiblePorts(false) %}
-                    {% for port in ports.ports %}
-                        <a href="{{ path('plant_index',{'port':port.id}) }}">{{ port.name }}</a>
-                    {% endfor %}        {% endfor %}</div>
+            {% if plant.attributeValuesByCode('port') | length %}
+                <div>{% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('port').first.attribute,'plant' : plant } %}</div>
+            {% endif %}
             <div><b>Tendance racinaire</b> <a href="{{ path('plant_index',{'root':plant.root}) }}">{{ plant.root | human('root') }}</a></div>
             <div><b>Feuillage</b> <a href="{{ path('plant_index',{'foliage':plant.foliage}) }}">{{ plant.foliage | human('foliage') }}</a>
                 <b>densité</b> <a href="{{ path('plant_index',{'leaf_density':plant.LeafDensity}) }}">{{ plant.LeafDensity | human('leaf_density') }}</a></div>

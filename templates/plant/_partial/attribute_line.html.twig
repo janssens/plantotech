@@ -3,13 +3,28 @@
         {% if attribute.typeNone %}
             <b><a href="{{ path('plant_index',{('a_' ~ attribute.code ):'1'}) }}">{{ attribute.name }}</a></b>
         {% else %}
+            {% if attribute.mainValue is not null %}
+                <b>{{ attribute.mainValue.label }}</b> :
+                {% for attribute_value in plant.attributeValuesByCode(attribute.code) %}
+                    {% if attribute_value.mainValue is not null %}
+                        {% if attribute.typeUnique %}
+                            {{ attribute_value.value }}
+                        {% else %}
+                            {% if attribute_value.value is not null %}<a href="{{ path('plant_index',{('a_' ~ attribute.code ):attribute_value.id}) }}">{{ attribute_value.value }}</a>{% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                <br>
+            {% endif %}
             <b>{{ attribute.name }}</b> :
             {#                                    {% if plant.attributesByCode(attribute.code) | length > 1 or plant.attributesByCode(attribute.code).first.value is not null %} : {% endif %}#}
             {% for attribute_value in plant.attributeValuesByCode(attribute.code) %}
-                {% if attribute.typeUnique %}
-                    {{ attribute_value.value }}
-                {% else %}
-                    {% if attribute_value.value is not null %}<a href="{{ path('plant_index',{('a_' ~ attribute.code ):attribute_value.id}) }}">{{ attribute_value.value }}</a>{% endif %}
+                {% if attribute_value.mainValue is null %}
+                    {% if attribute.typeUnique %}
+                        {{ attribute_value.value }}
+                    {% else %}
+                        {% if attribute_value.value is not null %}<a href="{{ path('plant_index',{('a_' ~ attribute.code ):attribute_value.id}) }}">{{ attribute_value.value }}</a>{% endif %}
+                    {% endif %}
                 {% endif %}
             {% endfor %}
         {% endif %}

@@ -36,14 +36,14 @@ class AttributeValue
     private $plants;
 
     /**
-     * @ORM\OneToOne(targetEntity=MainValue::class, mappedBy="attribute_value", cascade={"persist", "remove"})
-     */
-    private $mainValue;
-
-    /**
      * @ORM\Column(type="string", length=50)
      */
     private $code;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=MainValue::class, inversedBy="attribute_values")
+     */
+    private $main_value;
 
     public function __construct()
     {
@@ -107,23 +107,6 @@ class AttributeValue
         return $this;
     }
 
-    public function getMainValue(): ?MainValue
-    {
-        return $this->mainValue;
-    }
-
-    public function setMainValue(MainValue $mainValue): self
-    {
-        $this->mainValue = $mainValue;
-
-        // set the owning side of the relation if necessary
-        if ($mainValue->getAttributeValue() !== $this) {
-            $mainValue->setAttributeValue($this);
-        }
-
-        return $this;
-    }
-
     public function getCode(): ?string
     {
         return $this->code;
@@ -132,6 +115,18 @@ class AttributeValue
     public function setCode(string $code): self
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    public function getMainValue(): ?MainValue
+    {
+        return $this->main_value;
+    }
+
+    public function setMainValue(?MainValue $main_value): self
+    {
+        $this->main_value = $main_value;
 
         return $this;
     }

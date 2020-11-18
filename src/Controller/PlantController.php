@@ -45,7 +45,7 @@ class PlantController extends AbstractController
             }
         }
         //complex filter (join)
-        //'insolation','port','ph'
+        //'insolation','port'
         if (!isset($restrict['id']))
             $restrict['id'] = array();
         if ($request->query->get('port')){
@@ -56,78 +56,6 @@ class PlantController extends AbstractController
                 $local_restrict[] = $plant->getPlant()->getId();
             }
             $complex_filters['port'] = $request->query->get('port');
-            if ($restricted){
-                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
-            }else{
-                $restrict['id'] = $local_restrict;
-            }
-            $restricted = true;
-        }
-        if ($request->query->get('flowerings')){
-            $local_restrict = array();
-            /** @var FloweringAndCrop $flowering */
-            $flowerings_month = $request->query->get('flowerings');
-            $flowerings = $this->getDoctrine()->getRepository(FloweringAndCrop::class)->findBy(array('month'=>$flowerings_month,'type'=>FloweringAndCrop::TYPE_FLOWERING));
-            foreach ($flowerings as $flowering){
-                $local_restrict[] = $flowering->getPlant()->getId();
-            }
-            $complex_filters['flowerings'] = $flowerings_month;
-            if ($restricted){
-                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
-            }else{
-                $restrict['id'] = $local_restrict;
-            }
-            $restricted = true;        }
-        if ($request->query->get('crops')){
-            $local_restrict = array();
-            /** @var FloweringAndCrop $crop */
-            $crops_month = $request->query->get('crops');
-            $crops = $this->getDoctrine()->getRepository(FloweringAndCrop::class)->findBy(array('month'=>$crops_month,'type'=>FloweringAndCrop::TYPE_CROP));
-            foreach ($crops as $crop){
-                $local_restrict[] = $crop->getPlant()->getId();
-            }
-            $complex_filters['crops'] = $crops_month;
-            if ($restricted){
-                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
-            }else{
-                $restrict['id'] = $local_restrict;
-            }
-            $restricted = true;        }
-        if ($request->query->get('insolation')){
-            $local_restrict = array();
-            /** @var Insolation $insolation */
-            $insolations_id = $request->query->get('insolation');
-            $insolations = $this->getDoctrine()->getRepository(Insolation::class)->findBy(array('id'=>$insolations_id));
-            foreach ($insolations as $insolation){
-                foreach ($insolation->getPlants() as $plant){
-                    $local_restrict[] = $plant->getPlant()->getId();
-                }
-                if (!key_exists('insolation',$complex_filters) || !is_array($complex_filters['insolation'])){
-                    $complex_filters['insolation'] = array();
-                }
-                $complex_filters['insolation'][] = $insolation->getType();
-            }
-            if ($restricted){
-                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
-            }else{
-                $restrict['id'] = $local_restrict;
-            }
-            $restricted = true;
-        }
-        if ($request->query->get('soils')){
-            $local_restrict = array();
-            /** @var Soil $soil */
-            $soils_id = $request->query->get('soils');
-            $soils = $this->getDoctrine()->getRepository(Soil::class)->findBy(array('id'=>$soils_id));
-            foreach ($soils as $soil){
-                foreach ($soil->getPlants() as $plant){
-                    $local_restrict[] = $plant->getId();
-                }
-                if (!key_exists('soils',$complex_filters) || !is_array($complex_filters['soils'])){
-                    $complex_filters['soils'] = array();
-                }
-                $complex_filters['soils'][] = $soil->getName();
-            }
             if ($restricted){
                 $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
             }else{
@@ -157,6 +85,7 @@ class PlantController extends AbstractController
             else
                 $restrict['id'] = array_intersect($restrict['id'],$ids);
         }
+
         $rusticity = $request->query->get('rusticity');
         if ($rusticity){
             $restricted = true;
@@ -237,7 +166,6 @@ class PlantController extends AbstractController
                 $filters[$filter] = $request->query->get($filter);
             }
         }
-        $insolations = $this->getDoctrine()->getRepository(Insolation::class)->findAll();
         $attributes_collection = $this->getDoctrine()->getRepository(Attribute::class)->findAll();
         $attributes = array();
         foreach ($attributes_collection as $attribute){
@@ -253,7 +181,6 @@ class PlantController extends AbstractController
             'excluded_attributes' => $excluded_attributes,
             'query_string' => $s,
             'complex_filters' => $complex_filters,
-            'insolations' => $insolations,
         ]);
     }
 
