@@ -217,11 +217,6 @@ class Plant
     private $drought_tolerance;
 
     /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $diseases_and_pest;
-
-    /**
      * todo: user real user or entity
      * @ORM\Column(type="string", length=100, nullable=true)
      */
@@ -677,18 +672,6 @@ class Plant
     public function setDroughtTolerance(?int $drought_tolerance): self
     {
         $this->drought_tolerance = $drought_tolerance;
-
-        return $this;
-    }
-
-    public function getDiseasesAndPest(): ?string
-    {
-        return $this->diseases_and_pest;
-    }
-
-    public function setDiseasesAndPest(?string $diseases_and_pest): self
-    {
-        $this->diseases_and_pest = $diseases_and_pest;
 
         return $this;
     }

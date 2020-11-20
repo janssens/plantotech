@@ -5,9 +5,11 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\ConfigService;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
@@ -189,12 +191,9 @@ class SecurityController extends AbstractController
             ->context([
                 'user' => $user,
             ]);
-        try{
-            $this->mailer->send($email);
-            return 1;
-        }catch (\Exception $e){
+        if ($e = $this->_sendMail($email)){
             $session->getFlashBag()->add('error', 'oups, l\'email de rappel na pas pu être envoyé.'.
-                ' On réessaie dans un petit moment ?');
+                ' On réessaie ensemble dans un moment ?');
             $session->getFlashBag()->add('warning', $e->getMessage());
             return 0;
         }
@@ -203,29 +202,40 @@ class SecurityController extends AbstractController
     /**
      * @param User $user
      * @param SessionInterface $session
+     * @param int $count
      * @return int
      * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
-    private function _sendConfirm(User $user,SessionInterface $session){
+    private function _sendConfirm(User $user,SessionInterface $session,int $count = 0){
         $email = (new TemplatedEmail())
             ->from($this->config->getValue('app/main_email'))
             ->to($user->getEmail())
-            ->subject('['.$this->config->getValue('app/website_name').']Confirme ton nouveau compte')
+            ->subject('['.$this->config->getValue('app/website_name').'] Confirme ton nouveau compte')
             ->htmlTemplate('emails/confirm.html.twig')
             ->textTemplate('emails/confirm.txt.twig')
             ->context([
                 'user' => $user,
             ]);
-        try{
-            $this->mailer->send($email);
-            return 1;
-        }catch (\Exception $e){
+        if ($e = $this->_sendMail($email)){
             $session->getFlashBag()->add('error', 'oups, l\'email de confirmation na pas pu être envoyé.'.
-                ' On réessaie dans un moment ?');
+                ' On réessaie ensemble dans un moment ?');
             $session->getFlashBag()->add('warning', $e->getMessage());
             return 0;
         }
+        return 1;
+    }
 
+    private function _sendMail(TemplatedEmail $email,int $count = 0){
+        try{
+            $this->mailer->send($email);
+            return 0;
+        } catch (TransportExceptionInterface $e) {
+            if ($count >= 3){
+                return $e;
+            }
+            // retry
+            return $this->_sendMail($email,$count++);
+        }
     }
 
     /**
@@ -264,8 +274,6 @@ class SecurityController extends AbstractController
                     ));
                     $user->setConfirmationToken(md5(uniqid()));
                     $user->setIsActive(false); //need to validate first
-
-
 
                     if ($this->_sendConfirm($user,$session)){
                         $session->getFlashBag()->add('success', 'Vérifie tes emails pour valider ton compte :)');

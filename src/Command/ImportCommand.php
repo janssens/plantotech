@@ -5,14 +5,9 @@ namespace App\Command;
 use App\Entity\Attribute;
 use App\Entity\AttributeFamily;
 use App\Entity\AttributeValue;
-use App\Entity\Insolation;
-use App\Entity\InterestType;
 use App\Entity\MainValue;
 use App\Entity\Plant;
 use App\Entity\PlantFamily;
-use App\Entity\PlantsInsolations;
-use App\Entity\PlantsPorts;
-use App\Entity\Port;
 use App\Entity\Source;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpParser\Node\Expr\Cast\Object_;
@@ -44,7 +39,6 @@ protected static $defaultName = 'app:import-from-db';
     const PLANT_KEY_DENSITY = "densité_m2";
     const PLANT_KEY_INTEREST = "cultivar_d_intérêt";
     const PLANT_KEY_SPECIFICITY = "spécificité";
-    const PLANT_KEY_DISEASES_AND_PEST = "maladies_ravageurs";
     const PLANT_KEY_AUTHOR = "auteur";
     const PLANT_KEY_STRATUM = "strate";
 
@@ -290,7 +284,7 @@ protected static $defaultName = 'app:import-from-db';
 
         $simple_keys = array('latin_name','name','rusticity','rusticity_comment','temperature',
             'native_place','botany_leaf','botany_branch','botany_root','botany_flower','botany_seed','density',
-            'interest','specificity','diseases_and_pest','author');
+            'interest','specificity','author');
         $enum_keys = array('life_cycle','root','sucker','limestone','leaf_density','foliage','priority',
             'drought_tolerance','stratum');
         $simple_to_double_keys = array('height','width','sexual_maturity');
@@ -871,6 +865,10 @@ protected static $defaultName = 'app:import-from-db';
 
         $families =
             array(
+                'Biotope (environnement) // secteurs du terrain'=>array(
+                    'Conditions pédoclimatiques' => array(),
+                    'Milieu naturel et sub naturel' => array(),
+                ),
                 'Besoins éco-systèmiques'=>array(
                     'Auxiliaires' => array('besoin_pollinisation'),
                     'Plantes Compagnes' => array(),
