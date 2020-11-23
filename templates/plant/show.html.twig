@@ -22,7 +22,7 @@
             <h4>{{ family.name }}</h4>
             {% for child in family.children %}
                 {% if child.name %}<h5>{{ child.name }}</h5>{% endif %}
-                <ul>
+                <ul class="unstyled">
                     {% for element in child.propertyOrAttributes %}
                         {% if element.attribute %}
                             {% include "attribute/_partial/line.html.twig" with {'attribute': element,'plant' : plant } %}
