@@ -4,17 +4,6 @@
     <link rel="canonical" href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}" />
 {% endblock %}
 {% block stylesheets %}
-    <style>
-        h2{
-            color: #d4f1c4;
-        }
-        h3{
-            background: #8ea937;
-        }
-        h4{
-            background: #afa152;
-        }
-    </style>
 {% endblock %}
 {% block title %}{{ plant.LatinName }} - {{ plant.name }}{% endblock %}
 
@@ -27,115 +16,25 @@
     {% else %}
         <h2 style="color: orange">Aucune famille spécifiée</h2>
     {% endif %}
-    <div class="grid has-gutter-l">
-        <div >
-            {#Biotope#}
-            <h3>Biotope (environement) // secteurs du terrain</h3>
-            <h4>Conditions pédoclimatiques</h4>
-            <div><b>Résistance au froid (rusticité) :</b> {{ plant.Rusticity }}°C
-                {% if plant.RusticityComment %}({{ plant.RusticityComment }}){% endif %}</div>
-            <div><b>Résistance au sec :</b> <a href="{{ path('plant_index',{'drought_tolerance':plant.DroughtTolerance}) }}">{{ plant.DroughtTolerance | human('drought_tolerance') }}</a></div>
-{#            <div><b>Résistance au vent :</b> <span style="color:red;">cette info n'existe pas dans la base de donnée initiale</span></div>#}
-            {% if plant.attributeValuesByCode('insolation') | length %}
-                {% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('insolation').first.attribute,'plant' : plant } %}
-            {% endif %}
-            {% if plant.attributeValuesByCode('humuse') | length %}
-                {% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('humuse').first.attribute,'plant' : plant } %}
-            {% endif %}
-            {% if plant.attributeValuesByCode('sol') | length %}
-                {% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('sol').first.attribute,'plant' : plant } %}
-            {% endif %}
-            {% if plant.attributeValuesByCode('ph') | length %}
-                {% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('ph').first.attribute,'plant' : plant } %}
-            {% endif %}
-            <div><b>Calcaire :</b> <a href="{{ path('plant_index',{'limestone':plant.limestone}) }}">{{ plant.limestone | human('limestone') }}</a></div>
-            <h4>Milieu naturel et sub naturel</h4>
-            <div><b>Origine :</b> {% if plant.NativePlace %}{{ plant.NativePlace }}{% else %}<i style="color: orange">non précisé</i>{% endif %}</div>
-            {% for family in families %}
-                <h4>{{ family.name }}</h4>
-                {% for child in family.children %}
-                    <h5>{{ child.name }}</h5>
-                    <ul>
-                        {% for attribute in child.attributes %}
-                            {% include "plant/_partial/attribute_line.html.twig" with {'attribute': attribute,'plant' : plant } %}
-                        {% endfor %}
-                    </ul>
-                {% endfor %}
+    <div class="grid-12-small-6 has-gutter-l">
+        {% for family in families %}
+        <div class="col-6">
+            <h4>{{ family.name }}</h4>
+            {% for child in family.children %}
+                {% if child.name %}<h5>{{ child.name }}</h5>{% endif %}
+                <ul>
+                    {% for element in child.propertyOrAttributes %}
+                        {% if element.attribute %}
+                            {% include "attribute/_partial/line.html.twig" with {'attribute': element,'plant' : plant } %}
+                        {% else %}
+                            <li>
+                                {% include element.templates('line') with {'property': element,'plant' : plant} %}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
             {% endfor %}
         </div>
-        <div>
-            <h3><b>Description</b></h3>
-            <div><b>Strate</b> <a href="{{ path('plant_index',{'stratum':plant.stratum}) }}">{{ plant.stratum | human('stratum') }}</a></div>
-            <h4><b>Mensuration</b></h4>
-            <div><b>hauteur</b> {{ plant.Height }}m - <b>largeur</b> {{ plant.Width }}m </div>
-            <h4>Forme</h4>
-            {% if plant.attributeValuesByCode('port') | length %}
-                <div>{% include "plant/_partial/attribute_line.html.twig" with {'attribute': plant.attributeValuesByCode('port').first.attribute,'plant' : plant } %}</div>
-            {% endif %}
-            <div><b>Tendance racinaire</b> <a href="{{ path('plant_index',{'root':plant.root}) }}">{{ plant.root | human('root') }}</a></div>
-            <div><b>Feuillage</b> <a href="{{ path('plant_index',{'foliage':plant.foliage}) }}">{{ plant.foliage | human('foliage') }}</a>
-                <b>densité</b> <a href="{{ path('plant_index',{'leaf_density':plant.LeafDensity}) }}">{{ plant.LeafDensity | human('leaf_density') }}</a></div>
-            {% if plant.images | length %}
-                {% for image in plant.images %}
-                    <img width="150px" src="/uploads/{{ image.name }}" alt="">
-                {% endfor %}
-            {% else %}
-                <span style="color:orange;">Aucune image associée</span>
-            {% endif %}
-            <h4>Cycle</h4>
-            <div><b>Plante</b> <a href="{{ path('plant_index',{'life_cycle':plant.LifeCycle}) }}">{{ plant.LifeCycle | human('life_cycle') }}</a></div>
-            <div>
-                {% if flowerings | length or crops | length %}
-                    <table>
-                        <thead>
-                        <tr>
-                            <th></th>
-                            <th>Jan</th>
-                            <th>Fév</th>
-                            <th>Mar</th>
-                            <th>Avr</th>
-                            <th>Mai</th>
-                            <th>Juin</th>
-                            <th>Juil</th>
-                            <th>Aout</th>
-                            <th>Sept</th>
-                            <th>Oct</th>
-                            <th>Nov</th>
-                            <th>Déc</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Floraison</td>
-                            {% for m in 1..12 %}
-                                <td>
-                                    {% if flowerings[m] is defined %}<a href="{{ path('plant_index',{'a_flowering[]':flowerings[m].id}) }}">🌼</a>{% endif %}
-                                </td>
-                            {% endfor %}
-                        </tr>
-                        <tr>
-                            <td>Fructif</td>
-                            {% for m in 1..12 %}
-                                <td>
-                                    {% if crops[m] is defined %}<a href="{{ path('plant_index',{'a_crop[]':crops[m].id}) }}">🍎</a>{% endif %}
-                                </td>
-                            {% endfor %}
-                        </tr>
-                        </tbody>
-                    </table>
-                {% endif %}
-            </div>
-            {% if plant.sources | length %}
-                <h3>Sources</h3>
-                <div>
-                    <ul>
-                        {% for source in plant.sources %}
-                            <li>{{ source.name | autolink | raw }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-        </div>
+        {% endfor %}
     </div>
-
 {% endblock %}

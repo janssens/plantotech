@@ -1,0 +1,7 @@
+{% if plant.images | length %}
+    {% for image in plant.images %}
+        <img width="150px" src="/uploads/{{ image.name }}" alt="">
+    {% endfor %}
+{% else %}
+    <span style="color:orange;">Aucune image associée</span>
+{% endif %}

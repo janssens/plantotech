@@ -1,0 +1,39 @@
+{% if flowerings | length or crops | length %}
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>Jan</th>
+            <th>Fév</th>
+            <th>Mar</th>
+            <th>Avr</th>
+            <th>Mai</th>
+            <th>Juin</th>
+            <th>Juil</th>
+            <th>Aout</th>
+            <th>Sept</th>
+            <th>Oct</th>
+            <th>Nov</th>
+            <th>Déc</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Floraison</td>
+            {% for m in 1..12 %}
+                <td>
+                    {% if flowerings[m] is defined %}<a href="{{ path('plant_index',{'a_flowering[]':flowerings[m].id}) }}">🌼</a>{% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <td>Fructif</td>
+            {% for m in 1..12 %}
+                <td>
+                    {% if crops[m] is defined %}<a href="{{ path('plant_index',{'a_crop[]':crops[m].id}) }}">🍎</a>{% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+        </tbody>
+    </table>
+{% endif %}

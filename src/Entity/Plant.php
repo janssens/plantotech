@@ -14,51 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Plant
 {
 
-    const LIFE_CYCLE_UNDEFINED = 0;
-    const LIFE_CYCLE_ANNUAL = 1;
-    const LIFE_CYCLE_BIENNIAL = 2;
-    const LIFE_CYCLE_PERENNIAL = 3;
-
-    const ROOT_UNDEFINED = 0;
-    const ROOT_CREEPING = 1;
-    const ROOT_FASCICULE = 2;
-    const ROOT_MIXED = 3;
-    const ROOT_BULB = 4;
-    const ROOT_TAPROOT = 5;
-    const ROOT_TUBER = 6;
-
-    const SUCKER_YES = 1;
-    const SUCKER_VERY = 2;
-
-    const LIMESTONE_TOLERANT = 1;
-    const LIMESTONE_WARNING = 2;
-    const LIMESTONE_INDIFFERENT = 4;
-
-    const LEAF_DENSITY_LIGHT = 1;
-    const LEAF_DENSITY_MEDIUM = 2;
-    const LEAF_DENSITY_DENSE = 3;
-
-    const FOLIAGE_PERSISTANT = 1;
-    const FOLIAGE_SEMI_PERSISTANT = 2;
-    const FOLIAGE_DECIDUOUS = 3;
-
-    const PRIORITY_1 = 1;
-    const PRIORITY_2 = 2;
-
-    const DROUGHT_TOLERANCE_1 = 1;
-    const DROUGHT_TOLERANCE_2 = 2;
-    const DROUGHT_TOLERANCE_3 = 3;
-    const DROUGHT_TOLERANCE_4 = 4;
-    const DROUGHT_TOLERANCE_5 = 5;
-
-    const STRATUM_UNDEFINED = 0;
-    const STRATUM_LOW = 1;
-    const STRATUM_SHRUB = 2;
-    const STRATUM_MEDIUM = 3;
-    const STRATUM_TREE = 4;
-    const STRATUM_CANOPY = 5;
-    const STRATUM_CLIMBING = 6;
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -75,11 +30,6 @@ class Plant
      * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $name;
-
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $life_cycle;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -112,11 +62,6 @@ class Plant
     private $max_height;
 
     /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $root;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $min_width;
@@ -125,16 +70,6 @@ class Plant
      * @ORM\Column(type="integer", nullable=true)
      */
     private $max_width;
-
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $sucker;
-
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $limestone;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -187,16 +122,6 @@ class Plant
     private $density;
 
     /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $leaf_density;
-
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $foliage;
-
-    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $interest;
@@ -207,25 +132,10 @@ class Plant
     private $specificity;
 
     /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $priority;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $drought_tolerance;
-
-    /**
      * todo: user real user or entity
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $author;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $stratum;
 
     /**
      * @ORM\ManyToOne(targetEntity=PlantFamily::class, inversedBy="plants")
@@ -238,21 +148,11 @@ class Plant
     private $sources;
 
     /**
-     * @ORM\OneToMany(targetEntity=Association::class, mappedBy="plant1", orphanRemoval=true)
-     */
-    private $associations1;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Association::class, mappedBy="plant2", orphanRemoval=true)
-     */
-    private $associations2;
-
-    private $associations = null;
-
-    /**
      * @ORM\ManyToMany(targetEntity=AttributeValue::class, mappedBy="plants")
      */
     private $attributes_values;
+
+    private $_attributes_by_code;
 
     /**
      * @ORM\OneToMany(targetEntity=Image::class, mappedBy="Plant", orphanRemoval=true,cascade={"persist"})
@@ -262,9 +162,8 @@ class Plant
     public function __construct()
     {
         $this->sources = new ArrayCollection();
-        $this->associations1 = new ArrayCollection();
-        $this->associations2 = new ArrayCollection();
         $this->attributes_values = new ArrayCollection();
+        $this->_attributes_by_code = array();
         $this->images = new ArrayCollection();
     }
 
@@ -321,21 +220,6 @@ class Plant
         //shorten
         $string = substr($string,0,$length);
         return $string;
-    }
-
-    public function getLifeCycle(): ?int
-    {
-        return $this->life_cycle;
-    }
-
-    public function setLifeCycle(?int $life_cycle): self
-    {
-        if ($life_cycle>3 || $life_cycle<0){
-            $life_cycle = self::LIFE_CYCLE_UNDEFINED;
-        }
-        $this->life_cycle = $life_cycle;
-
-        return $this;
     }
 
     public function getRusticity(): ?int
@@ -417,18 +301,6 @@ class Plant
         return $this->min_height.'-'.$this->max_height;
     }
 
-    public function getRoot(): ?int
-    {
-        return $this->root;
-    }
-
-    public function setRoot(?int $root): self
-    {
-        $this->root = $root;
-
-        return $this;
-    }
-
     public function getMinWidth(): ?int
     {
         return $this->min_width;
@@ -458,30 +330,6 @@ class Plant
         if ($this->min_width == $this->max_width)
             return $this->min_width;
         return $this->min_width.'-'.$this->max_width;
-    }
-
-    public function getSucker(): ?int
-    {
-        return $this->sucker;
-    }
-
-    public function setSucker(?int $sucker): self
-    {
-        $this->sucker = $sucker;
-
-        return $this;
-    }
-
-    public function getLimestone(): ?int
-    {
-        return $this->limestone;
-    }
-
-    public function setLimestone(?int $limestone): self
-    {
-        $this->limestone = $limestone;
-
-        return $this;
     }
 
     public function getMinSexualMaturity(): ?int
@@ -604,30 +452,6 @@ class Plant
         return $this;
     }
 
-    public function getLeafDensity(): ?int
-    {
-        return $this->leaf_density;
-    }
-
-    public function setLeafDensity(?int $leaf_density): self
-    {
-        $this->leaf_density = $leaf_density;
-
-        return $this;
-    }
-
-    public function getFoliage(): ?int
-    {
-        return $this->foliage;
-    }
-
-    public function setFoliage(?int $foliage): self
-    {
-        $this->foliage = $foliage;
-
-        return $this;
-    }
-
     public function getInterest(): ?string
     {
         return $this->interest;
@@ -652,30 +476,6 @@ class Plant
         return $this;
     }
 
-    public function getPriority(): ?int
-    {
-        return $this->priority;
-    }
-
-    public function setPriority(?int $priority): self
-    {
-        $this->priority = $priority;
-
-        return $this;
-    }
-
-    public function getDroughtTolerance(): ?int
-    {
-        return $this->drought_tolerance;
-    }
-
-    public function setDroughtTolerance(?int $drought_tolerance): self
-    {
-        $this->drought_tolerance = $drought_tolerance;
-
-        return $this;
-    }
-
     public function getAuthor(): ?string
     {
         return $this->author;
@@ -684,18 +484,6 @@ class Plant
     public function setAuthor(?string $author): self
     {
         $this->author = $author;
-
-        return $this;
-    }
-
-    public function getStratum(): ?int
-    {
-        return $this->stratum;
-    }
-
-    public function setStratum(?int $stratum): self
-    {
-        $this->stratum = $stratum;
 
         return $this;
     }
@@ -744,21 +532,6 @@ class Plant
     }
 
     /**
-     * @return Collection|Association[]
-     */
-    public function getAssociations(): Collection
-    {
-        if ($this->associations === null){
-            $this->associations = new ArrayCollection(
-                array_merge(
-                    $this->associations1->toArray(),
-                    $this->associations2->toArray())
-            );
-        }
-        return $this->associations;
-    }
-
-    /**
      * @return Collection|AttributeValue[]
      */
     public function getAttributesValues(): Collection
@@ -766,7 +539,7 @@ class Plant
         return $this->attributes_values;
     }
 
-    public function getAttributeValuesByCode(string $code){
+    public function getAttributeValuesByCode($code = ''){
         return $this->attributes_values->filter(function ($attribute) use ($code){
             /** @var AttributeValue $attribute */
             return $attribute->getAttribute()->getCode() == $code;

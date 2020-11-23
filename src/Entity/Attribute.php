@@ -10,9 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=AttributeRepository::class)
  */
-class Attribute
+class Attribute extends PropertyOrAttribute
 {
-
     const TYPE_NONE  = 1;
     const TYPE_SINGLE  = 2;
     const TYPE_MULTIPLE = 3;
@@ -26,34 +25,14 @@ class Attribute
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $name;
-
-    /**
      * @ORM\Column(type="smallint")
      */
     private $type;
 
     /**
-     * @ORM\ManyToOne(targetEntity=AttributeFamily::class, inversedBy="attributes")
-     */
-    private $family;
-
-    /**
      * @ORM\OneToMany(targetEntity=AttributeValue::class, mappedBy="attribute", orphanRemoval=true)
      */
     private $availableValues;
-
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $code;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $position;
 
     /**
      * @ORM\OneToOne(targetEntity=MainValue::class, mappedBy="attribute", cascade={"persist", "remove"})
@@ -62,24 +41,8 @@ class Attribute
 
     public function __construct()
     {
+        parent::__construct();
         $this->availableValues = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getType(): ?int
@@ -102,18 +65,6 @@ class Attribute
     public function isTypeUnique() : bool
     {
         return $this->getType() === self::TYPE_UNIQUE;
-    }
-
-    public function getFamily(): ?AttributeFamily
-    {
-        return $this->family;
-    }
-
-    public function setFamily(?AttributeFamily $family): self
-    {
-        $this->family = $family;
-
-        return $this;
     }
 
     /**
@@ -147,30 +98,6 @@ class Attribute
         return $this;
     }
 
-    public function getCode(): ?string
-    {
-        return $this->code;
-    }
-
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
-    public function getPosition(): ?int
-    {
-        return $this->position;
-    }
-
-    public function setPosition(?int $position): self
-    {
-        $this->position = $position;
-
-        return $this;
-    }
-
     public function getMainValue(): ?MainValue
     {
         return $this->mainValue;
@@ -186,6 +113,11 @@ class Attribute
         }
 
         return $this;
+    }
+
+    public function isAttribute(): bool
+    {
+        return true;
     }
 
 }

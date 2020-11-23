@@ -1,0 +1,13 @@
+<h2>Plantes {% if plants | length %}({{plants | length }}){% endif %}</h2>
+
+{% if plants | length %}
+    <ul>
+        {% for plant in plants %}
+            <li>
+                {% include "plant/_partial/line.html.twig" %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <div>Aucune plante répertoriée ne correspond à tes critères <br>Essaye une requête plus simple.</div>
+{% endif %}

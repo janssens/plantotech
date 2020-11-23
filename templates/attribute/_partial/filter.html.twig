@@ -1,0 +1,14 @@
+<h4>{{ attribute.name }}</h4>
+{% if attribute.isTypeNone %}
+    <input type="checkbox" name="{{ attribute.code }}" id="a_{{ attribute.code }}" data-f-value="1" value="1" {% if attributes_values[attribute.code] is defined %} checked="checked" {% endif %} class="switch" />
+    <label for="a_{{ attribute.code }}" class="label"> oui ? </label>
+{% else %}
+    <ul class="unstyled">
+        {% for value in attribute.availableValues %}
+            <li><label for="filter_{{ attribute.code }}_{{ value.id }}">
+                    <input id="filter_{{ attribute.code }}_{{ value.id }}" name="{{ attribute.code }}[]" type="checkbox" value="{{ value.id }}" data-f-value="{{ value.id }}" {% if attributes_values[attribute.code] is defined and value in attributes_values[attribute.code] %} checked="checked" {% endif %} >
+                    {{ value.value | raw }}
+                </label></li>
+        {% endfor %}
+    </ul>
+{% endif %}

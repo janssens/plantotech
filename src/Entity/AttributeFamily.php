@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\AttributeFamilyRepository;
+use App\Entity\PropertyOrAttributeAbstract;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,12 +27,6 @@ class AttributeFamily
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Attribute::class, mappedBy="family")
-     * @OrderBy({"position" = "ASC"})
-     */
-    private $attributes;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $position;
@@ -52,15 +47,16 @@ class AttributeFamily
     private $children;
 
     /**
-     * @ORM\OneToMany(targetEntity=Property::class, mappedBy="family")
+     * @ORM\OneToMany(targetEntity=PropertyOrAttribute::class, mappedBy="family")
      */
-    private $properties;
+    private $propertyOrAttributes;
 
     public function __construct()
     {
         $this->attributes = new ArrayCollection();
         $this->children = new ArrayCollection();
         $this->properties = new ArrayCollection();
+        $this->propertyOrAttributes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -70,43 +66,15 @@ class AttributeFamily
 
     public function getName(): ?string
     {
+        if ($this->name === '_'){
+            return '';
+        }
         return $this->name;
     }
 
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Attribute[]
-     */
-    public function getAttributes(): Collection
-    {
-        return $this->attributes;
-    }
-
-    public function addAttribute(Attribute $attribute): self
-    {
-        if (!$this->attributes->contains($attribute)) {
-            $this->attributes[] = $attribute;
-            $attribute->setFamily($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAttribute(Attribute $attribute): self
-    {
-        if ($this->attributes->contains($attribute)) {
-            $this->attributes->removeElement($attribute);
-            // set the owning side to null (unless already changed)
-            if ($attribute->getFamily() === $this) {
-                $attribute->setFamily(null);
-            }
-        }
 
         return $this;
     }
@@ -179,32 +147,33 @@ class AttributeFamily
     }
 
     /**
-     * @return Collection|Property[]
+     * @return Collection|PropertyOrAttribute[]
      */
-    public function getProperties(): Collection
+    public function getPropertyOrAttributes(): Collection
     {
-        return $this->properties;
+        return $this->propertyOrAttributes;
     }
 
-    public function addProperty(Property $property): self
+    public function addPropertyOrAttribute(PropertyOrAttribute $propertyOrAttribute): self
     {
-        if (!$this->properties->contains($property)) {
-            $this->properties[] = $property;
-            $property->setFamily($this);
+        if (!$this->propertyOrAttributes->contains($propertyOrAttribute)) {
+            $this->propertyOrAttributes[] = $propertyOrAttribute;
+            $propertyOrAttribute->setFamily($this);
         }
 
         return $this;
     }
 
-    public function removeProperty(Property $property): self
+    public function removePropertyOrAttribute(PropertyOrAttribute $propertyOrAttribute): self
     {
-        if ($this->properties->removeElement($property)) {
+        if ($this->propertyOrAttributes->removeElement($propertyOrAttribute)) {
             // set the owning side to null (unless already changed)
-            if ($property->getFamily() === $this) {
-                $property->setFamily(null);
+            if ($propertyOrAttribute->getFamily() === $this) {
+                $propertyOrAttribute->setFamily(null);
             }
         }
 
         return $this;
     }
+
 }

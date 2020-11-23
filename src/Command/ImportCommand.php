@@ -5,12 +5,13 @@ namespace App\Command;
 use App\Entity\Attribute;
 use App\Entity\AttributeFamily;
 use App\Entity\AttributeValue;
+use App\Entity\FilterCategory;
 use App\Entity\MainValue;
 use App\Entity\Plant;
 use App\Entity\PlantFamily;
+use App\Entity\Property;
 use App\Entity\Source;
 use Doctrine\ORM\EntityManagerInterface;
-use PhpParser\Node\Expr\Cast\Object_;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -169,8 +170,7 @@ protected static $defaultName = 'app:import-from-db';
             'toxicite' => array('name' =>  'toxicité','type' => Attribute::TYPE_SINGLE),
             'toxicite_info' => array('name' =>  'info toxicité','type' => Attribute::TYPE_UNIQUE),
             'comestible' => array('name' =>  'comestible','type' => Attribute::TYPE_NONE),
-            'brise_vent' => array('name' =>  'brise vent','type' => Attribute::TYPE_NONE),
-            'sol' => array('name' =>  'aeration du sol','type' => Attribute::TYPE_MULTIPLE),
+            'soil' => array('name' =>  'aeration du sol','type' => Attribute::TYPE_MULTIPLE),
             'ph' => array('name' =>  'ph du sol','type' => Attribute::TYPE_MULTIPLE),
             'humus' => array('name' =>  'richesse du sol','type' => Attribute::TYPE_MULTIPLE),
             'argile' => array('name' =>  'argile','type' => Attribute::TYPE_MULTIPLE),
@@ -180,6 +180,16 @@ protected static $defaultName = 'app:import-from-db';
             'flowering' => array('name' =>  'floraison','type' => Attribute::TYPE_MULTIPLE),
             'insolation' => array('name' =>  'exposition possible','type' => Attribute::TYPE_MULTIPLE),
             'port' => array('name' =>  'port possible','type' => Attribute::TYPE_MULTIPLE),
+            'stratum' => array('name' =>  'strate','type' => Attribute::TYPE_SINGLE),
+            'root' => array('name' =>  'tendance racinaire','type' => Attribute::TYPE_SINGLE),
+            'life_cycle' => array('name' =>  'cycle de vie','type' => Attribute::TYPE_SINGLE),
+            'foliage' => array('name' =>  'feuillage','type' => Attribute::TYPE_SINGLE),
+            'limestone' => array('name' =>  'calcaire','type' => Attribute::TYPE_SINGLE),
+            'leaf_density' => array('name' =>  'densité de feuillage','type' => Attribute::TYPE_SINGLE),
+            'sucker' => array('name' =>  'drageonnant','type' => Attribute::TYPE_SINGLE),
+            'drought_tolerance' => array('name' =>  'résistance sècheresse','type' => Attribute::TYPE_SINGLE),
+            'priority' => array('name' =>  'priorité','type' => Attribute::TYPE_SINGLE),
+            'wind_stopper' => array('name' =>  'brise vent','type' => Attribute::TYPE_NONE),
         );
         $this->excluded_from_auto_import = array(
             'graine_comestible','graine_grignotte','graine_cuite','graine_farine','graine_sechee','graine_huile','graine_germee',
@@ -192,22 +202,17 @@ protected static $defaultName = 'app:import-from-db';
             'sol_draine_compact_profond',
             'bourgeon_seve_comestible',
             'interet_haie',
-            'besoin_zonage',
+            'besoin_zonage','besoin_protection','besoin_taille','besoin_conduite',
             'maladies_ravageurs',
-            'besoin_protection',
-            'usage_medicinal',
-            'besoin_taille',
-            'besoin_conduite',
             'usage_aromatique',
+            'usage_medicinal',
             'comestible',
-            'sol',
-            'ph',
-            'humus',
-            'argile',
+            'sol','ph','humus','argile',
             'humidity',
             'nutrient',
             'crop','flowering',
-            'insolation','port'
+            'insolation','port',
+            'stratum','root','life_cycle','foliage','limestone','leaf_density','sucker','drought_tolerance','priority'
         );
         parent::__construct();
     }
@@ -244,49 +249,14 @@ protected static $defaultName = 'app:import-from-db';
         $progressBar->start();
         $counter = 0;
 
-        $plant_map = array (
-            'LIFE_CYCLE_VIVACE'=> Plant::LIFE_CYCLE_PERENNIAL,
-            'LIFE_CYCLE_BISANNUELLE'=> Plant::LIFE_CYCLE_BIENNIAL,
-            'LIFE_CYCLE_ANNUEL'=> Plant::LIFE_CYCLE_ANNUAL,
-            'ROOT_TRAÇANTES'=> Plant::ROOT_CREEPING,
-            'ROOT_MIXTES'=> Plant::ROOT_MIXED,
-            'ROOT_FASCICULÉES'=> Plant::ROOT_FASCICULE,
-            'ROOT_BULBES'=> Plant::ROOT_BULB,
-            'ROOT_PIVOTANTES'=> Plant::ROOT_TAPROOT,
-            'ROOT_TUBERCULES'=> Plant::ROOT_TUBER,
-            'SUCKER_DRAGEONNANTES'=> Plant::SUCKER_YES,
-            'SUCKER_DRAGEONNANTES+'=> Plant::SUCKER_VERY,
-            'LIMESTONE_TOLÉRANT'=> Plant::LIMESTONE_TOLERANT,
-            'LIMESTONE_ATTENTION'=> Plant::LIMESTONE_WARNING,
-            'LIMESTONE_INDIFFÉRENT' => Plant::LIMESTONE_INDIFFERENT,
-            'LEAF_DENSITY_DENSE' => Plant::LEAF_DENSITY_DENSE,
-            'LEAF_DENSITY_MOYEN' => Plant::LEAF_DENSITY_MEDIUM,
-            'LEAF_DENSITY_LÉGER' => Plant::LEAF_DENSITY_LIGHT,
-            'FOLIAGE_PERSISTANT' => Plant::FOLIAGE_PERSISTANT,
-            'FOLIAGE_SEMI PERSISTANT' => Plant::FOLIAGE_SEMI_PERSISTANT,
-            'FOLIAGE_CADUC' => Plant::FOLIAGE_DECIDUOUS,
-            'DROUGHT_TOLERANCE_1' => Plant::DROUGHT_TOLERANCE_1,
-            'DROUGHT_TOLERANCE_2' => Plant::DROUGHT_TOLERANCE_2,
-            'DROUGHT_TOLERANCE_3' => Plant::DROUGHT_TOLERANCE_3,
-            'DROUGHT_TOLERANCE_4' => Plant::DROUGHT_TOLERANCE_4,
-            'DROUGHT_TOLERANCE_5' => Plant::DROUGHT_TOLERANCE_5,
-            'PRIORITY_1' => Plant::PRIORITY_1,
-            'PRIORITY_2' => Plant::PRIORITY_2,
-            'STRATUM_MÉDIANE' => Plant::STRATUM_MEDIUM,
-            'STRATUM_ARBRISSEAU' => Plant::STRATUM_SHRUB,
-            'STRATUM_GRIMPANTE' => Plant::STRATUM_CLIMBING,
-            'STRATUM_ARBRE' => Plant::STRATUM_TREE,
-            'STRATUM_BASSE' => Plant::STRATUM_LOW,
-            'STRATUM_CANOPÉE' => Plant::STRATUM_CANOPY,
-        );
+        $plant_map = array ();
 
         $parse_int = array('temperature','rusticity');
 
         $simple_keys = array('latin_name','name','rusticity','rusticity_comment','temperature',
             'native_place','botany_leaf','botany_branch','botany_root','botany_flower','botany_seed','density',
             'interest','specificity','author');
-        $enum_keys = array('life_cycle','root','sucker','limestone','leaf_density','foliage','priority',
-            'drought_tolerance','stratum');
+        $enum_keys = array('life_cycle','root','sucker','limestone','leaf_density','foliage','priority', 'drought_tolerance','stratum');
         $simple_to_double_keys = array('height','width','sexual_maturity');
 
 
@@ -297,7 +267,7 @@ protected static $defaultName = 'app:import-from-db';
             'sol_frais' => 'frais',
             'sol_lourd' => 'lourd'
         );
-        $soil_attribute = $this->newAttribute('sol');
+        $soil_attribute = $this->newAttribute('soil');
         $soils_map = array();
         foreach ($types_of_soil as $key => $type_name){
             $soils_map[$key] = $this->newValue($type_name,$soil_attribute);
@@ -313,6 +283,112 @@ protected static $defaultName = 'app:import-from-db';
         $ph_map = array();
         foreach ($types_of_ph as $key => $type_name){
             $ph_map[$key] = $this->newValue($type_name,$ph_attribute);
+        }
+
+        //priority
+        $types_of_priority = array(
+            'PRIORITY_0' => array('code'=>'0','label'=>'&#48;'), //0
+            'PRIORITY_1' => array('code'=>'1','label'=>'1'),
+            'PRIORITY_2' => array('code'=>'2','label'=>'2'),
+        );
+        $priority_attribute = $this->newAttribute('priority');
+        foreach ($types_of_priority as $key => $data){
+            $plant_map[$key] = $this->newValue($data['label'],$priority_attribute,$data['code']);
+        }
+
+        //drought_tolerance
+        $types_of_drought_tolerance = array(
+            'DROUGHT_TOLERANCE_1' => array('code'=>'1','label'=>'1/5'),
+            'DROUGHT_TOLERANCE_2' => array('code'=>'2','label'=>'2/5'),
+            'DROUGHT_TOLERANCE_3' => array('code'=>'3','label'=>'3/5'),
+            'DROUGHT_TOLERANCE_4' => array('code'=>'4','label'=>'4/5'),
+            'DROUGHT_TOLERANCE_5' => array('code'=>'5','label'=>'5/5'),
+        );
+        $drought_tolerance_attribute = $this->newAttribute('drought_tolerance');
+        foreach ($types_of_drought_tolerance as $key => $data){
+            $plant_map[$key] = $this->newValue($data['label'],$drought_tolerance_attribute,$data['code']);
+        }
+
+        //sucker
+        $types_of_sucker = array(
+            'SUCKER_DRAGEONNANTES'=> array('code'=>'yes','label'=>'drageonnantes'),
+            'SUCKER_DRAGEONNANTES+'=> array('code'=>'very','label'=>'drageonnantes+'),
+        );
+        $sucker_attribute = $this->newAttribute('sucker');
+        foreach ($types_of_sucker as $key => $data){
+            $plant_map[$key] = $this->newValue($data['label'],$sucker_attribute,$data['code']);
+        }
+
+        //leaf_density
+        $types_of_leaf_density = array(
+            'LEAF_DENSITY_DENSE' => array('code'=>'dense','label'=>'dense'),
+            'LEAF_DENSITY_MOYEN' => array('code'=>'medium','label'=>'moyen'),
+            'LEAF_DENSITY_LÉGER' => array('code'=>'light','label'=>'léger'),
+        );
+        $leaf_density_attribute = $this->newAttribute('leaf_density');
+        foreach ($types_of_leaf_density as $key => $data){
+            $plant_map[$key] = $this->newValue($data['label'],$leaf_density_attribute,$data['code']);
+        }
+
+        //foliage
+        $types_of_foliage = array(
+            'FOLIAGE_PERSISTANT' => array('code'=>'persistant','label'=>'persistant'),
+            'FOLIAGE_SEMI PERSISTANT' => array('code'=>'semi_persistant','label'=>'semi persistant'),
+            'FOLIAGE_CADUC' => array('code'=>'deciduous','label'=>'caduc'),
+        );
+        $foliage_attribute = $this->newAttribute('foliage');
+        foreach ($types_of_foliage as $key => $data){
+            $plant_map[$key] = $this->newValue($data['label'],$foliage_attribute,$data['code']);
+        }
+
+        //limestone
+        $types_of_limestone = array(
+            'LIMESTONE_TOLÉRANT'=> array('code'=>'tolerant','label'=>'tolérant'),
+            'LIMESTONE_ATTENTION'=> array('code'=>'warning','label'=>'attention'),
+            'LIMESTONE_INDIFFÉRENT' => array('code'=>'indifferent','label'=>'indifférent'),
+        );
+        $limestone_attribute = $this->newAttribute('limestone');
+        foreach ($types_of_limestone as $key => $data){
+            $plant_map[$key] = $this->newValue($data['label'],$limestone_attribute,$data['code']);
+        }
+
+        //root
+        $types_of_root = array(
+            'ROOT_TRAÇANTES'=> array('code'=>'creeping','label'=>'traçantes'),
+            'ROOT_MIXTES'=> array('code'=>'mixed','label'=>'mixtes'),
+            'ROOT_FASCICULÉES'=> array('code'=>'rascicule','label'=>'fasciculées'),
+            'ROOT_BULBES'=> array('code'=>'bulb','label'=>'bulbes'),
+            'ROOT_PIVOTANTES'=> array('code'=>'raproot','label'=>'pivotantes'),
+            'ROOT_TUBERCULES'=> array('code'=>'tuber','label'=>'tubercules'),
+        );
+        $root_attribute = $this->newAttribute('root');
+        foreach ($types_of_root as $key => $data){
+            $plant_map[$key] = $this->newValue($data['label'],$root_attribute,$data['code']);
+        }
+
+        //life cycle
+        $life_cycles = array(
+            'LIFE_CYCLE_VIVACE'=> array('code'=>'perennial','label'=>'vivace'),
+            'LIFE_CYCLE_BISANNUELLE'=> array('code'=>'biennial','label'=>'bisannuelle'),
+            'LIFE_CYCLE_ANNUEL'=> array('code'=>'annual','label'=>'annuel'),
+        );
+        $life_cycle_attribute = $this->newAttribute('life_cycle');
+        foreach ($life_cycles as $key => $data){
+            $plant_map[$key] = $this->newValue($data['label'],$life_cycle_attribute,$data['code']);
+        }
+
+        //stratum
+        $strates = array(
+            'STRATUM_MÉDIANE'=>array('code'=>'medium','label'=>'médiane'),
+            'STRATUM_ARBRISSEAU'=>array('code'=>'shrub','label'=>'arbrisseau'),
+            'STRATUM_GRIMPANTE'=>array('code'=>'climbing','label'=>'grimpante'),
+            'STRATUM_ARBRE'=>array('code'=>'tree','label'=>'arbre'),
+            'STRATUM_BASSE'=>array('code'=>'low','label'=>'basse'),
+            'STRATUM_CANOPÉE'=>array('code'=>'canopy','label'=>'canopée'),
+            );
+        $stratum_attribute = $this->newAttribute('stratum');
+        foreach ($strates as $key => $data){
+            $plant_map[$key] = $this->newValue($data['label'],$stratum_attribute,$data['code']);
         }
 
         //nutrient
@@ -511,10 +587,10 @@ protected static $defaultName = 'app:import-from-db';
             }
             foreach ($enum_keys as $key) {
                 $value = strtoupper($plant[constant('self::PLANT_KEY_' . strtoupper($key))]);
-                if (strtoupper($value)) {
+                if ($value) {
                     $local_value = $plant_map[strtoupper($key) . '_' . strtoupper($value)];
-                    $function = self::camelCase('set_' . $key);
-                    $new_plant->$function($local_value);
+                    if ($local_value)
+                        $new_plant->addAttributeValue($local_value);
                 }
             }
             foreach ($simple_to_double_keys as $key) {
@@ -863,56 +939,7 @@ protected static $defaultName = 'app:import-from-db';
         }
         $progressBar->finish();
 
-        $families =
-            array(
-                'Biotope (environnement) // secteurs du terrain'=>array(
-                    'Conditions pédoclimatiques' => array(),
-                    'Milieu naturel et sub naturel' => array(),
-                ),
-                'Besoins éco-systèmiques'=>array(
-                    'Auxiliaires' => array('besoin_pollinisation'),
-                    'Plantes Compagnes' => array(),
-                ),
-                'Besoins culturaux'=>array(
-                    'Soin'=> array('besoin_arrosage','besoin_taille','besoin_limitation_de_concurrence','besoin_azote',
-                        'besoin_conduite','besoin_cultural_entretien','besoin_cultural_exigences_particulieres','besoin_matiere_organique',
-                        'besoin_mineraux','besoin_protection','besoin_brise_vent','besoin_tuteur','maladies_ravageurs','besoin_zonage'),
-                    'Récolte'=> array('besoin_cultural_cueillette_ramassage','besoin_cultural_precisions_recolte','besoin_cultural_recolte_etalee_groupee'),
-                    'Multiplication'=> array('multiplication','multiplication_info'),
-                ),
-                'Services éco-systèmiques'=>array(
-                    'Fértilité du sol'=>array('interet_fixateur_dazote','interet_fixateur_de_mineraux','precisions_fixateur_de_mineraux',
-                        'interet_allelopathique','interet_amelioration_du_compost','interet_amelioration_structure_du_sol',
-                        'interet_biomasse','interet_anti_erosion'),
-                    'Faune'=>array('interet_habitat_d_oiseaux','interet_insectes_auxilliaires','precisions_insectes_auxilliaires',
-                        'interet_mellifere','interet_nectarifere','interet_pollen','interet_repulsif_insectes'),
-                    'Micro-climats'=>array('interet_ombre_legere','interet_couvre_sol','interet_haie','interet_pionnier')
-                ),
-                'Services culturaux'=>array(
-                    'Allimentation / Santé'=>array('toxicite','toxicite_info','fruit_comestible','graine_comestible','fleur_comestible',
-                        'petiole_feuille_comestible','bourgeon_seve_comestible','rhizome_tubercule_bulbe_comestible','usage_medicinal',
-                        'proprietes_medicinales','associations_culinaires'),
-                    'Animaux'=>array('fourrage_basse_court','fourrage_grands_herbivores','precision_fourrage'),
-                    'Plaisir des sens'=>array('odorante','ornementale'),
-                    'Usages artisanaux et domestique'=>array('vannerie','bois_oeuvre','tuteur','tinctoriale','bois_chauffage','usage_aromatique','porte_greffe'),
-                )
-            );
-        foreach ($families as $family_name => $children){
-            $family = $this->newAttributeFamily($family_name);
-            foreach ($children as $name => $attributes){
-                $family_child = $this->newAttributeFamily($name,$family);
-                foreach ($attributes as $attribute_code){
-                    /** @var Attribute $attribute */
-                    $attribute = $this->entityManager->getRepository(Attribute::class)->findOneBy(array('code'=>$attribute_code));
-                    if ($attribute){
-                        $attribute->setFamily($family_child);
-                        $this->entityManager->persist($attribute);
-                    }
-                }
-            }
-        }
-        $this->entityManager->flush();
-
+        //missing attributes
         $comestible = $this->newAttribute('comestible');
         $comestible_value = $this->newValue('',$comestible);
         foreach (array('fruit_comestible','graine_comestible','petiole_feuille_comestible','rhizome_tubercule_bulbe_comestible','fleur_comestible','bourgeon_seve_comestible') as $code){
@@ -924,7 +951,144 @@ protected static $defaultName = 'app:import-from-db';
                 }
             }
         }
-        $this->entityManager->persist($comestible_value);
+        $this->entityManager->flush();
+
+        $wind_stopper = $this->newAttribute('wind_stopper');
+        $wind_stopper_value = $this->newValue('',$wind_stopper);
+        /** @var AttributeValue $wind_stopper_value */
+        $haie_wind_stopper_value = $this->entityManager->getRepository(AttributeValue::class)->findOneBy(array('code'=>'brise-vent'));
+        foreach ($haie_wind_stopper_value->getPlants() as $plant){
+            $wind_stopper_value->addPlant($plant);
+        }
+        $this->entityManager->flush();
+
+        $properties = array(
+            'rusticity'=>array('position'=>0,'name'=>'résistance au froid (rusticité)'),
+            'rusticity_comment'=>array('position'=>1,'name'=>'commentaire'),
+            'native_place'=>array('position'=>1,'name'=>'origine'),
+            'height_width'=>array('position'=>1,'name'=>'hauteur - largeur'),
+            'gallery'=>array('position'=>3,'name'=>''),
+            'flowerings_crops'=>array('position'=>2,'name'=>'floraison et fructification'),
+            'sources'=>array('position'=>1,'name'=>'Sources'),
+        );
+        foreach ($properties as $code => $data){
+            $prop = new Property();
+            $prop->setCode($code);
+            $prop->setPosition($data['position']);
+            $prop->setName($data['name']);
+            $this->entityManager->persist($prop);
+        }
+        $this->entityManager->flush();
+
+        //families and category
+        $families =
+            array(
+                'Biotope (environnement) // secteurs du terrain'=>array(
+                    'Conditions pédoclimatiques' => array('attributes'=>array('drought_tolerance','wind_stopper','insolation','humus','soil','ph','limestone')
+                    ,'property'=>array('rusticity')),
+                    'Milieu naturel et sub naturel' => array('property'=>array('origin')),
+                ),
+                'Besoins éco-systèmiques'=>array(
+                    'Auxiliaires' => array('attributes'=>array('besoin_pollinisation')),
+                    'Plantes Compagnes' => array('attributes'=>array()),
+                ),
+                'Besoins culturaux'=>array(
+                    'Soin'=> array('attributes'=>array('besoin_arrosage','besoin_taille','besoin_limitation_de_concurrence','besoin_azote',
+                        'besoin_conduite','besoin_cultural_entretien','besoin_cultural_exigences_particulieres','besoin_matiere_organique',
+                        'besoin_mineraux','besoin_protection','besoin_brise_vent','besoin_tuteur','maladies_ravageurs','besoin_zonage')),
+                    'Récolte'=> array('attributes'=>array('besoin_cultural_cueillette_ramassage','besoin_cultural_precisions_recolte',
+                        'besoin_cultural_recolte_etalee_groupee')),
+                    'Multiplication'=> array('attributes'=>array('multiplication','multiplication_info')),
+                ),
+                'Description'=>array(
+                    '_' => array('attributes'=>array('stratum')),
+                    'Mensuration' => array('property'=>array('height_width')),
+                    'Forme' => array('attributes'=>array('port','foliage','root'),'property'=>array('gallery')),
+                    'Sources' => array('property'=>array('sources')),
+                ),
+                'Cycle'=>array(
+                    '_' => array('attributes'=>array('life_cycle',),'property'=>array('flowerings_crops')),
+                ),
+                'Services éco-systèmiques'=>array(
+                    'Fértilité du sol'=>array('attributes'=>array('interet_fixateur_dazote','interet_fixateur_de_mineraux','precisions_fixateur_de_mineraux',
+                        'interet_allelopathique','interet_amelioration_du_compost','interet_amelioration_structure_du_sol',
+                        'interet_biomasse','interet_anti_erosion')),
+                    'Faune'=>array('attributes'=>array('interet_habitat_d_oiseaux','interet_insectes_auxilliaires','precisions_insectes_auxilliaires',
+                        'interet_mellifere','interet_nectarifere','interet_pollen','interet_repulsif_insectes')),
+                    'Micro-climats'=>array('attributes'=>array('interet_ombre_legere','interet_couvre_sol','interet_haie','interet_pionnier'))
+                ),
+                'Services culturaux'=>array(
+                    'Allimentation / Santé'=>array('attributes'=>array('toxicite','toxicite_info','fruit_comestible','graine_comestible','fleur_comestible',
+                        'petiole_feuille_comestible','bourgeon_seve_comestible','rhizome_tubercule_bulbe_comestible','usage_medicinal',
+                        'proprietes_medicinales','associations_culinaires')),
+                    'Animaux'=>array('attributes'=>array('fourrage_basse_court','fourrage_grands_herbivores','precision_fourrage')),
+                    'Plaisir des sens'=>array('attributes'=>array('odorante','ornementale')),
+                    'Usages artisanaux et domestique'=>array('attributes'=>array('vannerie','bois_oeuvre','tuteur','tinctoriale','bois_chauffage',
+                        'usage_aromatique','porte_greffe')),
+                )
+            );
+        foreach ($families as $family_name => $children){
+            $family = $this->newAttributeFamily($family_name);
+            foreach ($children as $name => $data){
+                if (isset($data['attributes'])){
+                    $attributes = $data['attributes'];
+                    $family_child = $this->newAttributeFamily($name,$family);
+                    foreach ($attributes as $attribute_code){
+                        /** @var Attribute $attribute */
+                        $attribute = $this->entityManager->getRepository(Attribute::class)->findOneBy(array('code'=>$attribute_code));
+                        if ($attribute){
+                            $attribute->setFamily($family_child);
+                            $this->entityManager->persist($attribute);
+                        }
+                    }
+                }
+                if (isset($data['property'])){
+                    $properties = $data['property'];
+                    $family_child = $this->newAttributeFamily($name,$family);
+                    foreach ($properties as $code){
+                        /** @var Property $property */
+                        $property = $this->entityManager->getRepository(Property::class)->findOneBy(array('code'=>$code));
+                        if ($property){
+                            $property->setFamily($family_child);
+                            $this->entityManager->persist($property);
+                        }
+                    }
+                }
+            }
+        }
+
+        $filter_categories = array(
+            'mon sol' => array('attributes'=>array('humus','soil','ph')),
+            'mes conditions climatiques' => array('attributes'=>array('insolation','drought_tolerance'),'properties'=>array('rusticity')),
+            'créer un micro climat' => array('attributes'=>array('wind_stopper','leaf_density','foliage')),
+            'selon calendrier' => array('attributes'=>array('flowering','interet_mellifere','interet_nectarifere','interet_pollen','fruit_comestible','crop','stratum')),
+            'pour une haie' => array('attributes'=>array('interet_haie','comestible')),
+//            'Recherches avancées' => array(),
+        );
+        //
+        foreach ($filter_categories as $name => $data){
+            $category = new FilterCategory();
+            $category->setName($name);
+            if (isset($data['attributes'])){
+                foreach ($data['attributes'] as $code){
+                    /** @var Attribute $attribute */
+                    $attribute = $this->entityManager->getRepository(Attribute::class)->findOneBy(array('code'=>$code));
+                    if ($attribute){
+                        $category->addPropertyOrAttribute($attribute);
+                    }
+                }
+            }
+            if (isset($data['properties'])) {
+                foreach ($data['properties'] as $code) {
+                    /** @var Property $property */
+                    $property = $this->entityManager->getRepository(Property::class)->findOneBy(array('code' => $code));
+                    if ($property) {
+                        $category->addPropertyOrAttribute($property);
+                    }
+                }
+            }
+            $this->entityManager->persist($category);
+        }
         $this->entityManager->flush();
 
         $output->writeln('');
@@ -957,8 +1121,8 @@ protected static $defaultName = 'app:import-from-db';
         if (!$exist) {
             $exist = $this->entityManager->getRepository(MainValue::class)->findOneBy(array('attribute' => $attribute));
             if (!$exist) {
-                $main_value = new MainValue();;
-                $main_value->setLabel($label);
+                $main_value = new MainValue();
+                $main_value->setLabel(strtolower($label));
                 $main_value->setAttribute($attribute);
                 $this->entityManager->persist($main_value);
                 $this->attribute_main_value[$attribute->getCode()] = $main_value;
@@ -987,7 +1151,7 @@ protected static $defaultName = 'app:import-from-db';
                 $attr = $this->attribute_map[$code];
                 $a->setCode($code);
                 $a->setType($attr['type']);
-                $a->setName($attr['name']);
+                $a->setName(strtolower($attr['name']));
                 $this->entityManager->persist($a);
                 $this->attribute[$code] = $a;
                 return $a;
@@ -1004,8 +1168,9 @@ protected static $defaultName = 'app:import-from-db';
      */
     private function newValue(string $label, Attribute $attribute, string $code = ''){
         $name = substr($label,0,255);
+        $name = strtolower($name);
         if (!$code){
-            $code = $label;
+            $code = $name;
         }
         $code = Plant::makeSlug($code);
         if (!$code || strlen($code)===0){
@@ -1040,9 +1205,11 @@ protected static $defaultName = 'app:import-from-db';
      * @return AttributeFamily|null
      */
     private function newAttributeFamily(string $name,AttributeFamily $parent = null){
+        $name = strtolower($name);
         $exist = null;
-        if (isset($this->attribute_family[$name])){
-            $exist = $this->attribute_family[$name];
+        $parent_code = ($parent) ? Plant::makeSlug($parent->getName()) : 'orphan';
+        if (isset($this->attribute_family[$parent_code.'_'.$name])){
+            $exist = $this->attribute_family[$parent_code.'_'.$name];
             if ($exist->getParent() != $parent){
                 // what to do ?
             }
@@ -1055,7 +1222,7 @@ protected static $defaultName = 'app:import-from-db';
                 if ($parent)
                     $af->setParent($parent);
                 $this->entityManager->persist($af);
-                $this->attribute_family[$name] = $af;
+                $this->attribute_family[$parent_code.'_'.$name] = $af;
                 return $af;
             }
             if ($exist->getParent() != $parent){

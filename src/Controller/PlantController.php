@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Attribute;
 use App\Entity\AttributeFamily;
 use App\Entity\AttributeValue;
+use App\Entity\FilterCategory;
 use App\Entity\FloweringAndCrop;
 use App\Entity\Humus;
 use App\Entity\Image;
@@ -37,40 +38,18 @@ class PlantController extends AbstractController
         $filters = array();
         $restricted = false;
         $restrict = array();
-        $complex_filters = array();
-        $filters_map = array('life_cycle','root','stratum','drought_tolerance','foliage','leaf_density','limestone');
-        foreach ($filters_map as $filter){
-            if ($request->query->get($filter)){
-                $filters[$filter] = $request->query->get($filter);
-            }
-        }
-        //complex filter (join)
-        //'insolation','port'
+
         if (!isset($restrict['id']))
             $restrict['id'] = array();
-        if ($request->query->get('port')){
-            $local_restrict = array();
-            /** @var Port $port */
-            $port = $this->getDoctrine()->getRepository(Port::class)->find($request->query->get('port'));
-            foreach ($port->getPlants() as $plant){
-                $local_restrict[] = $plant->getPlant()->getId();
-            }
-            $complex_filters['port'] = $request->query->get('port');
-            if ($restricted){
-                $restrict['id'] = array_intersect($restrict['id'],$local_restrict);
-            }else{
-                $restrict['id'] = $local_restrict;
-            }
-            $restricted = true;
-        }
-        array_unique($restrict['id']);
 
-        $complex_filters_map = array('family');
-        foreach ($complex_filters_map as $filter){
-            if ($request->query->get($filter)){
-                $filters[$filter] = $request->query->get($filter);
-            }
+        //
+        if ($request->query->get('family')){
+            $filters['family'] = $request->query->get('family');
         }
+        if ($request->query->get('rusticity')){
+            $filters['rusticity'] = $request->query->get('rusticity');
+        }
+
         $s = $request->query->get('q');
         if ($s){
             $restricted = true;
@@ -106,9 +85,9 @@ class PlantController extends AbstractController
         $attributes_value = array();
         $excluded_attributes = array();
         foreach ($request->query->all() as $key => $value){
-            if (strpos($key,'a_')===0){ //attribute
-                $used_attributes[substr($key,2)] = $this->getDoctrine()->getRepository(Attribute::class)->findOneByCode(substr($key,2));
-                $attributes_value[substr($key,2)] = $value;
+            if (!in_array($key,array('q','rusticity','family'))){ //attribute
+                $used_attributes[$key] = $this->getDoctrine()->getRepository(Attribute::class)->findOneByCode($key);
+                $attributes_value[$key] = $value;
             }
         }
 
@@ -160,12 +139,6 @@ class PlantController extends AbstractController
 
         $plants = $this->getDoctrine()->getRepository(Plant::class)->findBy(array_merge($filters,$restrict));
 
-        $complex_filters_post_map = array('rusticity');
-        foreach ($complex_filters_post_map as $filter){
-            if ($request->query->get($filter)){
-                $filters[$filter] = $request->query->get($filter);
-            }
-        }
         $attributes_collection = $this->getDoctrine()->getRepository(Attribute::class)->findAll();
         $attributes = array();
         foreach ($attributes_collection as $attribute){
@@ -175,12 +148,12 @@ class PlantController extends AbstractController
         return $this->render('plant/index.html.twig', [
             'controller_name' => 'PlantController',
             'plants' => $plants,
+            'filter_categories' => $this->getDoctrine()->getRepository(FilterCategory::class)->findAll(),
             'filters' => $filters,
-            'attributes' => $attributes,
+            'attributes' => $attributes, //all
             'attributes_values' => $attributes_value,
             'excluded_attributes' => $excluded_attributes,
             'query_string' => $s,
-            'complex_filters' => $complex_filters,
         ]);
     }
 

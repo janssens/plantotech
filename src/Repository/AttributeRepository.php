@@ -19,32 +19,19 @@ class AttributeRepository extends ServiceEntityRepository
         parent::__construct($registry, Attribute::class);
     }
 
-    // /**
-    //  * @return InterestType[] Returns an array of InterestType objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Attribute Returns an attribute or null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByCode($code)
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.code = :val')
+            ->setParameter('val', $code)
             ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?InterestType
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+
 }
