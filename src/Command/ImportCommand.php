@@ -238,6 +238,9 @@ protected static $defaultName = 'app:import-from-db';
         $username = $input->getArgument('username');
         $password = $input->getArgument('password');
         $limit = $input->getOption('limit');
+        if (!$limit){
+            $limit = 99999;
+        }
 
         $clean_db = new \MysqliDb($host, $username, $password, $database,$port);
         $db = clone $clean_db;
@@ -951,6 +954,7 @@ protected static $defaultName = 'app:import-from-db';
                 }
             }
         }
+        $this->entityManager->persist($comestible_value);
         $this->entityManager->flush();
 
         $wind_stopper = $this->newAttribute('wind_stopper');

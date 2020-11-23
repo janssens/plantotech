@@ -14,6 +14,7 @@ use App\Entity\Ph;
 use App\Entity\Plant;
 use App\Entity\PlantAttribute;
 use App\Entity\Port;
+use App\Entity\PropertyOrAttribute;
 use App\Entity\Soil;
 use App\Form\PlantType;
 use App\Repository\PlantAttributeRepository;
@@ -35,6 +36,7 @@ class PlantController extends AbstractController
      */
     public function index(Request $request)
     {
+        $is_ajax = $request->get('_ajax') === '1';
         $filters = array();
         $restricted = false;
         $restrict = array();
@@ -44,10 +46,10 @@ class PlantController extends AbstractController
 
         //
         if ($request->query->get('family')){
-            $filters['family'] = $request->query->get('family');
+            $filters['family'] = $request->get('family');
         }
         if ($request->query->get('rusticity')){
-            $filters['rusticity'] = $request->query->get('rusticity');
+            $filters['rusticity'] = $request->get('rusticity');
         }
 
         $s = $request->query->get('q');
@@ -65,7 +67,7 @@ class PlantController extends AbstractController
                 $restrict['id'] = array_intersect($restrict['id'],$ids);
         }
 
-        $rusticity = $request->query->get('rusticity');
+        $rusticity = $request->get('rusticity');
         if ($rusticity){
             $restricted = true;
             $matched_plants = $this->getDoctrine()->getRepository(Plant::class)->findByRusticity($rusticity);
@@ -84,10 +86,15 @@ class PlantController extends AbstractController
         $used_attributes = array();
         $attributes_value = array();
         $excluded_attributes = array();
-        foreach ($request->query->all() as $key => $value){
-            if (!in_array($key,array('q','rusticity','family'))){ //attribute
-                $used_attributes[$key] = $this->getDoctrine()->getRepository(Attribute::class)->findOneByCode($key);
-                $attributes_value[$key] = $value;
+        foreach (array($request->query->all(),$request->request->all()) as $bag){
+            foreach ($bag as $key => $value){
+                if (!in_array($key,array('q','rusticity','family','_ajax'))){ //attribute
+                    $property_or_attribute = $this->getDoctrine()->getRepository(PropertyOrAttribute::class)->findOneBy(array('code'=>$key));
+                    if ($property_or_attribute){
+                        $used_attributes[$key] = $property_or_attribute;
+                        $attributes_value[$key] = $value;
+                    }
+                }
             }
         }
 
@@ -95,19 +102,23 @@ class PlantController extends AbstractController
             $matched_plants = array();
             /**
              * @var string $v
-             * @var Attribute $attribute
+             * @var PropertyOrAttribute $attribute
              */
             foreach ($used_attributes as $code => $attribute){
-                if ($attribute->isTypeNone()) {
-                    $av = $this->getDoctrine()->getRepository(AttributeValue::class)->findOneBy(array('value' => null, 'attribute' => $attribute));
-                    if ($av) {
-                        $av = array($av);
+                if ($attribute->isAttribute()){
+                    if ($attribute->isTypeNone()) {
+                        $av = $this->getDoctrine()->getRepository(AttributeValue::class)->findOneBy(array('value' => null, 'attribute' => $attribute));
+                        if ($av) {
+                            $av = array($av);
+                        }
+                    }else{
+                        if (!is_array($attributes_value[$code])){
+                            $attributes_value[$code] = array($attributes_value[$code]);
+                        }
+                        $av = $this->getDoctrine()->getRepository(AttributeValue::class)->findBy(array('id'=>$attributes_value[$code]));
                     }
                 }else{
-                    if (!is_array($attributes_value[$code])){
-                        $attributes_value[$code] = array($attributes_value[$code]);
-                    }
-                    $av = $this->getDoctrine()->getRepository(AttributeValue::class)->findBy(array('id'=>$attributes_value[$code]));
+                    continue;
                 }
                 $attribute_matched_plants = array();
                 if ($av){
@@ -145,16 +156,29 @@ class PlantController extends AbstractController
             $attributes[$attribute->getCode()] = $attribute;
         }
 
-        return $this->render('plant/index.html.twig', [
-            'controller_name' => 'PlantController',
-            'plants' => $plants,
-            'filter_categories' => $this->getDoctrine()->getRepository(FilterCategory::class)->findAll(),
-            'filters' => $filters,
-            'attributes' => $attributes, //all
-            'attributes_values' => $attributes_value,
-            'excluded_attributes' => $excluded_attributes,
-            'query_string' => $s,
-        ]);
+        if ($is_ajax){
+            return $this->json(array(
+                'success'=>true,
+                'data' => array(
+                    'filters'=>$this->renderView('plant/_partial/filters.html.twig',array(
+                        'filters' => $filters,
+                        'attributes_values' => $attributes_value,
+                        'excluded_attributes' => $excluded_attributes
+                    )),
+                    'list'=>$this->renderView('plant/_partial/list.html.twig',array('plants' => $plants,)),
+                )
+            ));
+        }else{
+            return $this->render('plant/index.html.twig', [
+                'controller_name' => 'PlantController',
+                'plants' => $plants,
+                'filter_categories' => $this->getDoctrine()->getRepository(FilterCategory::class)->findAll(),
+                'filters' => $filters,
+                'attributes_values' => $attributes_value,
+                'excluded_attributes' => $excluded_attributes,
+                'query_string' => $s,
+            ]);
+        }
     }
 
     /**

@@ -30,18 +30,23 @@
                                     </div>
                                 {% else %}
                                     <div class="col-2-small-3 fblock cat_{{ filter_category.id }} cat_all">
-                                        property {{ element.code }}
+                                        {% include element.templates('filter') with {'property': element} %}
                                     </div>
                                 {% endif %}
                             {% endfor %}
                         {% endfor %}
                     </div>
+                    <input type="hidden" name="_ajax" value="1">
                 </form>
             </div>
         </div>
     </div>
 
-    {% include "plant/_partial/filters.html.twig" %}
-    {% include "plant/_partial/list.html.twig" %}
+    <div id="filters">
+        {% include "plant/_partial/filters.html.twig" %}
+    </div>
+    <div id="list">
+        {% include "plant/_partial/list.html.twig" %}
+    </div>
 
 {% endblock %}
