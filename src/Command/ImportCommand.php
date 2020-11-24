@@ -262,7 +262,6 @@ protected static $defaultName = 'app:import-from-db';
         $enum_keys = array('life_cycle','root','sucker','limestone','leaf_density','foliage','priority', 'drought_tolerance','stratum');
         $simple_to_double_keys = array('height','width','sexual_maturity');
 
-
         //soil
         $types_of_soil = array(
             'sol_tres_drainant' => 'très drainant',
@@ -567,6 +566,9 @@ protected static $defaultName = 'app:import-from-db';
             $this->newValue($value,$usage_aromatique_attribute);
         }
 
+        $wind_stopper = $this->newAttribute('wind_stopper');
+        $wind_stopper_value = $this->newValue('',$wind_stopper);
+
         $this->entityManager->flush();
 
         $output->writeln('ready to import',OutputInterface::VERBOSITY_VERBOSE);
@@ -860,6 +862,16 @@ protected static $defaultName = 'app:import-from-db';
                     }
                 }
             }
+            $wind_stopper = $this->newAttribute('wind_stopper');
+            $wind_stopper_value = $this->newValue('',$wind_stopper);
+            $haie_wind_stopper_value = $this->entityManager->getRepository(AttributeValue::class)->findOneBy(array('code'=>'brise-vent'));
+            if (isset($interests_and_needs['interet_brise_vent'])){
+                $att_value = strtolower(trim($interests_and_needs['interet_brise_vent']));
+                if (strlen($att_value) >= 1 ){
+                    $new_plant->addAttributeValue($wind_stopper_value);
+                    $new_plant->addAttributeValue($haie_wind_stopper_value);
+                }
+            }
             //'besoin_zonage';
             if (isset($interests_and_needs['besoin_zonage'])&&$besoin_zonage_attribute){
                 $output->writeln('import attribute besoin_zonage',OutputInterface::VERBOSITY_VERBOSE);
@@ -941,29 +953,22 @@ protected static $defaultName = 'app:import-from-db';
             }
         }
         $progressBar->finish();
+        $this->entityManager->flush();
 
-        //missing attributes
+        //the missing attribute
         $comestible = $this->newAttribute('comestible');
         $comestible_value = $this->newValue('',$comestible);
+        $this->entityManager->flush();
+
         foreach (array('fruit_comestible','graine_comestible','petiole_feuille_comestible','rhizome_tubercule_bulbe_comestible','fleur_comestible','bourgeon_seve_comestible') as $code){
             $attribute = $this->newAttribute($code);
             foreach ($attribute->getAvailableValues() as $value){
                 foreach ($value->getPlants() as $plant){
                     $comestible_value->addPlant($plant);
-                    $this->entityManager->persist($plant);
                 }
             }
         }
         $this->entityManager->persist($comestible_value);
-        $this->entityManager->flush();
-
-        $wind_stopper = $this->newAttribute('wind_stopper');
-        $wind_stopper_value = $this->newValue('',$wind_stopper);
-        /** @var AttributeValue $wind_stopper_value */
-        $haie_wind_stopper_value = $this->entityManager->getRepository(AttributeValue::class)->findOneBy(array('code'=>'brise-vent'));
-        foreach ($haie_wind_stopper_value->getPlants() as $plant){
-            $wind_stopper_value->addPlant($plant);
-        }
         $this->entityManager->flush();
 
         $properties = array(

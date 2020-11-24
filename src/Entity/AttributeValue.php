@@ -31,7 +31,7 @@ class AttributeValue
     private $value;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="attributes")
+     * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="attributes",cascade={"persist"})
      */
     private $plants;
 

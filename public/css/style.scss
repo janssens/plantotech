@@ -1,10 +1,21 @@
 @import "forms";
+@import "fonts";
 
 body{
   padding: 5px;
 }
 select{
   background-image: none;
+}
+.container{
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+}
+img.main{
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
 }
 //filter
 .fblock{
@@ -20,4 +31,7 @@ span.tag{
       cursor: pointer;
     }
   }
+}
+.trap{
+  display: none;
 }

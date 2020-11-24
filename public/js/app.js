@@ -26,12 +26,19 @@ jQuery(function ($){
     //     let counter = $(this).find(':selected').length;
     //     console.log($(this).attr('id')+':'+counter);
     // });
+    window.addEventListener('popstate', function(e){
+        if(e.state)
+            ajaxSubmit($('#form_filter form'),e.state.data + '&' + '_ajax=1');
+    });
 });
 
-function ajaxSubmit($form){
-    let data = $form.serialize();
+function ajaxSubmit($form,data){
+    if (typeof data === 'undefined')
+        data = $form.serialize();
     $('#list').animate({'opacity':0},500);
     $('#filters').animate({'opacity':0},500);
+    let raw_url = window.location.href.split('?')[0];
+    let full_url = raw_url;
     $.ajax({
         method: "POST",
         url: $form.attr('action'),
@@ -42,6 +49,25 @@ function ajaxSubmit($form){
         if (ret.success){
             $('#list').html(ret.data.list).animate({'opacity':1},100);
             $('#filters').html(ret.data.filters).animate({'opacity':1},100);
+            let data_string = removeURLParameter(data,'_ajax');
+            data_string = removeURLParameter(data_string,'rusticity_v');
+            if (data_string){
+                full_url += '?' + data_string;
+            }
+            window.history.pushState({'data': data_string}, '',  full_url);
         }
     });
+}
+
+function removeURLParameter(query, parameter) {
+    var prefix = encodeURIComponent(parameter) + '=';
+    var pars = query.split(/[&;]/g);
+    //reverse iteration as may be destructive
+    for (var i = pars.length; i-- > 0;) {
+        //idiom for string.startsWith
+        if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+            pars.splice(i, 1);
+        }
+    }
+    return pars.join('&');
 }

@@ -45,11 +45,8 @@ class PlantController extends AbstractController
             $restrict['id'] = array();
 
         //
-        if ($request->query->get('family')){
+        if ($request->get('family')){
             $filters['family'] = $request->get('family');
-        }
-        if ($request->query->get('rusticity')){
-            $filters['rusticity'] = $request->get('rusticity');
         }
 
         $s = $request->query->get('q');
@@ -149,6 +146,9 @@ class PlantController extends AbstractController
             unset($restrict['id']);
 
         $plants = $this->getDoctrine()->getRepository(Plant::class)->findBy(array_merge($filters,$restrict));
+        if ($request->get('rusticity')){
+            $filters['rusticity'] = $request->get('rusticity');
+        }
 
         $attributes_collection = $this->getDoctrine()->getRepository(Attribute::class)->findAll();
         $attributes = array();

@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Plantotech{% endblock %}
+
+{% block body %}
+    <h2 class="chapeau">
+        Formulaire de contact
+    </h2>
+
+    <form action="" method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('contact') }}" >
+        <label class="trap">
+            <input type="text" name="firstname" value="" placeholder="">
+        </label>
+        <label>
+            <input type="text" name="name" placeholder="Mon prenom" {% if name is defined %}value="{{ name }}"{% endif %}/>
+        </label>
+        <br>
+        <label>
+            <input type="email" name="email" placeholder="mon@email.fr" {% if email is defined %}value="{{ email }}"{% endif %} required/>
+        </label>
+        <br>
+        <label>
+            <input type="text" name="subject" placeholder="sujet" {% if subject is defined %}value="{{ subject }}"{% endif %} required>
+        </label>
+        <br>
+        <label for="message">
+        <textarea id="message" name="message" placeholder="mon message" required>{% if message is defined %}{{ message }}{% endif %}</textarea>
+        </label>
+        <br>
+        <input type="submit" value="Envoyer 🐦">
+    </form>
+
+
+{% endblock %}

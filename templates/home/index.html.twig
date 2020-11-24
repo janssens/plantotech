@@ -3,20 +3,25 @@
 {% block title %}Plantotech{% endblock %}
 
 {% block body %}
-    <div class="chapeau">
+    <h2 class="chapeau">
         Bienvenu sur notre base de donnée en ligne dédiée au jardinage agro-forestier et au design de permaculture
-    </div>
+    </h2>
+
+    <p class="txtcenter">
+        <img src="img/home.png" alt="jardin-foret" class="main">
+    </p>
+
     <br>
     Bonjour {% if is_granted('ROLE_USER') %}{{ app.user.username }} 👋{% endif %} !
 
     <p>
-        Cette base de donnée est le fruit d’un travail collaboratif commencé en 2018, coordonnée et dirigé par l’Atelier des Alvéoles.
+        Cette base de donnée est le fruit d’un travail collaboratif commencé en 2018, coordonnée et dirigé par <a href="https://www.atelier-alveoles.fr/">l’Atelier des Alvéoles</a>.
         <br>
         Nous avons chercher à rassembler toutes les informations utiles pour concevoir et cultiver un jardin-foret, selon le design de permaculture.
         <br>
         Le vivant ne se laisse pas facilement rangé dans des cases... aussi, malgré tous nos efforts, certains critères peuvent être sujet à discussion.
         <br>
         Nous vous laissons le soin de confronter ces informations à d’autres sources. Ce travail évolue avec vous, n’hésites pas à nous faire part de vos suggestions,
-        ajout, coquilles relevés,... Vous pouvez pour cela utiliser ce formulaire.
+        ajout, coquilles relevés,... Vous pouvez pour cela utiliser <a href="{{ path('contact') }}">ce formulaire</a>.
     </p>
 {% endblock %}

@@ -5,12 +5,11 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\ConfigService;
+use App\Service\MailService;
 use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -26,20 +25,20 @@ class SecurityController extends AbstractController
 {
     private $userRepository;
     private $csrfTokenManager;
-    private $mailer;
     private $config;
+    private $mailer;
 
     public function __construct(
         UserRepository $userRepository,
         CsrfTokenManagerInterface $csrfTokenManager,
-        MailerInterface $mailer,
-        ConfigService $configService
+        ConfigService $configService,
+        MailService $mailerService
     )
     {
         $this->userRepository = $userRepository;
         $this->csrfTokenManager = $csrfTokenManager;
-        $this->mailer = $mailer;
         $this->config = $configService;
+        $this->mailer = $mailerService;
     }
 
     /**
@@ -179,7 +178,6 @@ class SecurityController extends AbstractController
      * @param User $user
      * @param SessionInterface $session
      * @return int
-     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
     private function _sendForgotPassword(User $user,SessionInterface $session){
         $email = (new TemplatedEmail())
@@ -191,7 +189,7 @@ class SecurityController extends AbstractController
             ->context([
                 'user' => $user,
             ]);
-        if ($e = $this->_sendMail($email)){
+        if ($e = $this->mailer->sendMail($email)){
             $session->getFlashBag()->add('error', 'oups, l\'email de rappel na pas pu être envoyé.'.
                 ' On réessaie ensemble dans un moment ?');
             $session->getFlashBag()->add('warning', $e->getMessage());
@@ -204,7 +202,6 @@ class SecurityController extends AbstractController
      * @param SessionInterface $session
      * @param int $count
      * @return int
-     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
      */
     private function _sendConfirm(User $user,SessionInterface $session,int $count = 0){
         $email = (new TemplatedEmail())
@@ -216,7 +213,7 @@ class SecurityController extends AbstractController
             ->context([
                 'user' => $user,
             ]);
-        if ($e = $this->_sendMail($email)){
+        if ($e = $this->mailer->sendMail($email)){
             $session->getFlashBag()->add('error', 'oups, l\'email de confirmation na pas pu être envoyé.'.
                 ' On réessaie ensemble dans un moment ?');
             $session->getFlashBag()->add('warning', $e->getMessage());
@@ -225,18 +222,7 @@ class SecurityController extends AbstractController
         return 1;
     }
 
-    private function _sendMail(TemplatedEmail $email,int $count = 0){
-        try{
-            $this->mailer->send($email);
-            return 0;
-        } catch (TransportExceptionInterface $e) {
-            if ($count >= 3){
-                return $e;
-            }
-            // retry
-            return $this->_sendMail($email,$count++);
-        }
-    }
+
 
     /**
      * @Route("/register", name="app_register")

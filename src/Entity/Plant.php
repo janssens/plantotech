@@ -148,7 +148,7 @@ class Plant
     private $sources;
 
     /**
-     * @ORM\ManyToMany(targetEntity=AttributeValue::class, mappedBy="plants")
+     * @ORM\ManyToMany(targetEntity=AttributeValue::class, mappedBy="plants",cascade={"persist"})
      */
     private $attributes_values;
 
