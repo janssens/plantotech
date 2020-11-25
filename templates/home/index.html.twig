@@ -24,4 +24,19 @@
         Nous vous laissons le soin de confronter ces informations à d’autres sources. Ce travail évolue avec vous, n’hésites pas à nous faire part de vos suggestions,
         ajout, coquilles relevés,... Vous pouvez pour cela utiliser <a href="{{ path('contact') }}">ce formulaire</a>.
     </p>
+
+        {% if is_granted('ROLE_USER') %}
+            <div class="txtcenter">
+                        <a href="{{ path('plant_index') }}" class="btn--success">Entrer dans la jungle 🌳 !</a>
+            </div>
+        {% else %}
+            <p> Pour découvrir la première version de cet outil, il faut se connecter 🤝 </p>
+
+            <div class="txtcenter">
+                <a href="{{ path('app_register') }}" class="btn--success">je rejoins la tribu 🏕️</a><br>
+                <small>Déjà un compte ? je me <a href="{{ path('app_login') }}">connecter ici</a>🔒</small>
+            </div>
+
+        {% endif %}
+
 {% endblock %}
