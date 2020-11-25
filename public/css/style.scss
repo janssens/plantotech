@@ -9,7 +9,7 @@ select{
 }
 .container{
   width: 100%;
-  max-width: 1200px;
+  max-width: 1110px;
   margin: auto;
 }
 img.main{
@@ -25,13 +25,94 @@ img.main{
   display: none;
 }
 span.tag{
+  height: 26px;
+  line-height: 20px;
+  padding: 3px 30px 3px 10px;
+  border-radius: 13px;
+  position: relative;
   span.close{
-    &:before{
-      content : 'x';
-      cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 20px;
+    background: white;
+    display: block;
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    cursor: pointer;
+    &:before, &:after {
+      position: absolute;
+      content: ' ';
+      top: 2px;
+      right: 9px;
+      height: 16px;
+      width: 2px;
+      background-color: #e55039;
+    }
+    &:before {
+      transform: rotate(45deg);
+    }
+    &:after {
+      transform: rotate(-45deg);
+    }
+    &:hover{
+      background: #e55039;
+      &:before, &:after {
+        background: white;
+      }
     }
   }
 }
+#filters_list{
+  li > a{
+    display: block;
+    text-decoration: none;
+    padding: 3px 10px;
+  }
+  .active{
+    font-weight: bold;
+    &:before{
+      content: '> ';
+    }
+  }
+}
+#form_filter{
+  .fblock{
+    padding: 10px;
+    h4{
+      font-weight: bold;
+    }
+  }
+}
+#filters{
+  padding: 10px 0;
+}
+$themeColours: (
+        "1": #b8e994,
+        "2": #78e08f,
+        "3": #38ada9,
+        "4": #82ccdd,
+        "5": #60a3bc,
+);
+
+@each $i, $color in $themeColours {
+  #filters_list{
+    .cat_#{$i}{
+      background: $color;
+    }
+  }
+  #form_filter{
+    .fblock.cat_#{$i}{
+      background: $color;
+    }
+  }
+  .tag.cat_#{$i}{
+    background: $color;
+  }
+}
+
 .trap{
   display: none;
 }

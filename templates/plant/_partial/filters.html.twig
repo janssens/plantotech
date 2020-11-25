@@ -14,8 +14,8 @@
     {% endfor %}
     {% for code,values in attributes_values %}
         {% for value in values %}
-            <span class="tag" data-key="{{ code }}" data-value="{% if not value.attribute.typeNone %}{{ value.id }}{% else %}1{% endif %}" {% if excluded_attributes[code] is defined %} style="background: red" {% endif %}>
-                    {{ value.attribute.name }} {% if not value.attribute.typeNone %}: {{ value.value }}{% endif %} ({{ value.plants | length }})
+            <span class="tag cat_{{ value.attribute.filterCategory.id }}" data-key="{{ code }}" data-value="{% if not value.attribute.typeNone %}{{ value.id }}{% else %}1{% endif %}" {% if excluded_attributes[code] is defined %} style="background: red" {% endif %}>
+                    <b>{{ value.attribute.name }}</b> {% if not value.attribute.typeNone %}: {{ value.value }}{% endif %} <small>({{ value.plants | length }})</small>
                     <span class="close"></span>
                 </span>
         {% endfor %}

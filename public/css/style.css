@@ -48,7 +48,7 @@ select {
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1110px;
   margin: auto;
 }
 
@@ -66,9 +66,129 @@ img.main {
   display: none;
 }
 
-span.tag span.close:before {
-  content: "x";
+span.tag {
+  height: 26px;
+  line-height: 20px;
+  padding: 3px 30px 3px 10px;
+  border-radius: 13px;
+  position: relative;
+}
+span.tag span.close {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  text-align: center;
+  line-height: 20px;
+  background: white;
+  display: block;
+  position: absolute;
+  right: 3px;
+  top: 3px;
   cursor: pointer;
+}
+span.tag span.close:before, span.tag span.close:after {
+  position: absolute;
+  content: " ";
+  top: 2px;
+  right: 9px;
+  height: 16px;
+  width: 2px;
+  background-color: #e55039;
+}
+span.tag span.close:before {
+  transform: rotate(45deg);
+}
+span.tag span.close:after {
+  transform: rotate(-45deg);
+}
+span.tag span.close:hover {
+  background: #e55039;
+}
+span.tag span.close:hover:before, span.tag span.close:hover:after {
+  background: white;
+}
+
+#filters_list li > a {
+  display: block;
+  text-decoration: none;
+  padding: 3px 10px;
+}
+#filters_list .active {
+  font-weight: bold;
+}
+#filters_list .active:before {
+  content: "> ";
+}
+
+#form_filter .fblock {
+  padding: 10px;
+}
+#form_filter .fblock h4 {
+  font-weight: bold;
+}
+
+#filters {
+  padding: 10px 0;
+}
+
+#filters_list .cat_1 {
+  background: #b8e994;
+}
+
+#form_filter .fblock.cat_1 {
+  background: #b8e994;
+}
+
+.tag.cat_1 {
+  background: #b8e994;
+}
+
+#filters_list .cat_2 {
+  background: #78e08f;
+}
+
+#form_filter .fblock.cat_2 {
+  background: #78e08f;
+}
+
+.tag.cat_2 {
+  background: #78e08f;
+}
+
+#filters_list .cat_3 {
+  background: #38ada9;
+}
+
+#form_filter .fblock.cat_3 {
+  background: #38ada9;
+}
+
+.tag.cat_3 {
+  background: #38ada9;
+}
+
+#filters_list .cat_4 {
+  background: #82ccdd;
+}
+
+#form_filter .fblock.cat_4 {
+  background: #82ccdd;
+}
+
+.tag.cat_4 {
+  background: #82ccdd;
+}
+
+#filters_list .cat_5 {
+  background: #60a3bc;
+}
+
+#form_filter .fblock.cat_5 {
+  background: #60a3bc;
+}
+
+.tag.cat_5 {
+  background: #60a3bc;
 }
 
 .trap {

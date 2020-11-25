@@ -4,16 +4,16 @@
 
 {% block body %}
 
-    <h1>Liste des plantes</h1>
+    <h1>Rechercher des plantes</h1>
 
     <div class="grid-12">
         <div class="col-12">
-            <h2>Rechercher</h2>
+            <h2>Mes critères</h2>
         </div>
         <div class="col-3-small-all">
-            <ul id="filters_list">
+            <ul id="filters_list" class="unstyled">
                 {% for filter_category in filter_categories  %}
-                    <li><a href="#cat_{{ filter_category.id }}">{{ filter_category.name }}</a></li>
+                    <li><a href="#cat_{{ filter_category.id }}" class="cat_{{ filter_category.id }}">{{ filter_category.name }}</a></li>
                 {% endfor %}
 {#                <li><a href="#cat_all">Recherches avancées</a></li>#}
             </ul>
