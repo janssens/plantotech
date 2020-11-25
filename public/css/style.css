@@ -52,6 +52,20 @@ select {
   margin: auto;
 }
 
+#footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  text-align: center;
+  border: 1px solid gray;
+}
+#footer small {
+  line-height: 30px;
+  margin: auto;
+}
+
 img.main {
   max-width: 600px;
   margin: auto;

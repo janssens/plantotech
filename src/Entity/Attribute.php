@@ -18,13 +18,6 @@ class Attribute extends PropertyOrAttribute
     const TYPE_UNIQUE = 4;
 
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
      * @ORM\Column(type="smallint")
      */
     private $type;

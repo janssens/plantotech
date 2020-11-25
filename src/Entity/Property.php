@@ -11,12 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Property extends PropertyOrAttribute
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
 
     public function isProperty(): bool
     {

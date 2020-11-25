@@ -34,6 +34,9 @@
         <div class="container">
             {% block body %}{% endblock %}
         </div>
+        <div id="footer">
+            <small>Un bug 🐛 ? Une suggestion 💡 ? Utilise <a href="{{ path('contact') }}">ce formulaire</a> !</small>
+        </div>
         <script src="{{ base_url }}js/jquery-3.5.1.min.js"></script>
         <script src="{{ base_url }}js/app.js"></script>
         {% block javascripts %}{% endblock %}

@@ -567,7 +567,11 @@ protected static $defaultName = 'app:import-from-db';
         }
 
         $wind_stopper = $this->newAttribute('wind_stopper');
-        $wind_stopper_value = $this->newValue('',$wind_stopper);
+        $this->newValue('',$wind_stopper);
+
+        //the missing attribute
+        $comestible = $this->newAttribute('comestible');
+        $comestible_value = $this->newValue('',$comestible);
 
         $this->entityManager->flush();
 
@@ -892,7 +896,8 @@ protected static $defaultName = 'app:import-from-db';
                 }
             }
             //'graine_comestible','graine_grignotte','graine_cuite','graine_farine','graine_sechee','graine_huile','graine_germee',
-            //'fruit_comestible','fruit_de_table','fruit_grignotte','fruit_transforme','fruit_conserve_par_cuisson','fruit_boisson','fruit_congelation','fruit_superfood','fruit_de_garde'
+            //'fruit_comestible','fruit_de_table','fruit_grignotte','fruit_transforme','fruit_conserve_par_cuisson','fruit_boisson',
+            //'fruit_congelation','fruit_superfood','fruit_de_garde'
             foreach ($multivalue_custom_attributes as $c => $data){
                 $output->writeln('import attribute '.$c,OutputInterface::VERBOSITY_VERBOSE);
                 foreach ($data['values'] as $code => $value){
@@ -900,6 +905,7 @@ protected static $defaultName = 'app:import-from-db';
                         $att_value = strtolower(trim($interests_and_needs[$code]));
                         if (strlen($att_value) >= 1 ){
                             $new_plant->addAttributeValue($value);
+                            $new_plant->addAttributeValue($comestible_value);
                         }
                     }
                 }
@@ -946,29 +952,15 @@ protected static $defaultName = 'app:import-from-db';
             $this->entityManager->persist($new_plant);
             $this->entityManager->flush();
 
-            $counter++;
             $progressBar->advance();
-            if ($counter>$limit){
+            $counter++;
+            if ($counter>=$limit){
                 break;
             }
         }
         $progressBar->finish();
         $this->entityManager->flush();
 
-        //the missing attribute
-        $comestible = $this->newAttribute('comestible');
-        $comestible_value = $this->newValue('',$comestible);
-        $this->entityManager->flush();
-
-        foreach (array('fruit_comestible','graine_comestible','petiole_feuille_comestible','rhizome_tubercule_bulbe_comestible','fleur_comestible','bourgeon_seve_comestible') as $code){
-            $attribute = $this->newAttribute($code);
-            foreach ($attribute->getAvailableValues() as $value){
-                foreach ($value->getPlants() as $plant){
-                    $comestible_value->addPlant($plant);
-                }
-            }
-        }
-        $this->entityManager->persist($comestible_value);
         $this->entityManager->flush();
 
         $properties = array(
