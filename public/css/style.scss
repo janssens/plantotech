@@ -1,6 +1,8 @@
 @import "forms";
 @import "fonts";
 
+$footer-height : 30px;
+
 body{
   padding: 5px;
 }
@@ -11,17 +13,19 @@ select{
   width: 100%;
   max-width: 1110px;
   margin: auto;
+  padding-bottom: $footer-height;
 }
 #footer{
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 30px;
+  height: $footer-height;
   text-align: center;
   border: 1px solid gray;
+  background: white;
   small{
-    line-height: 30px;
+    line-height: $footer-height;
     margin: auto;
   }
 }
@@ -128,4 +132,26 @@ $themeColours: (
 
 .trap{
   display: none;
+}
+table.flowerings_crops{
+  td{
+    text-align: center;
+  }
+}
+.plant-name{
+  text-transform: capitalize;
+}
+#plant_page{
+  h4,h5{
+    padding: 5px;
+    margin: 0;
+    text-transform: uppercase;
+    color: #333333;
+  }
+  h4{
+    background: #7f8fa6;
+  }
+  h5{
+    background: #dcdde1;
+  }
 }

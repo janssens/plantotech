@@ -50,6 +50,7 @@ select {
   width: 100%;
   max-width: 1110px;
   margin: auto;
+  padding-bottom: 30px;
 }
 
 #footer {
@@ -60,6 +61,7 @@ select {
   height: 30px;
   text-align: center;
   border: 1px solid gray;
+  background: white;
 }
 #footer small {
   line-height: 30px;
@@ -207,6 +209,27 @@ span.tag span.close:hover:before, span.tag span.close:hover:after {
 
 .trap {
   display: none;
+}
+
+table.flowerings_crops td {
+  text-align: center;
+}
+
+.plant-name {
+  text-transform: capitalize;
+}
+
+#plant_page h4, #plant_page h5 {
+  padding: 5px;
+  margin: 0;
+  text-transform: uppercase;
+  color: #333333;
+}
+#plant_page h4 {
+  background: #7f8fa6;
+}
+#plant_page h5 {
+  background: #dcdde1;
 }
 
 /*# sourceMappingURL=style.css.map */
