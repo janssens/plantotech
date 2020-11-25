@@ -861,6 +861,11 @@ protected static $defaultName = 'app:import-from-db';
                         foreach ($multivalue_custom_attr->getAvailableValues() as $value){
                             if (strpos($att_value,$value->getValue())>0 || strpos($att_value,$value->getValue()) === 0){
                                 $new_plant->addAttributeValue($value);
+                            }else{
+                                $slugged = Plant::makeSlug($value->getValue());
+                                if (strpos($att_value,$slugged)>0 || strpos($att_value,$slugged) === 0) {
+                                    $new_plant->addAttributeValue($value);
+                                }
                             }
                         }
                     }
@@ -1031,9 +1036,9 @@ protected static $defaultName = 'app:import-from-db';
         foreach ($families as $family_name => $children){
             $family = $this->newAttributeFamily($family_name);
             foreach ($children as $name => $data){
+                $family_child = $this->newAttributeFamily($name,$family);
                 if (isset($data['attributes'])){
                     $attributes = $data['attributes'];
-                    $family_child = $this->newAttributeFamily($name,$family);
                     foreach ($attributes as $attribute_code){
                         /** @var Attribute $attribute */
                         $attribute = $this->entityManager->getRepository(Attribute::class)->findOneBy(array('code'=>$attribute_code));
@@ -1045,7 +1050,6 @@ protected static $defaultName = 'app:import-from-db';
                 }
                 if (isset($data['property'])){
                     $properties = $data['property'];
-                    $family_child = $this->newAttributeFamily($name,$family);
                     foreach ($properties as $code){
                         /** @var Property $property */
                         $property = $this->entityManager->getRepository(Property::class)->findOneBy(array('code'=>$code));

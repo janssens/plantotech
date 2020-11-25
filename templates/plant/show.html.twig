@@ -9,32 +9,40 @@
 
 {% block body %}
 
-    <h1>{{ plant.LatinName }} - {{ plant.name }}</h1>
+    <h1 class="plant-name">{{ plant.LatinName }} - {{ plant.name }}</h1>
     {% if is_granted('ROLE_EDIT') %}<a href="{{ path('plant_edit',{'id':plant.id}) }}">🖊️ editer</a>{% endif %}
     {% if plant.Family %}
     <h2><a href="{{ path('plant_index',{'family':plant.Family.id}) }}">{{ plant.Family.Name }}</a></h2>
     {% else %}
         <h2 style="color: orange">Aucune famille spécifiée</h2>
     {% endif %}
-    <div class="grid-12-small-6 has-gutter-l">
-        {% for family in families %}
+    <div class="grid-12-small-6 has-gutter-l" id="plant_page">
         <div class="col-6">
-            <h4>{{ family.name }}</h4>
-            {% for child in family.children %}
-                {% if child.name %}<h5>{{ child.name }}</h5>{% endif %}
-                <ul class="unstyled">
-                    {% for element in child.propertyOrAttributes %}
-                        {% if element.attribute %}
-                            {% include "attribute/_partial/line.html.twig" with {'attribute': element,'plant' : plant } %}
-                        {% else %}
-                            <li>
-                                {% include element.templates('line') with {'property': element,'plant' : plant} %}
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% endfor %}
+        {% for family in families %}
+            {% if family.children | length %}
+                <h4>{{ family.name }}</h4>
+                {% for child in family.children %}
+                    {% if child.propertyOrAttributes | length %}
+                        {% if child.name %}<h5>{{ child.name }}</h5>{% endif %}
+                        <ul class="unstyled">
+                            {% for element in child.propertyOrAttributes %}
+                                {% if element.attribute %}
+                                    {% include "attribute/_partial/line.html.twig" with {'attribute': element,'plant' : plant } %}
+                                {% else %}
+                                    <li>
+                                        {% include element.templates('line') with {'property': element,'plant' : plant} %}
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if loop.index == 3 %}
         </div>
+        <div class="col-6">
+            {% endif %}
         {% endfor %}
+        </div>
     </div>
 {% endblock %}
