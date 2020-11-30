@@ -238,9 +238,12 @@ protected static $defaultName = 'app:import-from-db';
         $username = $input->getArgument('username');
         $password = $input->getArgument('password');
         $limit = $input->getOption('limit');
-        if (!$limit){
+        if ($limit === "0"){
+            $limit = 0;
+        }else if (!$limit){
             $limit = 99999;
         }
+
 
         $clean_db = new \MysqliDb($host, $username, $password, $database,$port);
         $db = clone $clean_db;
@@ -577,7 +580,16 @@ protected static $defaultName = 'app:import-from-db';
 
         $output->writeln('ready to import',OutputInterface::VERBOSITY_VERBOSE);
 
+        if ($limit==0){
+            $progressBar->finish();
+            $output->writeln('');
+            return 1;
+        }
+
         foreach ($plants as $plant) {
+            if ($counter>=$limit){
+                break;
+            }
             $new_plant = new Plant();
             //key value part.
             foreach ($simple_keys as $key) {
@@ -959,12 +971,8 @@ protected static $defaultName = 'app:import-from-db';
 
             $progressBar->advance();
             $counter++;
-            if ($counter>=$limit){
-                break;
-            }
         }
         $progressBar->finish();
-        $this->entityManager->flush();
 
         $this->entityManager->flush();
 
