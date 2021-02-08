@@ -1,22 +1,47 @@
 {% extends 'base.html.twig' %}
 
+{% if is_granted('ROLE_EDIT') %}
+    {% set edit = (app.request.query.all.edit is defined and app.request.query.all.edit) %}
+{% endif %}
+
 {% block head %}
     <link rel="canonical" href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}" />
 {% endblock %}
+
 {% block stylesheets %}
+    {% if edit %}
+        <link rel="stylesheet" href="{{ base_url }}css/edit.css"/>
+    {% endif %}
 {% endblock %}
+
+{% block javascripts %}
+    {% if edit %}
+        <script src="{{ base_url }}js/edit.js"></script>
+        <script>
+            var attribute_edit_url_template = '{{ path('plant_attribute_edit',{'id':plant.id,'attribute':'__attribute_id__'}) }}';
+            var property_edit_url_template = '{{ path('plant_property_edit',{'id':plant.id,'property':'__property_id__'}) }}';
+        </script>
+    {% endif %}
+{% endblock %}
+
 {% block title %}{{ plant.LatinName }} - {{ plant.name }}{% endblock %}
 
 {% block body %}
 
     <h1 class="plant-name">{{ plant.LatinName }} - {{ plant.name }}</h1>
-    {% if is_granted('ROLE_EDIT') %}<a href="{{ path('plant_edit',{'id':plant.id}) }}">🖊️ editer</a>{% endif %}
+    {% if is_granted('ROLE_EDIT') %}
+        {% if edit %}
+            <a href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}">👁️ quitter le mode édition</a>
+        {% else %}
+            <a href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug,'edit':true}) }}">🖊️ éditer la fiche</a>
+        {% endif %}
+    {% endif %}
     {% if plant.Family %}
     <h2><a href="{{ path('plant_index',{'family':plant.Family.id}) }}">{{ plant.Family.Name }}</a></h2>
     {% else %}
         <h2 style="color: orange">Aucune famille spécifiée</h2>
     {% endif %}
-    <div class="grid-12-small-6 has-gutter-l" id="plant_page">
+    <div class="grid-12-small-6 has-gutter-l {% if edit %}editable{% endif %}" id="plant_page">
         <div class="col-6">
         {% for family in families %}
             {% if family.children | length %}
@@ -29,7 +54,7 @@
                                 {% if element.attribute %}
                                     {% include "attribute/_partial/line.html.twig" with {'attribute': element,'plant' : plant } %}
                                 {% else %}
-                                    <li>
+                                    <li data-code="{{ element.code }}" data-type="property" data-id="{{ element.id }}" class="show">
                                         {% include element.templates('line') with {'property': element,'plant' : plant} %}
                                     </li>
                                 {% endif %}

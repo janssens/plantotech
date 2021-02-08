@@ -461,12 +461,16 @@ protected static $defaultName = 'app:import-from-db';
 
         foreach (array(self::INSOLATION_TYPE_SHADE => 'ombre',self::INSOLATION_TYPE_SUN => 'soleil',self::INSOLATION_TYPE_HALF_SHADE => 'mi-ombre') as $code => $name){
             $insolation_map[$code] = $this->newValue($name,$insolation_attribute,$code);
+            $insolation_map_ideal[$code] = $this->newValue($name,$insolation_attribute,'ideal-'.$code);
+            $insolation_map_ideal[$code]->setMainValue($insolation_main_value);
+            $this->entityManager->persist($insolation_map_ideal[$code]);
         }
 
         //port
         $port_attribute = $this->newAttribute('port');
         $port_main_value = $this->newMainValue($port_attribute,'port naturel');
         $port_map = array();
+        $port_map_natural = array();
         $port_type_map = array(
             'ACAULE' => array('name'=>'acaule','code'=>'acaule'),
             'ARBUSTIF ARRONDI' => array('name'=>'arbustif arrondi','code'=>'arbustif_arrondi'),
@@ -481,6 +485,9 @@ protected static $defaultName = 'app:import-from-db';
         );
         foreach ($port_type_map as $key => $data){
             $port_map[$key] = $this->newValue($data['name'],$port_attribute,$data['code']);
+            $port_map_natural[$key] = $this->newValue($data['name'],$port_attribute,$data['code'].'-natural');
+            $port_map_natural[$key]->setMainValue($port_main_value);
+            $this->entityManager->persist($port_map_natural[$key]);
         }
 
         $multivalue_custom_attributes = array();
@@ -660,13 +667,14 @@ protected static $defaultName = 'app:import-from-db';
                     var_dump($plant_port);die();
                 }
                 $port_name = $plant_port['port'];
-                if (isset($port_map[$port_name])){
-                    $new_plant->addAttributeValue($port_map[$port_name]);
-                    $natural = $plant_port[self::PLANTS_PORTS_KEY_TYPE] == 'naturel';
-                    if ($natural){
-                        /** @var AttributeValue $value */
-                        $value = $port_map[$port_name];
-                        $value->setMainValue($port_main_value);
+                $natural = $plant_port[self::PLANTS_PORTS_KEY_TYPE] == 'naturel';
+                if ($natural){
+                    if (isset($port_map_natural[$port_name])) {
+                        $new_plant->addAttributeValue($port_map_natural[$port_name]);
+                    }
+                }else {
+                    if (isset($port_map[$port_name])) {
+                        $new_plant->addAttributeValue($port_map[$port_name]);
                     }
                 }
             }
@@ -813,13 +821,14 @@ protected static $defaultName = 'app:import-from-db';
                 if ($ideal && count($types) > 1){
                     die('Many ideal isolations ?!'."\n");
                 }
-                foreach ($types as $type){
-                    $new_plant->addAttributeValue($insolation_map[$type]);
-                }
                 if ($ideal){
-                    /** @var AttributeValue $value */
-                    $value = $insolation_map[$types[0]]; //only one type
-                    $value->setMainValue($insolation_main_value);
+                    foreach ($types as $type){
+                        $new_plant->addAttributeValue($insolation_map_ideal[$type]);
+                    }
+                }else{
+                    foreach ($types as $type){
+                        $new_plant->addAttributeValue($insolation_map[$type]);
+                    }
                 }
             }
 

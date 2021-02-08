@@ -56,4 +56,20 @@ class Image
 
         return $this;
     }
+
+    public function getSrc(): ?string
+    {
+        $src = self::getName();
+        if (!$src){
+            return '';
+        }
+        $re = '/^http(s?):\/\/(.*).(JPG|JPEG|PNG)/i';
+
+        preg_match_all($re, $src, $matches, PREG_SET_ORDER, 0);
+
+        if (!count($matches)){
+            return '/uploads/'.$src;
+        }
+        return $src;
+    }
 }

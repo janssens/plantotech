@@ -258,7 +258,7 @@ class Plant
         return $this;
     }
 
-    public function getWoody(): ?int
+    public function getWoody(): ?bool
     {
         return $this->woody;
     }
@@ -540,12 +540,29 @@ class Plant
     }
 
     public function getAttributeValuesByCode($code = ''){
-        return $this->attributes_values->filter(function ($attribute) use ($code){
-            /** @var AttributeValue $attribute */
-            return $attribute->getAttribute()->getCode() == $code;
+        return $this->attributes_values->filter(function ($attribute_value) use ($code){
+            /** @var AttributeValue $attribute_value */
+            return $attribute_value->getAttribute()->getCode() == $code && !$attribute_value->getMainValue();
         });
     }
 
+    public function getMainAttributeValuesByCode($code = ''){
+        return $this->attributes_values->filter(function ($attribute_value) use ($code){
+            /** @var AttributeValue $attribute_value */
+            /** @var Attribute $attribute */
+            $attribute = $attribute_value->getAttribute();
+            return $attribute->getCode() == $code && $attribute_value->getMainValue() && $attribute_value->getMainValue() === $attribute->getMainValue();
+        });
+    }
+
+    public function getAttributeValuesByCodeAsArray($code = ''){
+        $return = array();
+        /** @var AttributeValue $attributeValue */
+        foreach ( $this->getAttributeValuesByCode($code) as $attributeValue ){
+            $return[$attributeValue->getCode()] = $attributeValue;
+        }
+        return $return;
+    }
 
     public function addAttributeValue(AttributeValue $attributeValue): self
     {

@@ -60,12 +60,37 @@ class Attribute extends PropertyOrAttribute
         return $this->getType() === self::TYPE_UNIQUE;
     }
 
+    public function isTypeMultiple() : bool
+    {
+        return $this->getType() === self::TYPE_MULTIPLE;
+    }
+
     /**
      * @return Collection|AttributeValue[]
      */
     public function getAvailableValues(): Collection
     {
         return $this->availableValues;
+    }
+
+    /**
+     * @return Collection|AttributeValue[]
+     */
+    public function getAvailableMainValues(): Collection
+    {
+        return $this->availableValues->filter(function ($attribute_value) {
+            return $attribute_value->getMainValue();
+        });
+    }
+
+    /**
+     * @return Collection|AttributeValue[]
+     */
+    public function getAvailableNonMainValues(): Collection
+    {
+        return $this->availableValues->filter(function ($attribute_value) {
+            return !$attribute_value->getMainValue();
+        });
     }
 
     public function addAvailableValue(AttributeValue $availableValue): self

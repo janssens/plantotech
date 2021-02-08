@@ -36,6 +36,19 @@ class PlantFamilyRepository extends ServiceEntityRepository
     }
     */
 
+    /**
+     * @return PlantFamily[] Returns an array of PlantFamily objects
+    */
+    public function findAlphabetical()
+    {
+        return $this->createQueryBuilder('f')
+            ->orderBy('f.name', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+
     /*
     public function findOneBySomeField($value): ?PlantFamily
     {

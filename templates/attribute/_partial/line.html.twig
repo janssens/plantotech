@@ -1,11 +1,11 @@
-{% if plant.attributeValuesByCode(attribute.code) | length %}
-    <li data-code="{{ attribute.code }}">
+{% if (plant.attributeValuesByCode(attribute.code) | length) or (edit) %}
+    <li data-code="{{ attribute.code }}" data-type="attribute" data-id="{{ attribute.id }}" class="show">
         {% if attribute.typeNone %}
-            <b><a href="{{ path('plant_index',{ (attribute.code) : '1'}) }}">{{ attribute.name }}</a></b>
+            <b>{% if edit %}{% if plant.attributeValuesByCode(attribute.code) | length %}✅{% else %}🔲{% endif %}&nbsp;{% endif %}<a href="{{ path('plant_index',{ (attribute.code) : '1'}) }}">{{ attribute.name }}</a></b>
         {% else %}
             {% if attribute.mainValue is not null %}
                 <b>{{ attribute.mainValue.label }}</b> :
-                {% for attribute_value in plant.attributeValuesByCode(attribute.code) %}
+                {% for attribute_value in plant.mainAttributeValuesByCode(attribute.code) %}
                     {% if attribute_value.mainValue is not null %}
                         {% if attribute.typeUnique %}
                             {{ attribute_value.value }}

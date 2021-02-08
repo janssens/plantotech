@@ -1,0 +1,49 @@
+<li data-code="{{ attribute.code }}" data-type="attribute" data-id="{{ attribute.id }}">
+    <form action="{{ path('plant_attribute_edit',{'id':plant.id,'attribute':attribute.id}) }}" onsubmit="return attributeLineEditSubmit(this)">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_attribute_edit_'~attribute.code) }}" >
+    {% if attribute.typeNone %}
+        <label for="value"><input type="checkbox" {% if plant.attributeValuesByCode(attribute.code) | length %}checked="checked"{% endif %} name="value" value="{{ attribute.code }}">&nbsp;{{ attribute.name }}</label>
+    {% else %}
+        {% if attribute.mainValue is not null %}
+            <b>{{ attribute.mainValue.label }}</b> :
+            {% if attribute.typeUnique %}
+                {% set attribute_value = plant.mainAttributeValuesByCode(attribute.code).first %}
+                <input type="text" value="{% if attribute_value %}{{ attribute_value.value }}{% endif %}" name="main_value">
+            {% else %}
+                {% set attribute_values = plant.mainAttributeValuesByCode(attribute.code) %}
+                <select name="main_value{% if attribute.typeMultiple %}[]{% endif %}" {% if attribute.typeMultiple %}multiple{% endif %}>
+                    {% for value in attribute.availableMainValues %}
+                        <option value="{{ value.id }}" {% if (value in attribute_values) and (value.mainValue is not null) %}selected="selected"{% endif %}>{{ value.value }}</option>
+                    {% endfor %}
+                    {% if not attribute.typeMultiple %}
+                        <option value="0" {% if not attribute_values | length %}selected="selected"{% endif %}></option>
+                    {% endif %}
+                </select>
+            {% endif %}
+            <br>
+        {% endif %}
+        <b>{{ attribute.name }}</b> :
+        {% if attribute.typeUnique %}
+            {% set attribute_value = plant.attributeValuesByCode(attribute.code).first %}
+            <input type="text" value="{% if attribute_value %}{{ attribute_value.value }}{% endif %}" name="value">
+        {% else %}
+            {% set attribute_values = plant.attributeValuesByCode(attribute.code) %}
+            <select name="value{% if attribute.typeMultiple %}[]{% endif %}" {% if attribute.typeMultiple %}multiple{% endif %}>
+                {% if (attribute.mainValue is null) %}
+                    {% set values = attribute.availableValues %}
+                {% else %}
+                    {% set values = attribute.availableNonMainValues %}
+                {% endif %}
+                {% for value in values %}
+                    <option value="{{ value.id }}" {% if (value in attribute_values) and ((attribute.mainValue is null) or (value.mainValue is null)) %}selected="selected"{% endif %}>{{ value.value }}</option>
+                {% endfor %}
+                {% if not attribute.typeMultiple %}
+                <option value="0" {% if not attribute_values | length %}selected="selected"{% endif %}></option>
+                {% endif %}
+            </select>
+        {% endif %}
+
+    {% endif %}
+        <input type="submit" value="Ok">
+    </form>
+</li>

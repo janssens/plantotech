@@ -1,0 +1,23 @@
+.editable{
+  li[data-type='attribute']{
+    cursor: cell;
+  }
+  li[data-type='attribute']:before{
+    content: '✏️';
+  }
+  li[data-type='property']{
+    cursor: cell;
+  }
+  li[data-type='property']:before{
+    content: '✒️';
+  }
+  form.img_delete a {
+    &:hover{
+      background: red;
+    }
+    cursor: crosshair;
+    &:hover > img{
+      opacity: 0.7;
+    }
+  }
+}

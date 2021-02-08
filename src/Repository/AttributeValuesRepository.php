@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\AttributeValue;
+use App\Entity\MainValue;
+use App\Entity\Plant;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

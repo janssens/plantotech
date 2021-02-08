@@ -1,6 +1,8 @@
 {% set flowerings = plant.getAttributeValuesByCodeAsArray('flowering') %}
 {% set crops = plant.getAttributeValuesByCodeAsArray('crop') %}
 {% if flowerings | length or crops | length %}
+<form action="{{ path('plant_flowerings_crops_edit',{'id':plant.id}) }}" onsubmit="return propertyLineEditSubmit(this)">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_flowerings_crops_edit') }}" >
     <table class="flowerings_crops">
         <thead>
         <tr>
@@ -24,7 +26,7 @@
             <td>Floraison</td>
             {% for m in 1..12 %}
                 <td>
-                    {% if flowerings[m] is defined %}<a href="{{ path('plant_index',{'a_flowering[]':flowerings[m].id}) }}">🌼</a>{% endif %}
+                    <input type="checkbox" name="flowerings[{{ m }}]" value="1" {% if flowerings[m] is defined %}checked="checked"{% endif %} />
                 </td>
             {% endfor %}
         </tr>
@@ -32,10 +34,12 @@
             <td>Fructif</td>
             {% for m in 1..12 %}
                 <td>
-                    {% if crops[m] is defined %}<a href="{{ path('plant_index',{'a_crop[]':crops[m].id}) }}">🍎</a>{% endif %}
+                    <input type="checkbox" name="crops[{{ m }}]" value="1" {% if crops[m] is defined %}checked="checked"{% endif %} />
                 </td>
             {% endfor %}
         </tr>
         </tbody>
     </table>
+    <input type="submit" value="Ok">
+</form>
 {% endif %}
