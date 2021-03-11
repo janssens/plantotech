@@ -151,9 +151,28 @@ $themeColours: (
 .bg-img{
   background-image: var(--bg-image);
 }
+
 .border-955441{
   border-color: #955441;
 }
 .border-afbf6a{
   border-color: #afbf6a;
+}
+.theme-afbf6a{
+  h3{
+    color:#afbf6a;
+  }
+  .mygroup{
+    border-color: #afbf6a;
+    //background-color: lighten(#afbf6a,100);
+  }
+}
+.theme-955441{
+  h3{
+    color:#955441;
+  }
+  .mygroup{
+    border-color: #955441;
+    //background-color: lighten(#955441,100);
+  }
 }

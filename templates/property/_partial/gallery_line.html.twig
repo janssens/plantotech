@@ -1,5 +1,5 @@
 {% if plant.images | length %}
-    <div class="flex">
+    <div class="flex flex-wrap">
         {% for image in plant.images %}
             <a href="{{ asset(image.src) }}" class="block"><img width="150px" src="{{ asset(image.src)|imagine_filter('square') }}" alt=""></a>
         {% endfor %}

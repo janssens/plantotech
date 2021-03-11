@@ -28,7 +28,7 @@
                     <h1 class="uppercase text-3xl font-black">{{ plant.name }}</h1>
                     <h2 class="text-center w-full italic text-2xl">{{ plant.LatinName }}</h2>
                     {% if plant.Family %}
-                        <h3><a href="{{ path('plant_index',{'family':plant.Family.id}) }}">{{ plant.Family.Name }}</a></h3>
+                        <h3 class="text-lg"><span class="uppercase font-bold">Famille : </span><a class="hover:underline" href="{{ path('plant_index',{'family':plant.Family.id}) }}">{{ plant.Family.Name }}</a></h3>
                     {% endif %}
                 </div>
                 <div class="px-5 py-7">
@@ -73,7 +73,7 @@
                         {% include properties_and_attributes['gallery'].templates('line') with {'element': properties_and_attributes['gallery'],'plant' : plant} %}
                     </div>
                     <div class="grid grid-cols-12 grid-flow-row gap-1">
-                        <div class="grid grid-cols-4 gap-4 col-span-8">
+                        <div class="grid grid-cols-4 gap-4 col-span-8 theme-afbf6a">
                             <div class="text-center col-span-4">
                                 <h3 class="uppercase font-bold underline"><span class="text-xl">Services</span> <br>écosystèmiques</h3>
                             </div>
@@ -82,21 +82,20 @@
                             {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_couvre_sol'],'icon': asset('build/img/picto/tapissant.svg')} %}
                             {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_mellifere','interet_nectarifere','interet_pollen'],'icon': asset('build/img/picto/polinisateurs.svg')} %}
                             {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_fixateur_de_mineraux','precisions_fixateur_de_mineraux','interet_amelioration_du_compost','interet_biomasse','interet_amelioration_structure_du_sol'],'icon': asset('build/img/picto/lombric.svg')} %}
-                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_fixateur_dazote']} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_fixateur_dazote'],'icon': asset('build/img/picto/azote.svg')} %}
                             {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_habitat_d_oiseaux'],'icon': asset('build/img/picto/oiseau.svg')} %}
-                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_allelopathique']} %}
-                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_pionnier']} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_allelopathique','interet_pionnier'],'icon': asset('build/img/picto/herbe.svg')} %}
                             {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_ombre_legere'],'icon': asset('build/img/picto/ombre.svg')} %}
                             {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_anti_erosion'],'icon': asset('build/img/picto/errosion.svg')} %}
                         </div>
-                        <div class="grid grid-cols-2 gap-4 col-span-4">
+                        <div class="grid grid-cols-2 gap-4 col-span-4 theme-955441">
                             <div class="text-center col-span-2">
                                 <h3 class="uppercase font-bold underline"><span class="text-xl">Besoins</span> <br>écosystémiques</h3>
                             </div>
                             {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_brise_vent'],'icon': asset('build/img/picto/vent.svg')} %}
                             {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_pollinisation'],'icon': asset('build/img/picto/polinisation_croisee.svg')} %}
-                            {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_limitation_de_concurrence']} %}
-                            {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_azote']} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_limitation_de_concurrence'],'icon': asset('build/img/picto/herbe.svg')} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_azote'],'icon': asset('build/img/picto/azote.svg')} %}
                             {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_mineraux','besoin_matiere_organique'],'icon': asset('build/img/picto/lombric.svg')} %}
                         </div>
                         <div class="grid grid-cols-3 grid-flow-row gap-1 col-span-6">
@@ -173,8 +172,6 @@
                                 {% include properties_and_attributes['besoin_conduite'].templates('line') with {'element': properties_and_attributes['besoin_conduite'],'plant' : plant} %}
                                 {% include properties_and_attributes['multiplication'].templates('line') with {'element': properties_and_attributes['multiplication'],'plant' : plant} %}
                                 {% include properties_and_attributes['multiplication_info'].templates('line') with {'element': properties_and_attributes['multiplication_info'],'plant' : plant} %}
-                                {% include properties_and_attributes['besoin_cultural_exigences_particulieres'].templates('line') with {'element': properties_and_attributes['besoin_cultural_exigences_particulieres'],'plant' : plant} %}
-                                {% include properties_and_attributes['besoin_cultural_entretien'].templates('line') with {'element': properties_and_attributes['besoin_cultural_entretien'],'plant' : plant} %}
                                 {% include properties_and_attributes['besoin_tuteur'].templates('line') with {'element': properties_and_attributes['besoin_tuteur'],'plant' : plant} %}
                                 {% include properties_and_attributes['maladies_ravageurs'].templates('line') with {'element': properties_and_attributes['maladies_ravageurs'],'plant' : plant} %}
                                 {% include properties_and_attributes['besoin_protection'].templates('line') with {'element': properties_and_attributes['besoin_protection'],'plant' : plant} %}
@@ -190,6 +187,8 @@
                                     <div class="inline-block bg-img bg-contain bg-no-repeat h-10 w-10" style="--bg-image: url({{ asset('build/img/picto/taille.svg') }})" ></div>
                                 </div>
                                 {% include properties_and_attributes['besoin_taille'].templates('line') with {'element': properties_and_attributes['besoin_taille'],'plant' : plant} %}
+                                {% include properties_and_attributes['besoin_cultural_exigences_particulieres'].templates('line') with {'element': properties_and_attributes['besoin_cultural_exigences_particulieres'],'plant' : plant} %}
+                                {% include properties_and_attributes['besoin_cultural_entretien'].templates('line') with {'element': properties_and_attributes['besoin_cultural_entretien'],'plant' : plant} %}
                             </div>
                             <div class="">
                                 <div class="border-l-2 border-955441 px-2 w-full">
@@ -206,7 +205,6 @@
                         {% include properties_and_attributes['sexual_maturity'].templates('line') with {'element': properties_and_attributes['sexual_maturity'],'plant' : plant} %}
                         {% include properties_and_attributes['flowerings_crops'].templates('block') with {'element': properties_and_attributes['flowerings_crops'],'plant' : plant} %}
                     </div>
-                    <span class="uppercase">Sources : </span>
                     {% include properties_and_attributes['sources'].templates('line') with {'element': properties_and_attributes['sources'],'plant' : plant} %}
                 </div>
             </div>

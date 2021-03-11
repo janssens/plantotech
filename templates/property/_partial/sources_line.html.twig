@@ -1,8 +1,9 @@
 {% if plant.sources | length %}
     <div>
+        <span class="uppercase font-bold">Sources : </span>
         <ul>
             {% for source in plant.sources %}
-                <li>{{ source.name | autolink | raw }}</li>
+                <li class="hover:underline hover:text-blue-400">{{ source.name | autolink | raw }}</li>
             {% endfor %}
         </ul>
     </div>
