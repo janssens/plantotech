@@ -96,17 +96,53 @@ $themeColours: (
 
 @each $i, $color in $themeColours {
   #filters_list{
-    .cat.cat--#{$i}{
-      background: $color !important;
+    .cat.cat--1{
+      background:#b8e994 !important;
+    }
+    .cat.cat--2{
+      background:#78e08f !important;
+    }
+    .cat.cat--3{
+      background:#38ada9 !important;
+    }
+    .cat.cat--4{
+      background:#82ccdd !important;
+    }
+    .cat.cat--5{
+      background:#60a3bc !important;
     }
   }
   #form_filter{
-    .fblock.cat--#{$i} h4{
-      background: $color;
+    .fblock.cat--1 h4{
+      background: #b8e994;
+    }
+    .fblock.cat--2 h4{
+      background: #78e08f;
+    }
+    .fblock.cat--3 h4{
+      background: #38ada9;
+    }
+    .fblock.cat--4 h4{
+      background: #82ccdd;
+    }
+    .fblock.cat--5 h4{
+      background: #60a3bc;
     }
   }
-  .tag.cat--#{$i}{
-    background: $color;
+  .tag.cat--1 h4{
+    background: #b8e994;
+  }
+  .tag.cat--2 h4{
+    background: #78e08f;
+  }
+  .tag.cat--3 h4{
+    background: #38ada9;
+  }
+  .tag.cat--4 h4{
+    background: #82ccdd;
+  }
+  .tag.cat--5 h4{
+    background: #60a3bc;
   }
 }
 .tag{
