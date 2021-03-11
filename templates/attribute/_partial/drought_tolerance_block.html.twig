@@ -1,0 +1,17 @@
+{% if (plant.attributeValuesByCode(element.code) | length) or (edit) %}
+    {% set attribute_value = plant.attributeValuesByCode(element.code).first.value %}
+    <div data-code="{{ element.code }}" data-type="attribute" data-id="{{ element.id }}" class="show">
+        <span class="uppercase">{{ element.name }}</span>
+{#        <a href="{{ path('plant_index',{ (element.code) : element.id}) }}">#}
+            <div class="grid grid-cols-5">
+                {% for i in 1..5 %}
+                    {% if i > attribute_value %}
+                        <div class="bg-contain bg-no-repeat bg-center bg-img h-12 w-12" style="--bg-image: url({{ asset('build/img/picto/goutte_vide.png') }})"></div>
+                    {% else %}
+                        <div class="bg-contain bg-no-repeat bg-center bg-img h-12 w-12" style="--bg-image: url({{ asset('build/img/picto/goutte_pleine.png') }})"></div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+{#        </a>#}
+    </div>
+{% endif %}

@@ -1,3 +1,42 @@
-<a href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}">{{ plant.name }}</a>
-- <i>{{ plant.LatinName }}</i>
-{% if is_granted('ROLE_EDIT') %}- <a href="{{ path('plant_edit',{'id':plant.id}) }}">editer </a>{% endif %}
+<td class="py-3 px-6 text-left whitespace-nowrap">
+    <div class="flex items-center">
+        <span class="font-medium"><a href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}">{{ plant.name }}</a></span>
+    </div>
+</td>
+<td class="py-3 px-6 text-left hidden md:table-cell">
+    <div class="flex items-center">
+        <a href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}"><i>{{ plant.LatinName }}</i></a>
+    </div>
+</td>
+<td class="py-3 px-6 text-left whitespace-nowrap">
+    <div class="flex items-center">
+        <div class="mr-2">
+            <img class="h-6" src="{{ asset('build/img/silhouettes/ico/'~plant.getMainAttributeValuesByCode('port').first.code~'.png') }}" alt="silouette {{ plant.getMainAttributeValuesByCode('port').first.value }}" class="main">
+        </div>
+        <span class="port port--{{ plant.getMainAttributeValuesByCode('port').first.code }} hidden lg:block">{{ plant.getMainAttributeValuesByCode('port').first.value }}</span>
+    </div>
+</td>
+<td class="py-3 px-6 text-center hidden xl:table-cell">
+    <span class="stratum stratum--{{ plant.getAttributeValuesByCode('stratum').first.code }}">{{ plant.getAttributeValuesByCode('stratum').first.value }}</span>
+</td>
+<td class="py-3 px-6 text-center">
+    <div class="flex item-center justify-center">
+        <a href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}">
+            <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                <i class="mdi mdi-eye"></i>
+            </div>
+        </a>
+        {% if is_granted('ROLE_EDIT') %}
+            <a href="{{ path('plant_edit',{'id':plant.id}) }}">
+                <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                    <i class="mdi mdi-pencil"></i>
+                </div>
+            </a>
+        {% endif %}
+{#        <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">#}
+{#            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">#}
+{#                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />#}
+{#            </svg>#}
+{#        </div>#}
+    </div>
+</td>

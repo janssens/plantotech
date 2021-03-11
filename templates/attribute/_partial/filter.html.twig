@@ -1,14 +1,20 @@
 <h4>{{ attribute.name }}</h4>
-{% if attribute.isTypeNone %}
-    <input type="checkbox" name="{{ attribute.code }}" id="a_{{ attribute.code }}" data-f-value="1" value="1" {% if attributes_values[attribute.code] is defined %} checked="checked" {% endif %} class="switch" />
-    <label for="a_{{ attribute.code }}" class="label"> oui ? </label>
-{% else %}
-    <ul class="unstyled">
-        {% for value in attribute.availableValues %}
-            <li><label for="filter_{{ attribute.code }}_{{ value.id }}">
-                    <input id="filter_{{ attribute.code }}_{{ value.id }}" name="{{ attribute.code }}[]" type="checkbox" value="{{ value.id }}" data-f-value="{{ value.id }}" {% if attributes_values[attribute.code] is defined and value in attributes_values[attribute.code] %} checked="checked" {% endif %} >
-                    {{ value.value | raw }}
-                </label></li>
-        {% endfor %}
-    </ul>
-{% endif %}
+<div class="content">
+    {% if attribute.isTypeNone %}
+        <label class="inline-flex items-center mt-3 cursor-pointer" for="a_{{ attribute.code }}">
+            <input id="a_{{ attribute.code }}" name="{{ attribute.code }}" type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" data-f-value="1" value="1" {% if attributes_values[attribute.code] is defined %} checked="checked" {% endif %}>
+            <span class="ml-2 text-gray-700">oui ?</span>
+        </label>
+    {% else %}
+        <ul class="unstyled">
+            {% for value in attribute.availableValues %}
+                <li>
+                    <label class="inline-flex items-center mt-3 cursor-pointer" for="filter_{{ attribute.code }}_{{ value.id }}">
+                        <input id="filter_{{ attribute.code }}_{{ value.id }}" name="{{ attribute.code }}[]" type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" value="{{ value.id }}" data-f-value="{{ value.id }}" {% if attributes_values[attribute.code] is defined and value in attributes_values[attribute.code] %} checked="checked" {% endif %}>
+                        <span class="ml-2 text-gray-700">{{ value.value | raw }}</span>
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

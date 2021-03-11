@@ -1,13 +1,27 @@
-<h2>Plantes {% if plants | length %}({{plants | length }}){% endif %}</h2>
+<div class="w-full text-center">
+    <h2>{% if plants | length %}{{plants | length }}{% endif %} plantes</h2>
+</div>
 
 {% if plants | length %}
-    <ul>
-        {% for plant in plants %}
-            <li>
-                {% include "plant/_partial/line.html.twig" %}
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="bg-white shadow-md rounded my-6">
+        <table class="min-w-max w-full table-auto">
+            <thead>
+            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                <th class="py-3 px-6 text-left">Nom Commun</th>
+                <th class="py-3 px-6 text-left hidden md:table-cell">Nom Latin</th>
+                <th class="py-3 px-6 text-center">Port</th>
+                <th class="py-3 px-6 text-center hidden xl:table-cell">Strate</th>
+                <th class="py-3 px-6 text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+            {% for plant in plants %}
+                <tr class="border-b border-gray-200 {% if loop.index0 is odd %}bg-gray-50{% endif %} hover:bg-gray-100">
+                    {% include "plant/_partial/line.html.twig" %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 {% else %}
     <div>Aucune plante répertoriée ne correspond à tes critères <br>Essaye une requête plus simple.</div>
 {% endif %}

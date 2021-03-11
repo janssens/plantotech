@@ -1,7 +1,9 @@
 {% if plant.images | length %}
-    {% for image in plant.images %}
-        <img width="150px" src="{{ image.src }}" alt="">
-    {% endfor %}
+    <div class="flex">
+        {% for image in plant.images %}
+            <a href="{{ asset(image.src) }}" class="block"><img width="150px" src="{{ asset(image.src)|imagine_filter('square') }}" alt=""></a>
+        {% endfor %}
+    </div>
 {% else %}
     <span style="color:orange;">Aucune image associée</span>
 {% endif %}

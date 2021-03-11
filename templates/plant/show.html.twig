@@ -2,6 +2,8 @@
 
 {% if is_granted('ROLE_EDIT') %}
     {% set edit = (app.request.query.all.edit is defined and app.request.query.all.edit) %}
+{% else %}
+    {% set edit = false %}
 {% endif %}
 
 {% block head %}
@@ -9,14 +11,13 @@
 {% endblock %}
 
 {% block stylesheets %}
-    {% if edit %}
-        <link rel="stylesheet" href="{{ base_url }}css/edit.css"/>
-    {% endif %}
+    {{ parent() }}
 {% endblock %}
 
 {% block javascripts %}
+    {{ parent() }}
     {% if edit %}
-        <script src="{{ base_url }}js/edit.js"></script>
+        {{ encore_entry_script_tags('edit') }}
         <script>
             var attribute_edit_url_template = '{{ path('plant_attribute_edit',{'id':plant.id,'attribute':'__attribute_id__'}) }}';
             var property_edit_url_template = '{{ path('plant_property_edit',{'id':plant.id,'property':'__property_id__'}) }}';
@@ -51,13 +52,7 @@
                         {% if child.name %}<h5>{{ child.name }}</h5>{% endif %}
                         <ul class="unstyled">
                             {% for element in child.propertyOrAttributes %}
-                                {% if element.attribute %}
-                                    {% include "attribute/_partial/line.html.twig" with {'attribute': element,'plant' : plant } %}
-                                {% else %}
-                                    <li data-code="{{ element.code }}" data-type="property" data-id="{{ element.id }}" class="show">
-                                        {% include element.templates('line') with {'property': element,'plant' : plant} %}
-                                    </li>
-                                {% endif %}
+                                {% include element.templates('line') with {'property': element,'plant' : plant} %}
                             {% endfor %}
                         </ul>
                     {% endif %}

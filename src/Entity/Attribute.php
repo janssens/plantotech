@@ -138,4 +138,10 @@ class Attribute extends PropertyOrAttribute
         return true;
     }
 
+    public function getTemplates(string $type = 'line'){
+        $filename = "attribute/_partial/".$this->getCode()."_".$type.".html.twig";
+        $default = "attribute/_partial/default_".$type.".html.twig";
+        return array($filename,$default);
+    }
+
 }

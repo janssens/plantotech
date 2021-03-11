@@ -1,19 +1,64 @@
 {% extends 'base.html.twig' %}
 {% block title %}Je rejoins la communauté{% endblock %}
 {% block body %}
-    <div class="grid-6-small-2">
-        <div class="col-2"></div>
-        <form class="signin col-2" method="post">
-            <h1>Créer mon compte</h1>
-            <input type="text" name="username" id="inputUsername" placeholder="Je choisi un nom d'utilisateur" required autofocus><br>
-            <input type="email" name="email" id="inputEmail" placeholder="Mon adresse email" required><br>
-            <input type="password" name="password" id="inputPassword" placeholder="Un mot de passe" required><br>
-            {% if use_register_code %}
-            <input type="text" name="code" id="inputCode" placeholder="J'ai un code d'accès" ><br>
-            {% endif %}
-            <button type="submit" class="btn--primary">
-                👥 Je rejoins la communauté
-            </button>
-        </form>
+    <div class="min-w-screen min-h-screen flex items-center justify-center px-5 py-5">
+        <div class="bg-gray-100 text-gray-500 rounded-xl shadow-xl w-full overflow-hidden" style="max-width:1000px">
+            <div class="md:flex w-full">
+                <div class="hidden md:block w-1/2 bg-indigo-500 py-10 px-10">
+                    <img src="{{ asset('build/img/register.svg') }}" alt="register" class="w-full">
+                </div>
+                <div class="w-full md:w-1/2 py-10 px-5 md:px-10">
+                    <div class="text-center mb-10">
+                        <h1 class="font-bold text-3xl text-gray-900">Créer mon compte</h1>
+                        <p>Saisis tes informations pour t'inscrire</p>
+                    </div>
+                    <form method="post">
+                        <div class="flex -mx-3">
+                            <div class="w-full px-3 mb-5">
+                                <label for="" >Nom d'utilisateur</label>
+                                <div class="flex">
+                                    <div class="ico"><i class="mdi mdi-account-outline"></i></div>
+                                    <input autofocus required name="username" type="text" class="outline-none" placeholder="Rob1913">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex -mx-3">
+                            <div class="w-full px-3 mb-5">
+                                <label for="">Email</label>
+                                <div class="flex">
+                                    <div class="ico"><i class="mdi mdi-email-outline"></i></div>
+                                    <input required type="email" name="email" class="outline-none" placeholder="robert@hart.org">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex -mx-3">
+                            <div class="w-full px-3 {% if use_register_code %}mb-5{% else %}mb-12{% endif %}">
+                                <label for="password">Mot de passe</label>
+                                <div class="flex">
+                                    <div class="ico"><i class="mdi mdi-lock-outline"></i></div>
+                                    <input required name="password" id="password" type="password" class="outline-none" placeholder="************">
+                                </div>
+                            </div>
+                        </div>
+                        {% if use_register_code %}
+                            <div class="flex -mx-3">
+                                <div class="w-full px-3 mb-12">
+                                    <label for="" class="text-xs font-semibold px-1">Mon code d'accès</label>
+                                    <div class="flex">
+                                        <div class="ico"><i class="mdi mdi-key-variant"></i></div>
+                                        <input required name="code" type="text" class="outline-none" placeholder="Sesamum_indicum">
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="flex -mx-3">
+                            <div class="w-full px-3 mb-5 text-center">
+                                <button type="submit" class="btn btn--primary">Je rejoins la communauté</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

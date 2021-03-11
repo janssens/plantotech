@@ -1,0 +1,29 @@
+{% set flowerings = plant.getAttributeValuesByCodeAsArray('flowering') %}
+{% set crops = plant.getAttributeValuesByCodeAsArray('crop') %}
+{% set months = ['j','f','m','a','m','j','j','a','s','o','n','d'] %}
+{% if flowerings | length or crops | length %}
+        <div class="grid grid-flow-col">
+            <div class="col-span-2 bg-img bg-contain bg-no-repeat bg-center" style="--bg-image: url({{ asset('build/img/picto/fleur.svg') }})"></div>
+            {% for m in 1..12 %}
+                <div class="text-center">
+                    {% if flowerings[m] is defined %}
+                        <a class="capitalize font-bold text-black" href="{{ path('plant_index',{'a_flowering[]':flowerings[m].id}) }}">{{ months[m-1] }}</a>
+                    {% else %}
+                        <span class="capitalize text-gray-300">{{ months[m-1] }}</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="grid grid-flow-col">
+            <div class="col-span-2 bg-img bg-contain bg-no-repeat bg-center" style="--bg-image: url({{ asset('build/img/picto/fructif.svg') }})"></div>
+            {% for m in 1..12 %}
+                <div class="text-center">
+                    {% if crops[m] is defined %}
+                        <a class="capitalize font-bold text-black" href="{{ path('plant_index',{'a_crops[]':crops[m].id}) }}">{{ months[m-1] }}</a>
+                    {% else %}
+                        <span class="capitalize text-gray-300">{{ months[m-1] }}</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+{% endif %}

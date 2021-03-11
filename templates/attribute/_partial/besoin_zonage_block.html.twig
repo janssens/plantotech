@@ -1,0 +1,14 @@
+<div class="show text-center" data-code="{{ element.code }}" data-type="attribute" data-id="{{ element.id }}" >
+    <img class="inline-block h-16 w-16" src="{{ asset('build/img/picto/zone.svg') }}" alt=""><br>
+    {% set min = 0 %}
+    {% set max = 0 %}
+    {% for attribute_value in plant.attributeValuesByCode(element.code) %}
+        {% if min == 0 %}
+            {% set min = attribute_value.value %}
+        {% endif %}
+        {% if attribute_value.value > max %}
+            {% set max = attribute_value.value %}
+        {% endif %}
+    {% endfor %}
+    zone {{ min }}-{{ max }}
+</div>

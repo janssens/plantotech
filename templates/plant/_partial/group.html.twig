@@ -1,0 +1,13 @@
+{% if icon is defined %}
+    {% set icon_html %}<div class="inline-block bg-img bg-contain bg-no-repeat bg-center h-10 w-10" style="--bg-image: url({{ icon }})" ></div>{% endset %}
+{% else %}
+    {% set icon_html = ''%}
+{% endif %}
+{% set content %}{% for code in codes %}{% include properties_and_attributes[code].templates('tiny') with {'element': properties_and_attributes[code],'plant' : plant} %}{% endfor %}
+{% endset %}
+{% if content | length > 5 %}
+<div class="text-center bg-gray-100 min-h-24 py-2 rounded-2xl">
+    {{ icon_html }}{{ content }}
+</div>
+{% endif %}
+

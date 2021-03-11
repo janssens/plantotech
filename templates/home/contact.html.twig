@@ -3,33 +3,66 @@
 {% block title %}Plantotech{% endblock %}
 
 {% block body %}
-    <h2 class="chapeau">
-        Formulaire de contact
-    </h2>
-
-    <form action="" method="post">
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('contact') }}" >
-        <label class="trap">
-            <input type="text" name="firstname" value="" placeholder="">
-        </label>
-        <label>
-            <input type="text" name="name" placeholder="Mon prenom" {% if name is defined %}value="{{ name }}"{% endif %}/>
-        </label>
-        <br>
-        <label>
-            <input type="email" name="email" placeholder="mon@email.fr" {% if email is defined %}value="{{ email }}"{% endif %} required/>
-        </label>
-        <br>
-        <label>
-            <input type="text" name="subject" placeholder="sujet" {% if subject is defined %}value="{{ subject }}"{% endif %} required>
-        </label>
-        <br>
-        <label for="message">
-        <textarea id="message" name="message" placeholder="mon message" required>{% if message is defined %}{{ message }}{% endif %}</textarea>
-        </label>
-        <br>
-        <input type="submit" value="Envoyer 🐦">
-    </form>
-
+    <div class="min-w-screen min-h-screen bg-gray-900 flex items-center justify-center px-5 py-5">
+        <div class="bg-gray-100 text-gray-500 rounded-xl shadow-xl w-full overflow-hidden" style="max-width:1000px">
+            <div class="md:flex w-full">
+                <div class="hidden md:block w-1/2 bg-white py-10 px-10">
+                    <svg class="w-full" id="Capa_1" enable-background="new 0 0 512 512" height="512" viewBox="0 0 512 512" width="512" xmlns="http://www.w3.org/2000/svg"><g><path d="m193.75 268.558c0-4.139 3.373-7.483 7.512-7.483s7.483 3.345 7.483 7.483v36.652c0 4.139-3.345 7.483-7.483 7.483s-7.512-3.345-7.512-7.483z" fill="#917d52"/><path clip-rule="evenodd" d="m296.678 491.021-296.678-13.153v-114.889c0-5.981.794-8.73 4.904-13.153 31.465-34.016 82.716-56.608 141.082-56.608 95.217 0 172.405 59.584 172.405 133.087.001 23.5-7.88 45.553-21.713 64.716z" fill="#95d6a4" fill-rule="evenodd"/><path clip-rule="evenodd" d="m296.678 491.021-296.678-13.153v-48.643c53.944-39.685 148.425-66.019 256-66.019 14.514 0 28.8.482 42.775 1.417 12.529 18.454 19.616 39.43 19.616 61.682.001 23.5-7.88 45.553-21.713 64.716z" fill="#78c2a4" fill-rule="evenodd"/><path d="m339.227 261.584c0-4.138 3.345-7.512 7.483-7.512 4.167 0 7.512 3.374 7.512 7.512v59.528c0 4.139-3.345 7.512-7.512 7.512-4.139 0-7.483-3.373-7.483-7.512z" fill="#917d52"/><path clip-rule="evenodd" d="m512 357.934v118.12c-7.03 5.499-14.967 10.517-23.642 14.967h-202.112c-35.915-18.397-58.848-46.403-58.848-77.783 0-55.446 71.576-100.374 159.904-100.374 47.027 0 89.405 12.841 118.659 33.108 5.387 3.741 6.039 7.767 6.039 11.962z" fill="#b3e59f" fill-rule="evenodd"/><path clip-rule="evenodd" d="m512 429.225v46.829c-7.03 5.499-14.967 10.517-23.642 14.967h-202.112c-35.915-18.397-58.848-46.403-58.848-77.783 0-18.198 7.71-35.263 21.203-49.975 2.466-.029 4.933-.057 7.398-.057 107.577 0 202.085 26.334 256.001 66.019z" fill="#95d6a4" fill-rule="evenodd"/><path d="m69.988 376.501c0-4.139 3.373-7.512 7.512-7.512s7.484 3.373 7.484 7.512v43.994c0 4.138-3.346 7.512-7.484 7.512s-7.512-3.373-7.512-7.512z" fill="#917d52"/><path d="m434.783 379.25c0-4.139 3.345-7.512 7.483-7.512 4.167 0 7.512 3.373 7.512 7.512v43.994c0 4.139-3.345 7.483-7.512 7.483-4.139 0-7.483-3.345-7.483-7.483z" fill="#917d52"/><path clip-rule="evenodd" d="m512 454.227v23.641c-.766 6.917-6.236 12.387-13.153 13.153h-485.694c-6.888-.766-12.387-6.237-13.153-13.153v-23.641c53.944-39.713 148.425-66.019 256-66.019 107.576 0 202.084 26.306 256 66.019z" fill="#d6f6b2" fill-rule="evenodd"/><path clip-rule="evenodd" d="m512 467.72v10.148c-.766 6.917-6.236 12.387-13.153 13.153h-485.694c-6.888-.766-12.387-6.237-13.153-13.153v-10.148z" fill="#ccf49f" fill-rule="evenodd"/><path clip-rule="evenodd" d="m237.064 88.614c-.623 0-1.247.028-1.9.057-5.725-18.312-22.819-31.578-43.03-31.578-3.146 0-6.265.312-9.241.936-8.192-21.657-29.111-37.049-53.632-37.049-27.213 0-49.976 18.936-55.871 44.334-17.603 3.401-30.87 18.907-30.87 37.502 0 12.047 3.545 25.171 16.924 25.171h201.716c3.345 0 8.249-.482 8.249-7.03-.001-17.858-14.486-32.343-32.345-32.343z" fill="#d2f6ff" fill-rule="evenodd"/><path d="m85.579 255.178 30.359 110.722c1.445 5.272-2.637 10.602-8.079 10.602h-60.746c-4.65 0-8.392-3.771-8.392-8.391 0-1.049.17-2.041.538-2.977l30.162-110.041c1.219-4.479 5.811-7.087 10.262-5.868 3.005.794 5.187 3.147 5.896 5.953z" fill="#66b394"/><path d="m450.373 257.928 30.36 110.721c1.418 5.272-2.636 10.602-8.079 10.602h-60.747c-4.648 0-8.391-3.77-8.391-8.391 0-1.049.171-2.041.511-2.977l30.188-110.04c1.22-4.479 5.812-7.087 10.262-5.896 3.005.822 5.16 3.174 5.896 5.981z" fill="#66b394"/><path d="m207.81 170.195 24.635 89.774c1.162 4.28-2.154 8.589-6.548 8.589h-49.268c-3.771 0-6.831-3.033-6.831-6.803 0-.851.17-1.644.453-2.381l24.463-89.263c.992-3.628 4.706-5.754 8.334-4.762 2.409.651 4.195 2.579 4.762 4.846z" fill="#66b394"/><path d="m358.048 91.931 42.436 154.828c2.012 7.398-3.686 14.825-11.282 14.825h-84.955c-6.493 0-11.765-5.272-11.765-11.764 0-1.445.283-2.835.765-4.139l42.181-153.921c1.701-6.236 8.136-9.893 14.372-8.192 4.195 1.134 7.228 4.423 8.248 8.363z" fill="#66b394"/><g clip-rule="evenodd" fill-rule="evenodd"><path d="m334.209 96.211 41.272 150.548c2.013 7.398-3.686 14.825-11.282 14.825h25.003c7.597 0 13.294-7.427 11.282-14.825l-42.436-154.828c-1.02-3.94-4.053-7.229-8.248-8.362-6.236-1.701-12.671 1.956-14.372 8.192z" fill="#5aa687"/><path d="m429.766 274 12.331 44.929 13.635 49.72c1.247 4.564-1.645 9.156-5.953 10.318-.681.17-1.389.284-2.126.284h2.126 22.876c5.443 0 9.497-5.329 8.079-10.602l-11.396-41.556-18.965-69.165c-.736-2.807-2.891-5.159-5.895-5.981-4.45-1.19-9.042 1.417-10.262 5.896z" fill="#5aa687"/><path d="m232.444 259.969-24.635-89.774c-.566-2.268-2.353-4.195-4.762-4.847-3.628-.992-7.342 1.134-8.334 4.762l-5.953 21.742 18.681 68.117c.368 1.417.284 2.834-.198 4.081-.936 2.58-3.401 4.507-6.35 4.507h7.852 17.151c4.394.001 7.71-4.308 6.548-8.588z" fill="#5aa687"/><path d="m97.484 298.604-11.905-43.427c-.709-2.806-2.892-5.159-5.896-5.953-4.451-1.219-9.043 1.389-10.262 5.868l-4.421 16.158 9.326 34.072 16.61 60.577c1.247 4.563-1.644 9.156-5.952 10.318-.681.17-1.39.284-2.127.284h2.127 22.875c5.442 0 9.524-5.329 8.079-10.602z" fill="#5aa687"/><path d="m59.443 127.987h201.716c3.345 0 8.249-.482 8.249-7.03 0-6.718-2.041-12.983-5.557-18.142-.936.142-1.87.17-2.692.17h-201.716c-8.361 0-12.869-5.103-15.108-11.877-1.19 3.686-1.815 7.626-1.815 11.708 0 12.047 3.544 25.171 16.923 25.171z" fill="#b8f0ff"/></g></g></svg>
+                </div>
+                <div class="w-full md:w-1/2 py-10 px-5 md:px-10">
+                    <div class="text-center mb-1">
+                        <h1 class="font-bold text-3xl text-gray-900">Formulaire de contact</h1>
+                        <p>Un bug 🐛 ? Une suggestion 💡 ?</p>
+                    </div>
+                    <form method="post">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('contact') }}" >
+                        <label class="trap">
+                            <input type="text" name="firstname" value="" placeholder="">
+                        </label>
+                        <div class="flex -mx-3">
+                            <div class="w-full px-3 mb-3">
+                                <label for="username" >Mon prénom</label>
+                                <div class="flex">
+                                    <div class="ico"><i class="mdi mdi-account-outline"></i></div>
+                                    <input autofocus required name="username" id="username" type="text" class="outline-none" placeholder="Maïté" {% if name is defined %}value="{{ name }}"{% endif %}>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex -mx-3">
+                            <div class="w-full px-3 mb-3">
+                                <label for="email">Mon e-mail</label>
+                                <div class="flex">
+                                    <div class="ico"><i class="mdi mdi-email-outline"></i></div>
+                                    <input required id="email" type="email" name="email" class="outline-none" placeholder="maite@france3.fr" {% if email is defined %}value="{{ email }}"{% endif %}>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex -mx-3">
+                            <div class="w-full px-3 mb-3">
+                                <label for="subject">Sujet</label>
+                                <div class="flex">
+                                    <div class="ico"><i class="mdi mdi-information-outline"></i></div>
+                                    <input type="text" id="subject" name="subject" placeholder="La battavia n'y est pas ?" {% if subject is defined %}value="{{ subject }}"{% endif %} required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex -mx-3">
+                            <div class="w-full px-3 mb-5">
+                                <label for="message">Message</label>
+                                <div class="flex">
+                                    <textarea id="message" id="message" name="message" class="outline-none" placeholder="mon message" required>{% if message is defined %}{{ message }}{% endif %}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex -mx-3">
+                            <div class="w-full px-3 mb-5 text-center">
+                                <button type="submit" class="btn btn--primary"><i class="mdi mdi-send mr-1"></i>Envoyer</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

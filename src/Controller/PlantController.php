@@ -23,6 +23,7 @@ use App\Repository\PlantAttributeRepository;
 use App\Repository\PlantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,7 +38,6 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 class PlantController extends AbstractController
 {
     private $csrfTokenManager;
-
 
     public function __construct(CsrfTokenManagerInterface $csrfTokenManager)
     {
@@ -247,12 +247,12 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/card/{id}/{slug}", name="plant_show")
+     * @Route("/detailed/{id}/{slug}", name="plant_detailed")
      * @param Plant $plant
      * @param string $slug
      * @return Response
      */
-    public function show(Plant $plant,string $slug)
+    public function detailed(Plant $plant,string $slug)
     {
         if ($plant->getSlug() != $slug){
             return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
@@ -260,6 +260,28 @@ class PlantController extends AbstractController
         $root_families = $this->getDoctrine()->getRepository(AttributeFamily::class)->findBy(array('parent'=>null));
         return $this->render('plant/show.html.twig', [
             'families' => $root_families,
+            'plant' => $plant,
+        ]);
+    }
+
+    /**
+     * @Route("/card/{id}/{slug}", name="plant_show")
+     * @param Plant $plant
+     * @param string $slug
+     * @return Response
+     */
+    public function card(Plant $plant,string $slug)
+    {
+        if ($plant->getSlug() != $slug){
+            return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
+        }
+        $properties_and_attributes = array();
+        /** @var PropertyOrAttribute $element */
+        foreach ($this->getDoctrine()->getRepository(PropertyOrAttribute::class)->findAll() as $element){
+            $properties_and_attributes[$element->getCode()] = $element;
+        }
+        return $this->render('plant/card.html.twig', [
+            'properties_and_attributes' => $properties_and_attributes,
             'plant' => $plant,
         ]);
     }
@@ -552,10 +574,11 @@ class PlantController extends AbstractController
         if ($images_url = $request->get('images_url')){
             if (count($images_url)){
                 foreach ($images_url as $url){
-                    if ($url){
-                        //todo check is url
+                    if ($u = Image::urlOk($url)){
+                        $name = Image::grab_image($u,$this->getParameter('app_images_directory'));
                         $img = new Image();
-                        $img->setName($url);
+                        $img->setName($name);
+                        $img->setOrigin($u);
                         $plant->addImage($img);
                         $em->persist($img);
                     }
@@ -598,7 +621,7 @@ class PlantController extends AbstractController
      */
     public function edit(Request $request, Plant $plant): Response
     {
-        return $this->redirectToRoute('plant_redirect_to_show',array('id'=>$plant->getId()));
+        return $this->redirectToRoute('plant_detailed',array('id'=>$plant->getId(),'slug'=>$plant->getSlug(),'edit'=>1));
     }
 
     /**

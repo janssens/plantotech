@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind forms;
+
+@import "~mdi/scss/materialdesignicons";
+@import "~dropzone/dist/dropzone.css";
+
+@import "sources/vars";
+@import "sources/fonts";
+
+body{
+  background: $bg_color;
+}
+h1{
+  @apply w-full text-center
+}
+.btn{
+  @apply focus:outline-none text-white text-sm py-2.5 px-5 border-b-4  rounded-md
+}
+.btn--primary{
+  @apply border-blue-600 bg-blue-500 hover:bg-blue-400
+}
+.btn--secondary{
+  @apply border-gray-600 bg-gray-500 hover:bg-gray-400
+}
+.btn--success{
+  @apply border-green-600 bg-green-500 hover:bg-green-400
+}
+.btn--danger{
+  @apply border-red-600 bg-red-500 hover:bg-red-400
+}
+.btn--warning{
+  @apply border-yellow-600 bg-yellow-500 hover:bg-yellow-400
+}
+.btn--info{
+  @apply border-purple-600 bg-purple-500 hover:bg-purple-400
+}
+.btn--dark{
+  @apply border-gray-600 bg-gray-500 hover:bg-gray-400
+}
+
+form{
+  label{
+    @apply text-xs font-semibold px-1;
+  }
+  input[type=text],input[type=password],input[type=email]{
+    @apply w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500
+  }
+  textarea{
+    @apply w-full px-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500
+  }
+  .trap{
+    visibility: hidden;
+  }
+}
+.ico{
+  @apply w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center;
+  i{
+    @apply text-gray-400 text-lg
+  }
+}
+
+.stratum{
+  @apply py-1 px-3 rounded-full text-xs
+}
+.stratum--low{
+  @apply bg-purple-100 text-purple-500
+}
+.stratum--shrub{
+  @apply bg-purple-200 text-purple-600
+}
+.stratum--medium{
+  @apply bg-purple-300 text-purple-600
+}
+.stratum--tree{
+  @apply bg-purple-400 text-white
+}
+.stratum--canopy{
+  @apply bg-purple-500 text-purple-100
+}
+.stratum--climbing{
+  @apply bg-yellow-200 text-yellow-600
+}
+
+$themeColours: (
+        "1": #b8e994,
+        "2": #78e08f,
+        "3": #38ada9,
+        "4": #82ccdd,
+        "5": #60a3bc,
+);
+
+@each $i, $color in $themeColours {
+  #filters_list{
+    .cat.cat--#{$i}{
+      background: $color !important;
+    }
+  }
+  #form_filter{
+    .fblock.cat--#{$i} h4{
+      background: $color;
+    }
+  }
+  .tag.cat--#{$i}{
+    background: $color;
+  }
+}
+.tag{
+  @apply py-1 px-3 rounded-full mr-1;
+}
+#filters_list{
+  .cat{
+    @apply block w-4/5 py-3 px-6 text-left relative overflow-hidden bg-white;
+  }
+  .cat.active{
+    @apply w-full;
+    &::after,&::before {
+      position: absolute;
+      display: block;
+      content: '';
+      width: 0;
+      height: 0;
+    }
+    &::after {
+      right:0;
+      top:0;
+      border-width: 0 50px 50px 0;
+      border-color: transparent $bg_color transparent transparent;
+    }
+    &::before {
+      right:0;
+      bottom:0;
+      border-width: 0 0 50px 50px;
+      border-color: transparent transparent $bg_color transparent;
+    }
+  }
+  .cat--all{
+    @apply bg-purple-500;
+  }
+}
+.fblock{
+  @apply bg-white shadow rounded-xl mx-1 overflow-hidden mb-2;
+  h4{
+    @apply text-gray-900 uppercase text-sm leading-normal w-full py-3 px-6 text-left;
+  }
+  .content{
+    @apply px-2;
+  }
+}
+.bg-img{
+  background-image: var(--bg-image);
+}
+.border-955441{
+  border-color: #955441;
+}
+.border-afbf6a{
+  border-color: #afbf6a;
+}

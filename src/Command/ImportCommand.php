@@ -992,6 +992,7 @@ protected static $defaultName = 'app:import-from-db';
             'height_width'=>array('position'=>1,'name'=>'hauteur - largeur'),
             'gallery'=>array('position'=>3,'name'=>''),
             'flowerings_crops'=>array('position'=>2,'name'=>'floraison et fructification'),
+            'sexual_maturity'=>array('position'=>3,'name'=>'maturité sexuelle'),
             'sources'=>array('position'=>1,'name'=>'Sources'),
         );
         foreach ($properties as $code => $data){

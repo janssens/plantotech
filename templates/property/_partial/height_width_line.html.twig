@@ -1,1 +1,4 @@
-<div><b>hauteur</b> {{ plant.Height }}m - <b>largeur</b> {{ plant.Width }}m </div>
+<div data-code="{{ element.code }}" data-type="property" data-id="{{ element.id }}" class="show">
+    <img src="{{ asset('build/img/picto/hauteur.svg') }}" alt="" class="h-14 inline align-baseline -mb-2"> {{ plant.Height }}m
+    <img src="{{ asset('build/img/picto/largeur.svg') }}" alt="" class="w-14 inline align-baseline -mb-2"> {{ plant.Width }}m
+</div>

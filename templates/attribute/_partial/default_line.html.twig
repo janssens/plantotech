@@ -1,0 +1,32 @@
+{% if (plant.attributeValuesByCode(element.code) | length) or (edit) %}
+    <div data-code="{{ element.code }}" data-type="attribute" data-id="{{ element.id }}" class="show">
+        {% if element.typeNone %}
+            <span class="font-black uppercase">{% if edit %}{% if plant.attributeValuesByCode(element.code) | length %}✅{% else %}🔲{% endif %}&nbsp;{% endif %}<a href="{{ path('plant_index',{ (element.code) : '1'}) }}">{{ element.name }}</a></span>
+        {% else %}
+            {% if element.mainValue is not null %}
+                <span class="font-black uppercase">{{ element.mainValue.label }}</span> :
+                {% for attribute_value in plant.mainAttributeValuesByCode(element.code) %}
+                    {% if attribute_value.mainValue is not null %}
+                        {% if element.typeUnique %}
+                            {{ attribute_value.value }}
+                        {% else %}
+                            {% if attribute_value.value is not null %}<a class="hover:underline capitalize" href="{{ path('plant_index',{ (element.code) : attribute_value.id}) }}">{{ attribute_value.value }}</a>{% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                <br>
+            {% endif %}
+            <span class="font-black uppercase">{{ element.name }}</span> :
+            {#                                    {% if plant.attributesByCode(attribute.code) | length > 1 or plant.attributesByCode(attribute.code).first.value is not null %} : {% endif %}#}
+            {% for attribute_value in plant.attributeValuesByCode(element.code) %}
+                {% if attribute_value.mainValue is null %}
+                    {% if element.typeUnique %}
+                        <span class="font-black capitalize">{{ attribute_value.value }}</span>
+                    {% else %}
+                        {% if attribute_value.value is not null %}<a class="hover:underline capitalize" href="{{ path('plant_index',{ (element.code) : attribute_value.id}) }}">{{ attribute_value.value }}</a>{% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endif %}

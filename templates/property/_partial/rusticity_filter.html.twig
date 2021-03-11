@@ -1,20 +1,24 @@
 <h4>Rusticité</h4>
-<input type="range" id="rusticity_v" name="rusticity_v" min="-40" max="5" class="f_not_used" disabled="disabled" value="{% if ( filters['rusticity'] is defined ) %}{{filters['rusticity']}}{% endif %}">
-<br>
-<label for="rusticity" class="label">Rusticité <span></span>°C</label><br>
-<input id="rusticity" name="rusticity" type="checkbox" value="" data-f-value="" {% if ( filters['rusticity'] is defined ) %}checked="checked"{% endif %} class="switch" />
-<script>
-    document.getElementById('rusticity_v').addEventListener('change',function (){
-        document.getElementById('rusticity').value = this.value;
-        document.getElementById('rusticity').setAttribute('data-f-value',this.value);
-        document.querySelector('[for="rusticity"] span').innerHTML = this.value;
-    });
-    document.getElementById('rusticity').addEventListener('click',function (){
-        console.log(this);
-        if (this.checked)
-            document.getElementById('rusticity_v').removeAttribute("disabled");
-        else
-            document.getElementById('rusticity_v').setAttribute("disabled", "disabled");
-    });
-    document.getElementById('rusticity_v').dispatchEvent(new Event('change'));
-</script>
+<div class="content">
+    <input type="range" id="rusticity_v" name="rusticity_v" min="-40" max="5" class="f_not_used" disabled="disabled" value="{% if ( filters['rusticity'] is defined ) %}{{filters['rusticity']}}{% endif %}">
+    <br>
+    <label class="inline-flex items-center mt-3 cursor-pointer" for="rusticity">
+        <input id="rusticity" name="rusticity" type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" value="" data-f-value="" {% if ( filters['rusticity'] is defined ) %}checked="checked"{% endif %} >
+        <div class="ml-2 text-gray-700 label">Rusticité <span></span>°C</div>
+    </label>
+    <script>
+        document.getElementById('rusticity_v').addEventListener('change',function (){
+            document.getElementById('rusticity').value = this.value;
+            document.getElementById('rusticity').setAttribute('data-f-value',this.value);
+            document.querySelector('[for="rusticity"] .label span').innerHTML = this.value;
+        });
+        document.getElementById('rusticity').addEventListener('click',function (){
+            console.log(this);
+            if (this.checked)
+                document.getElementById('rusticity_v').removeAttribute("disabled");
+            else
+                document.getElementById('rusticity_v').setAttribute("disabled", "disabled");
+        });
+        document.getElementById('rusticity_v').dispatchEvent(new Event('change'));
+    </script>
+</div>

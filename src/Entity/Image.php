@@ -28,6 +28,11 @@ class Image
      */
     private $Plant;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $origin;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,13 +68,52 @@ class Image
         if (!$src){
             return '';
         }
-        $re = '/^http(s?):\/\/(.*).(JPG|JPEG|PNG)/i';
+        return '/uploads/'.$src;
+    }
 
-        preg_match_all($re, $src, $matches, PREG_SET_ORDER, 0);
-
-        if (!count($matches)){
-            return '/uploads/'.$src;
+    static function urlOk($url){
+        $re = '/(https?:\/\/.*\.wikimedia.org\/[^#]*\.jpg)/miU';
+        preg_match($re, $url, $matches, PREG_OFFSET_CAPTURE, 0);
+        if (count($matches)){
+            return $matches[0][0];
         }
-        return $src;
+        else{
+            return false;
+        }
+    }
+
+    static function grab_image($url,$save_to_dir){
+
+        $path      = parse_url($url, PHP_URL_PATH);       // get path from url
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION)); // get ext from path
+        $new_filename  = md5($url).'_'.preg_replace("/[^A-Za-z0-9 ]/", '', pathinfo($path, PATHINFO_FILENAME));  // get name from path
+
+        $ch = curl_init ($url);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
+        $raw=curl_exec($ch);
+        curl_close ($ch);
+        $save_to = $save_to_dir.'/'.$new_filename.'.'.$extension;
+        if(file_exists($save_to)){
+            unlink($save_to);
+        }
+        $fp = fopen($save_to,'x');
+        fwrite($fp, $raw);
+        fclose($fp);
+
+        return $new_filename.'.'.$extension;
+    }
+
+    public function getOrigin(): ?string
+    {
+        return $this->origin;
+    }
+
+    public function setOrigin(?string $origin): self
+    {
+        $this->origin = $origin;
+
+        return $this;
     }
 }

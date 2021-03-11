@@ -539,6 +539,10 @@ class Plant
         return $this->attributes_values;
     }
 
+    /**
+     * @param string $code
+     * @return ArrayCollection
+     */
     public function getAttributeValuesByCode($code = ''){
         return $this->attributes_values->filter(function ($attribute_value) use ($code){
             /** @var AttributeValue $attribute_value */
@@ -546,6 +550,10 @@ class Plant
         });
     }
 
+    /**
+     * @param string $code
+     * @return ArrayCollection
+     */
     public function getMainAttributeValuesByCode($code = ''){
         return $this->attributes_values->filter(function ($attribute_value) use ($code){
             /** @var AttributeValue $attribute_value */

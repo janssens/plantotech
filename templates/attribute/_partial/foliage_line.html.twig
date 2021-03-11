@@ -1,0 +1,11 @@
+{% if (plant.attributeValuesByCode(element.code) | length) or (edit) %}
+    <div class="bg-contain bg-no-repeat show bg-img text-green-800 " data-code="{{ element.code }}" data-type="attribute" data-id="{{ element.id }}" style="--bg-image: url({{ asset('build/img/picto/foliage_'~plant.getAttributeValuesByCode('foliage').first.code~'.png') }})">
+            {% for attribute_value in plant.attributeValuesByCode(element.code) %}
+                <a class="hover:underline uppercase text-xl" href="{{ path('plant_index',{ (element.code) : attribute_value.id}) }}">
+                    {{ attribute_value.value }}
+                </a>
+            {% endfor %}
+        <br>
+        {{ plant.getAttributeValuesByCode('leaf_density').first.value }}
+    </div>
+{% endif %}

@@ -1,0 +1,32 @@
+{% if (plant.attributeValuesByCode(element.code) | length) or (edit) %}
+    {% if plant.getMainAttributeValuesByCode('insolation').first %}
+        {% set insolation = plant.getMainAttributeValuesByCode('insolation').first.code %}
+    {% else %}
+        {% set insolation = plant.getAttributeValuesByCode('insolation').first.code %}
+    {% endif %}
+    <div class="bg-contain bg-center bg-no-repeat py-6 text-yellow-900 show bg-img h-30 w-30 text-center m-auto" data-code="insolation" data-type="attribute" data-id="{{ element.id }}" style="--bg-image: url({{ asset('build/img/picto/insolation_'~insolation~'.png') }})">
+            {% for attribute_value in plant.mainAttributeValuesByCode('insolation') %}
+                {% if attribute_value.mainValue is not null %}
+                    {% if element.typeUnique %}
+                        {{ attribute_value.value }}
+                    {% else %}
+                        {% if attribute_value.value is not null %}
+                            <a class="hover:underline text-xl font-black uppercase" href="{{ path('plant_index',{ 'insolation' : attribute_value.id}) }}">
+                            {{ attribute_value.value }}</a>{% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+                <br>
+            {% for attribute_value in plant.attributeValuesByCode('insolation') %}
+                {% if attribute_value.mainValue is null %}
+                    {% if element.typeUnique %}
+                        <span class="uppercase">{{ attribute_value.value }}</span>
+                    {% else %}
+                        {% if attribute_value.value is not null %}
+                            <a class="hover:underline uppercase" href="{{ path('plant_index',{ 'insolation' : attribute_value.id}) }}">
+                            {{ attribute_value.value }}</a>{% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+    </div>
+{% endif %}

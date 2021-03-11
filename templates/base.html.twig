@@ -4,43 +4,84 @@
         <meta charset="UTF-8">
         {% block head %}{% endblock %}
         <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="stylesheet" href="{{ base_url }}css/knacss/css/knacss.css"/>
-        <link rel="stylesheet" href="{{ base_url }}css/style.css"/>
-        <link rel="stylesheet" href="{{ base_url }}lib/dropzone/min/dropzone.min.css"/>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
     </head>
-    <body>
-        <div class="grid">
-            <div>
+    <body class="">
+        <div class="w-full bb bg-white flex p-3">
+            <div class="flex-none">
                 <a href="{{ base_url }}">Accueil</a> / <a href="{{ path('plant_index') }}">🌿 les plantes</a>
             </div>
-            <div class="txtright">
+            <div class="flex-grow"></div>
+            <div class="text-right flex-none">
                 {% if is_granted('ROLE_USER') %}
-                   <b> {% if is_granted('ROLE_ADMIN') %}🌳{% else %}🧘{% endif %} {{ app.user.username }} </b> |  🔓<a href="{{ path('app_logout') }}">déconnection</a>
+                   <b> {% if is_granted('ROLE_ADMIN') %}🌳{% else %}🧘{% endif %} {{ app.user.username }} </b> |  <a href="{{ path('app_logout') }}"><i class="mdi mdi-lock-off"></i>déconnection</a>
                 {% else %}
                     <a href="{{ path('app_login') }}">connexion</a> | <a href="{{ path('app_register') }}">s'inscrire</a>
                 {% endif %}
             </div>
         </div>
-        <div class="grid-12-small-4">
-            {% for type,messages in app.session.flashBag.all %}
-                {% if type == 'error' %}{% set type = 'danger' %}{% endif %}
-                {% for message in messages %}
-                    <div class="col-4"></div>
-                    <div class="col-4 alert--{{ type }} txtcenter">{{ message }}</div>
-                    <div class="col-4"></div>
-                {% endfor %}
-            {% endfor %}
-        </div>
-        <div class="container">
+        <div class="container-center min-h-screen">
             {% block body %}{% endblock %}
         </div>
-        <div id="footer">
-            <small>Un bug 🐛 ? Une suggestion 💡 ? Utilise <a href="{{ path('contact') }}">ce formulaire</a> !</small>
-        </div>
-        <script src="{{ base_url }}js/jquery-3.5.1.min.js"></script>
-        <script src="{{ base_url }}js/app.js"></script>
-        <script src="{{ base_url }}lib/dropzone/min/dropzone.min.js"></script>
-        {% block javascripts %}{% endblock %}
+        <footer class="h-10 bg-white w-full border-t text-center p-1">
+            <small>Un bug 🐛 ? Une suggestion 💡 ? Utilise <a href="{{ path('contact') }}" class="underline">ce formulaire</a> !</small>
+        </footer>
+        {% if app.session.flashBag.peekAll|length > 0 %}
+            <div id="flash" class="px-10 flex flex-col space-y-3 fixed w-full top-14">
+                {% for type,messages in app.session.flashBag.all %}
+                    {% if type == "info" %}
+                        {% for message in messages %}
+                            <div class="bg-blue-100 p-5 w-full sm:w-1/2 border-l-4 border-blue-500 relative">
+                                <div class="flex space-x-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="flex-none fill-current text-blue-500 h-4 w-4">
+                                        <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-.001 5.75c.69 0 1.251.56 1.251 1.25s-.561 1.25-1.251 1.25-1.249-.56-1.249-1.25.559-1.25 1.249-1.25zm2.001 12.25h-4v-1c.484-.179 1-.201 1-.735v-4.467c0-.534-.516-.618-1-.797v-1h3v6.265c0 .535.517.558 1 .735v.999z"></path></svg>
+                                    <div class="flex-1 leading-tight text-sm text-blue-700">{{ message }}</div>
+                                </div>
+                                <div class="absolute right-2 top-1 cursor-pointer close">
+                                    <i class="mdi mdi-close"></i>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% elseif type == "success" %}
+                        {% for message in messages %}
+                            <div class="bg-green-100 p-5 w-full sm:w-1/2 rounded relative">
+                                <div class="flex justify-between">
+                                    <div class="flex space-x-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="flex-none fill-current text-green-500 h-4 w-4">
+                                            <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.25 16.518l-4.5-4.319 1.396-1.435 3.078 2.937 6.105-6.218 1.421 1.409-7.5 7.626z"></path></svg>
+                                        <div class="flex-1 leading-tight text-sm text-green-700 font-medium">{{ message }}</div>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="flex-none fill-current text-green-600 h-3 w-3">
+                                        <path d="M23.954 21.03l-9.184-9.095 9.092-9.174-2.832-2.807-9.09 9.179-9.176-9.088-2.81 2.81 9.186 9.105-9.095 9.184 2.81 2.81 9.112-9.192 9.18 9.1z"></path></svg>
+                                </div>
+                                <div class="absolute right-2 top-1 cursor-pointer close">
+                                    <i class="mdi mdi-close"></i>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% elseif type == "error" %}
+                        {% for message in messages %}
+                            <div class="bg-red-100 p-5 w-full sm:w-1/2 relative">
+                                <div class="flex space-x-3">
+                                    <i class="mdi mdi-close-circle text-red-700"></i>
+                                    <div class="leading-tight flex flex-col space-y-2">
+                                        <div class="text-sm font-medium text-red-700">Oups !</div>
+                                        <div class="flex-1 leading-snug text-sm text-red-600">{{ message }}</div>
+                                    </div>
+                                </div>
+                                <div class="absolute right-2 top-1 cursor-pointer close">
+                                    <i class="mdi mdi-close"></i>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
     </body>
 </html>

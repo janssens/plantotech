@@ -1,0 +1,215 @@
+{% extends 'base.html.twig' %}
+
+{% if is_granted('ROLE_EDIT') %}
+    {% set edit = (app.request.query.all.edit is defined and app.request.query.all.edit) %}
+{% else %}
+    {% set edit = false %}
+{% endif %}
+
+{% block head %}
+    <link rel="canonical" href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}" />
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block title %}{{ plant.LatinName }} - {{ plant.name }}{% endblock %}
+
+{% block body %}
+    <div class="min-w-screen min-h-screen flex items-center justify-center px-5 py-5">
+        <div class="p-10 xs:p-0 mx-auto md:w-full">
+            <div class="bg-white shadow w-full rounded-xl overflow-hidden">
+                <div class="w-full bg-gray-900 text-white mb-1 p-2 ">
+                    <h1 class="uppercase text-3xl font-black">{{ plant.name }}</h1>
+                    <h2 class="text-center w-full italic text-2xl">{{ plant.LatinName }}</h2>
+                    {% if plant.Family %}
+                        <h3><a href="{{ path('plant_index',{'family':plant.Family.id}) }}">{{ plant.Family.Name }}</a></h3>
+                    {% endif %}
+                </div>
+                <div class="px-5 py-7">
+                    <div class="grid grid-cols-3 grid-flow-row">
+                        <div class="col-span-2">
+{#         TODO:                   "life_cycle"#}
+                            {% include properties_and_attributes['stratum'].templates('line') with {'element': properties_and_attributes['stratum'],'plant' : plant} %}
+                            {% include properties_and_attributes['port'].templates('line') with {'element': properties_and_attributes['port'],'plant' : plant} %}
+                            {% include properties_and_attributes['height_width'].templates('line') with {'element': properties_and_attributes['height_width'],'plant' : plant} %}
+                        </div>
+                        <div>
+                            {% include properties_and_attributes['besoin_zonage'].templates('block') with {'element': properties_and_attributes['besoin_zonage'],'plant' : plant} %}
+                        </div>
+                    </div>
+                    <div class="grid grid-rows-4 grid-cols-3 grid-flow-row gap-1 h-96">
+                        <div class="col-span-2 row-span-4 bg-img bg-no-repeat bg-center bg-contain bg-bottom" style="--bg-image: url({{ asset('build/img/silhouettes/ico/'~plant.getMainAttributeValuesByCode('port').first.code~'.png') }})" >
+                        </div>
+                        <div>{% include properties_and_attributes['insolation'].templates('block') with {'element': properties_and_attributes['insolation'],'plant' : plant} %}</div>
+                        <div>{% include properties_and_attributes['rusticity'].templates('block') with {'element': properties_and_attributes['rusticity'],'plant' : plant} %}</div>
+{#        TODO:                 "rusticity_comment"#}
+                        <div>{% include properties_and_attributes['foliage'].templates('block') with {'element': properties_and_attributes['foliage'],'plant' : plant} %}</div>
+                        <div>{% include properties_and_attributes['drought_tolerance'].templates('block') with {'element': properties_and_attributes['drought_tolerance'],'plant' : plant} %}</div>
+{#        TODO:                 "humidity"#}
+                    </div>
+                    <div class="grid grid-rows-1 grid-cols-3 grid-flow-row gap-1 h-36">
+                        <div class="col-span-2 relative bg-img bg-no-repeat bg-center bg-contain bg-top" style="--bg-image: url({{ asset('build/img/silhouettes/ico/root_'~plant.attributeValuesByCode('root').first.code~'.png') }});background-color: #eee1d1">
+                            <div class="absolute bottom-0 w-full text-center">
+                                {% include properties_and_attributes['root'].templates('line') with {'element': properties_and_attributes['root'],'plant' : plant} %}
+{#        TODO:                       "sucker"#}
+                            </div>
+                        </div>
+                        <div>
+                            {% include properties_and_attributes['soil'].templates('line') with {'element': properties_and_attributes['soil'],'plant' : plant} %}
+                            {% include properties_and_attributes['humus'].templates('line') with {'element': properties_and_attributes['humus'],'plant' : plant} %}
+                            {% include properties_and_attributes['argile'].templates('line') with {'element': properties_and_attributes['argile'],'plant' : plant} %}
+                            {% include properties_and_attributes['limestone'].templates('line') with {'element': properties_and_attributes['limestone'],'plant' : plant} %}
+                            {% include properties_and_attributes['ph'].templates('line') with {'element': properties_and_attributes['ph'],'plant' : plant} %}
+                            {% include properties_and_attributes['nutrient'].templates('line') with {'element': properties_and_attributes['nutrient'],'plant' : plant} %}
+                        </div>
+                    </div>
+                    <div class="my-5">
+                        {% include properties_and_attributes['gallery'].templates('line') with {'element': properties_and_attributes['gallery'],'plant' : plant} %}
+                    </div>
+                    <div class="grid grid-cols-12 grid-flow-row gap-1">
+                        <div class="grid grid-cols-4 gap-4 col-span-8">
+                            <div class="text-center col-span-4">
+                                <h3 class="uppercase font-bold underline"><span class="text-xl">Services</span> <br>écosystèmiques</h3>
+                            </div>
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['wind_stopper'],'icon': asset('build/img/picto/vent.svg')} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_insectes_auxilliaires','precisions_insectes_auxilliaires','interet_repulsif_insectes'],'icon': asset('build/img/picto/auxiliaire.svg')} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_couvre_sol'],'icon': asset('build/img/picto/tapissant.svg')} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_mellifere','interet_nectarifere','interet_pollen'],'icon': asset('build/img/picto/polinisateurs.svg')} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_fixateur_de_mineraux','precisions_fixateur_de_mineraux','interet_amelioration_du_compost','interet_biomasse','interet_amelioration_structure_du_sol'],'icon': asset('build/img/picto/lombric.svg')} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_fixateur_dazote']} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_habitat_d_oiseaux'],'icon': asset('build/img/picto/oiseau.svg')} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_allelopathique']} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_pionnier']} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_ombre_legere'],'icon': asset('build/img/picto/ombre.svg')} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['interet_anti_erosion'],'icon': asset('build/img/picto/errosion.svg')} %}
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 col-span-4">
+                            <div class="text-center col-span-2">
+                                <h3 class="uppercase font-bold underline"><span class="text-xl">Besoins</span> <br>écosystémiques</h3>
+                            </div>
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_brise_vent'],'icon': asset('build/img/picto/vent.svg')} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_pollinisation'],'icon': asset('build/img/picto/polinisation_croisee.svg')} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_limitation_de_concurrence']} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_azote']} %}
+                            {% include 'plant/_partial/group.html.twig' with {'codes': ['besoin_mineraux','besoin_matiere_organique'],'icon': asset('build/img/picto/lombric.svg')} %}
+                        </div>
+                        <div class="grid grid-cols-3 grid-flow-row gap-1 col-span-6">
+                            <div class="col-span-3 mb-3">
+                                <h3 class="uppercase font-bold text-xl underline">Ressources</h3>
+                            </div>
+                            <div>
+                                <div class="border-l-2 border-afbf6a px-2 w-full">
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-7 w-7" style="--bg-image: url({{ asset('build/img/picto/comestible.svg') }})" ></div>
+                                </div>
+                                {% include properties_and_attributes['graine_comestible'].templates('line') with {'element': properties_and_attributes['graine_comestible'],'plant' : plant} %}
+                                {% include properties_and_attributes['fruit_comestible'].templates('line') with {'element': properties_and_attributes['fruit_comestible'],'plant' : plant} %}
+                                {% include properties_and_attributes['rhizome_tubercule_bulbe_comestible'].templates('line') with {'element': properties_and_attributes['rhizome_tubercule_bulbe_comestible'],'plant' : plant} %}
+                                {% include properties_and_attributes['petiole_feuille_comestible'].templates('line') with {'element': properties_and_attributes['petiole_feuille_comestible'],'plant' : plant} %}
+                                {% include properties_and_attributes['bourgeon_seve_comestible'].templates('line') with {'element': properties_and_attributes['bourgeon_seve_comestible'],'plant' : plant} %}
+                                {% include properties_and_attributes['fleur_comestible'].templates('line') with {'element': properties_and_attributes['fleur_comestible'],'plant' : plant} %}
+                            </div>
+                            <div>
+                                <div class="border-l-2 border-afbf6a px-2 w-full">
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-7 w-7" style="--bg-image: url({{ asset('build/img/picto/nez.png') }})" ></div>
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-7 w-7" style="--bg-image: url({{ asset('build/img/picto/oeil.png') }})" ></div>
+                                </div>
+                                {% include properties_and_attributes['ornementale'].templates('tiny') with {'element': properties_and_attributes['ornementale'],'plant' : plant} %}
+                                {% include properties_and_attributes['odorante'].templates('tiny') with {'element': properties_and_attributes['odorante'],'plant' : plant} %}
+                                {% include properties_and_attributes['tinctoriale'].templates('tiny') with {'element': properties_and_attributes['tinctoriale'],'plant' : plant} %}
+                                {% include properties_and_attributes['usage_aromatique'].templates('line') with {'element': properties_and_attributes['usage_aromatique'],'plant' : plant} %}
+                            </div>
+                            <div>
+                                <div class="border-l-2 border-afbf6a px-2 w-full">
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-7 w-7" style="--bg-image: url({{ asset('build/img/picto/caducee.png') }})" ></div>
+                                </div>
+                                {% include properties_and_attributes['usage_medicinal'].templates('line') with {'element': properties_and_attributes['usage_medicinal'],'plant' : plant} %}
+                                {% include properties_and_attributes['proprietes_medicinales'].templates('line') with {'element': properties_and_attributes['proprietes_medicinales'],'plant' : plant} %}
+                                {% include properties_and_attributes['toxicite'].templates('line') with {'element': properties_and_attributes['toxicite'],'plant' : plant} %}
+                                {% include properties_and_attributes['toxicite_info'].templates('line') with {'element': properties_and_attributes['toxicite_info'],'plant' : plant} %}
+                            </div>
+                            <div>
+                                <div class="border-l-2 border-afbf6a px-2 w-full">
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-7 w-7" style="--bg-image: url({{ asset('build/img/picto/bois.png') }})" ></div>
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-7 w-7" style="--bg-image: url({{ asset('build/img/picto/ornementale.png') }})" ></div>
+                                </div>
+                                {% include properties_and_attributes['bois_oeuvre'].templates('line') with {'element': properties_and_attributes['bois_oeuvre'],'plant' : plant} %}
+                                {% include properties_and_attributes['bois_chauffage'].templates('line') with {'element': properties_and_attributes['bois_chauffage'],'plant' : plant} %}
+                                {% include properties_and_attributes['tuteur'].templates('line') with {'element': properties_and_attributes['tuteur'],'plant' : plant} %}
+                                {% include properties_and_attributes['vannerie'].templates('line') with {'element': properties_and_attributes['vannerie'],'plant' : plant} %}
+                                {% include properties_and_attributes['porte_greffe'].templates('line') with {'element': properties_and_attributes['porte_greffe'],'plant' : plant} %}
+                            </div>
+                            <div>
+                                <div class="border-l-2 border-afbf6a px-2 w-full">
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-5 w-5" style="--bg-image: url({{ asset('build/img/picto/poule.svg') }})" ></div>
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-7 w-7" style="--bg-image: url({{ asset('build/img/picto/mouton.png') }})" ></div>
+                                </div>
+                                {% include properties_and_attributes['fourrage_basse_court'].templates('tiny') with {'element': properties_and_attributes['fourrage_basse_court'],'plant' : plant} %}
+                                {% include properties_and_attributes['fourrage_grands_herbivores'].templates('tiny') with {'element': properties_and_attributes['fourrage_grands_herbivores'],'plant' : plant} %}
+                                {% include properties_and_attributes['precision_fourrage'].templates('tiny') with {'element': properties_and_attributes['precision_fourrage'],'plant' : plant} %}
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 grid-flow-row gap-1 col-span-6">
+                            <div class="col-span-3 mb-3">
+                                <h3 class="uppercase font-bold text-xl underline">Besoins Culturaux</h3>
+                            </div>
+                            <div class="">
+                                <div class="border-l-2 border-955441 px-2 w-full">
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-10 w-10" style="--bg-image: url({{ asset('build/img/picto/recolte.svg') }})" ></div>
+                                </div>
+                                {% include properties_and_attributes['besoin_cultural_cueillette_ramassage'].templates('tiny') with {'element': properties_and_attributes['besoin_cultural_cueillette_ramassage'],'plant' : plant} %}
+                                {% include properties_and_attributes['besoin_cultural_recolte_etalee_groupee'].templates('tiny') with {'element': properties_and_attributes['besoin_cultural_recolte_etalee_groupee'],'plant' : plant} %}
+                                {% include properties_and_attributes['besoin_cultural_precisions_recolte'].templates('tiny') with {'element': properties_and_attributes['besoin_cultural_precisions_recolte'],'plant' : plant} %}
+                            </div>
+                            <div class="">
+                                <div class="border-l-2 border-955441 px-2 w-full">
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-10 w-10" style="--bg-image: url({{ asset('build/img/picto/conduite.svg') }})" ></div>
+                                </div>
+                                {% include properties_and_attributes['besoin_conduite'].templates('line') with {'element': properties_and_attributes['besoin_conduite'],'plant' : plant} %}
+                                {% include properties_and_attributes['multiplication'].templates('line') with {'element': properties_and_attributes['multiplication'],'plant' : plant} %}
+                                {% include properties_and_attributes['multiplication_info'].templates('line') with {'element': properties_and_attributes['multiplication_info'],'plant' : plant} %}
+                                {% include properties_and_attributes['besoin_cultural_exigences_particulieres'].templates('line') with {'element': properties_and_attributes['besoin_cultural_exigences_particulieres'],'plant' : plant} %}
+                                {% include properties_and_attributes['besoin_cultural_entretien'].templates('line') with {'element': properties_and_attributes['besoin_cultural_entretien'],'plant' : plant} %}
+                                {% include properties_and_attributes['besoin_tuteur'].templates('line') with {'element': properties_and_attributes['besoin_tuteur'],'plant' : plant} %}
+                                {% include properties_and_attributes['maladies_ravageurs'].templates('line') with {'element': properties_and_attributes['maladies_ravageurs'],'plant' : plant} %}
+                                {% include properties_and_attributes['besoin_protection'].templates('line') with {'element': properties_and_attributes['besoin_protection'],'plant' : plant} %}
+                            </div>
+                            <div class="">
+                                <div class="border-l-2 border-955441 px-2 w-full">
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-10 w-10" style="--bg-image: url({{ asset('build/img/picto/arose.svg') }})" ></div>
+                                </div>
+                                {% include properties_and_attributes['besoin_arrosage'].templates('tiny') with {'element': properties_and_attributes['besoin_arrosage'],'plant' : plant} %}
+                            </div>
+                            <div class="">
+                                <div class="border-l-2 border-955441 px-2 w-full">
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-10 w-10" style="--bg-image: url({{ asset('build/img/picto/taille.svg') }})" ></div>
+                                </div>
+                                {% include properties_and_attributes['besoin_taille'].templates('line') with {'element': properties_and_attributes['besoin_taille'],'plant' : plant} %}
+                            </div>
+                            <div class="">
+                                <div class="border-l-2 border-955441 px-2 w-full">
+                                    <div class="inline-block bg-img bg-contain bg-no-repeat h-10 w-10" style="--bg-image: url({{ asset('build/img/picto/haie.svg') }})" ></div>
+                                </div>
+                                {% include properties_and_attributes['interet_haie'].templates('line') with {'element': properties_and_attributes['interet_haie'],'plant' : plant} %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-5">
+                        {% include properties_and_attributes['native_place'].templates('line') with {'element': properties_and_attributes['native_place'],'plant' : plant} %}
+                    </div>
+                    <div class="max-w-screen-md m-auto">
+                        {% include properties_and_attributes['sexual_maturity'].templates('line') with {'element': properties_and_attributes['sexual_maturity'],'plant' : plant} %}
+                        {% include properties_and_attributes['flowerings_crops'].templates('block') with {'element': properties_and_attributes['flowerings_crops'],'plant' : plant} %}
+                    </div>
+                    <span class="uppercase">Sources : </span>
+                    {% include properties_and_attributes['sources'].templates('line') with {'element': properties_and_attributes['sources'],'plant' : plant} %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -11,6 +11,7 @@
                 <th>Id</th>
                 <th>Username</th>
                 <th>Roles</th>
+                <th>Actif</th>
                 <th>Email</th>
                 <th>actions</th>
             </tr>
@@ -21,6 +22,7 @@
                 <td>{{ user.id }}</td>
                 <td>{{ user.username }}</td>
                 <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+                <td>{{ user.IsActive }}</td>
                 <td>{{ user.email }}</td>
                 <td>
                     <a href="{{ path('user_show', {'id': user.id}) }}">show</a>

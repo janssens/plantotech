@@ -1,1 +1,6 @@
-<b>{{ property.name }} :</b> {{ plant | get(property.code) }}
+{% set value %}{{ plant | get(element.code) }}{% endset %}
+{% if value %}
+<div class="" data-code="{{ element.code }}" data-type="property" data-id="{{ element.id }}">
+    <span class="uppercase font-bold">{{ element.name }} : </span>{{ value }}
+</div>
+{% endif %}
