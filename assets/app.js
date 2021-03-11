@@ -19,7 +19,7 @@ $("button").click(function (){
 });
 $("#flash .close").click(function (){
     console.log(this);
-    $(this).parent().hide(500,function (){
+    $(this).closest('.message').hide(500,function (){
         $(this).remove();
     });
 });
