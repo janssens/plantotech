@@ -12,6 +12,9 @@
 body{
   background: $bg_color;
 }
+p > a{
+  @apply text-gray-900 underline hover:no-underline hover:text-black;
+}
 h1{
   @apply w-full text-center
 }

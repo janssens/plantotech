@@ -86,7 +86,7 @@ class Image
 
         $path      = parse_url($url, PHP_URL_PATH);       // get path from url
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION)); // get ext from path
-        $new_filename  = md5($url).'_'.preg_replace("/[^A-Za-z0-9 ]/", '', pathinfo($path, PATHINFO_FILENAME));  // get name from path
+        $new_filename  = md5($url).'_'.preg_replace("/[^A-Za-z0-9]/", '', pathinfo($path, PATHINFO_FILENAME));  // get name from path
 
         $ch = curl_init ($url);
         curl_setopt($ch, CURLOPT_HEADER, 0);
