@@ -126,7 +126,7 @@ abstract class CsvCommand extends Command
         }
         $filename = pathinfo($file,PATHINFO_FILENAME);
         $dir = pathinfo($file,PATHINFO_DIRNAME);
-        $mapfile = fopen($dir.".".$filename.'_map', "w") or die("Unable to open file!");
+        $mapfile = fopen($dir."/.".$filename.'_map', "w") or die("Unable to open file!");
         fwrite($mapfile, implode($this->getDelimiter(),$map));
         fclose($mapfile);
     }
