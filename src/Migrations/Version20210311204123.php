@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20201125133951 extends AbstractMigration
+final class Version20210311204123 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -30,7 +30,7 @@ final class Version20201125133951 extends AbstractMigration
         $this->addSql('CREATE TABLE category (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, position INT DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE config (id INT AUTO_INCREMENT NOT NULL, path VARCHAR(255) NOT NULL, value VARCHAR(255) DEFAULT NULL, label VARCHAR(255) DEFAULT NULL, frontend_type VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_D48A2F7CB548B0F (path), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE filter_category (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(50) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE image (id INT AUTO_INCREMENT NOT NULL, plant_id INT NOT NULL, name VARCHAR(255) NOT NULL, INDEX IDX_C53D045F1D935652 (plant_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE image (id INT AUTO_INCREMENT NOT NULL, plant_id INT NOT NULL, name VARCHAR(255) NOT NULL, origin VARCHAR(255) DEFAULT NULL, INDEX IDX_C53D045F1D935652 (plant_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE main_value (id INT AUTO_INCREMENT NOT NULL, attribute_id INT NOT NULL, label VARCHAR(50) NOT NULL, UNIQUE INDEX UNIQ_BE2BEB72B6E62EFA (attribute_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE plant (id INT AUTO_INCREMENT NOT NULL, family_id INT DEFAULT NULL, latin_name VARCHAR(50) NOT NULL, name VARCHAR(50) DEFAULT NULL, rusticity INT DEFAULT NULL, rusticity_comment VARCHAR(100) DEFAULT NULL, temperature INT DEFAULT NULL, woody SMALLINT DEFAULT NULL, min_height INT DEFAULT NULL, max_height INT DEFAULT NULL, min_width INT DEFAULT NULL, max_width INT DEFAULT NULL, min_sexual_maturity INT DEFAULT NULL, max_sexual_maturity INT DEFAULT NULL, native_place VARCHAR(200) DEFAULT NULL, botany_leaf VARCHAR(500) DEFAULT NULL, botany_branch VARCHAR(500) DEFAULT NULL, botany_root VARCHAR(500) DEFAULT NULL, botany_flower VARCHAR(500) DEFAULT NULL, botany_fruit VARCHAR(500) DEFAULT NULL, botany_seed VARCHAR(500) DEFAULT NULL, density VARCHAR(20) DEFAULT NULL, interest LONGTEXT DEFAULT NULL, specificity VARCHAR(100) DEFAULT NULL, author VARCHAR(100) DEFAULT NULL, INDEX IDX_AB030D72C35E566A (family_id), FULLTEXT INDEX IDX_AB030D72A2A718195E237E06 (latin_name, name), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE plant_family (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(50) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
