@@ -10,6 +10,7 @@ import './styles/style.scss';
 
 import $ from 'jquery';
 import 'mdi-component';
+import 'fslightbox';
 
 $("button").click(function (){
     let dest = $(this).data('href');

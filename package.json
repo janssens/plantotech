@@ -6,6 +6,7 @@
         "core-js": "^3.0.0",
         "dropzone": "^5.8.0",
         "file-loader": "^6.2.0",
+        "fslightbox": "^3.2.3",
         "glob-all": "^3.2.1",
         "jquery": "^3.6.0",
         "mdi-component": "^0.4.1",
