@@ -1,41 +1,65 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}User index{% endblock %}
+{% block title %}Les utilisateurs{% endblock %}
 
 {% block body %}
-    <h1>User index</h1>
+    <h1 class="content-center text-center text-3xl p-5">Liste des utilisateurs</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Username</th>
-                <th>Roles</th>
-                <th>Actif</th>
-                <th>Email</th>
-                <th>actions</th>
+    <div class="bg-white shadow-md rounded my-6">
+        <table class="min-w-max w-full table-auto">
+            <thead>
+            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                <th class="py-3 px-6 text-left">Id</th>
+                <th class="py-3 px-6 text-left">Username</th>
+                <th class="py-3 px-6 text-center">Roles</th>
+                <th class="py-3 px-6 text-center">Actif</th>
+                <th class="py-3 px-6 text-center">Email</th>
+                <th class="py-3 px-6 text-center">Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                <td>{{ user.IsActive }}</td>
-                <td>{{ user.email }}</td>
-                <td>
-                    <a href="{{ path('user_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('user_edit', {'id': user.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('user_new') }}">Create new</a>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+            {% for user in users %}
+                <tr class="border-b border-gray-200 {% if loop.index0 is odd %}bg-gray-50{% endif %} hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                        <div class="flex items-center">
+                            <span class="font-medium"><a href="{{ path('user_show', {'id': user.id}) }}">{{ user.id }}</a></span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-left hidden md:table-cell">
+                        <div class="flex items-center">
+                            <a href="{{ path('user_show', {'id': user.id}) }}"><i>{{ user.username }}</i></a>
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                        <div class="flex items-center">
+                            {{ user.roles ? user.roles|json_encode : '' }}
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-center whitespace-nowrap">
+                        {% if user.IsActive %}<id class="mdi mdi-check"></id>{% endif %}
+                    </td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                        <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+                    </td>
+                    <td class="py-3 px-6 text-center">
+                        <div class="flex item-center justify-center">
+                            <a href="{{ path('user_show', {'id': user.id}) }}">
+                                <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                    <i class="mdi mdi-eye"></i>
+                                </div>
+                            </a>
+                            <a href="{{ path('user_edit', {'id': user.id}) }}">
+                                <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                    <i class="mdi mdi-pencil"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="m-2 p-2">
+        <a class="btn btn--success" href="{{ path('user_new') }}"><i class="mdi mdi-plus"></i>Nouvel utilisateur</a>
+    </div>
 {% endblock %}
