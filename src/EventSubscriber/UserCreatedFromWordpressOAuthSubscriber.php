@@ -12,7 +12,7 @@ use Symfony\Component\Mailer\Messenger\SendEmailMessage;
 class UserCreatedFromWordpressOAuthSubscriber implements EventSubscriberInterface
 {
     private $wordpressOAuthLogger;
-    private MailService $mailer;
+    private $mailer;
 
     public function __construct(
         LoggerInterface $wordpressOauthLogger,
