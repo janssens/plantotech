@@ -18,8 +18,7 @@ $("button").click(function (){
         window.location.href = dest;
     }
 });
-$("#flash .close").click(function (){
-    console.log(this);
+$("#flash .close").on('click',function (){
     $(this).closest('.message').hide(500,function (){
         $(this).remove();
     });
