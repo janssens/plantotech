@@ -33,6 +33,8 @@ class AdminController extends AbstractController
                 }
             }
             $em->flush();
+            $session = $request->getSession();
+            $session->getFlashBag()->add('success', 'Configuration enregistrée');
         }
         return $this->render('admin/index.html.twig',array('config'=>$config));
     }
