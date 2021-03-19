@@ -3,8 +3,9 @@
 {% block title %}Liste des plantes ({{plants | length }}){% endblock %}
 
 {% block body %}
-    <h1 class="content-center text-center text-3xl p-5">Rechercher des plantes</h1>
+    <h1 class="content-center text-center text-3xl p-5">{% if is_granted('ROLE_USER') %}Rechercher des plantes{% else %}Toutes les plantes{% endif %}</h1>
 
+    {% if is_granted('ROLE_USER') %}
     <div class="grid grid-cols-12">
         <div class="col-span-12">
             <h2>Mes critères</h2>
@@ -42,6 +43,11 @@
             </div>
         </div>
     </div>
+    {% else %}
+        <div class="bg-yellow-200 p-5 shadow rounded-md mx-auto w-full md:w-1/2 text-red-500 text-center">
+            💡 <a href="{{ path('app_register') }}" class="underline hover:no-underline">Inscris-toi</a> pour accéder aux outils de recherche 🔎
+        </div>
+    {% endif %}
 
     <div id="filters">
         {% include "plant/_partial/filters.html.twig" %}

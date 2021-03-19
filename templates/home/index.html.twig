@@ -29,13 +29,18 @@
     <div class="m-2">
         {% if is_granted('ROLE_USER') %}
             <div class="text-center">
-                <button type="button" data-href="{{ path('plant_index') }}" class="btn btn--dark">Entrer dans la jungle 🌳 !</button>
+                <button type="button" data-href="{{ path('plant_index') }}" class="btn btn--dark">Entrer dans la jungle ! 🌳 </button>
             </div>
         {% else %}
             <div class="text-center pb-5">
-                <p>Pour utiliser cet outil, il faut se connecter 🤝 </p>
-                <button type="button" data-href="{{ path('app_register') }}" class="m-auto focus:outline-none block mt-5 text-white text-sm py-2.5 px-5 border-b-4 border-blue-600 rounded-md bg-blue-500 hover:bg-blue-400">je rejoins la tribu 🏕️</button>
+                <p>Pour utiliser toutes les fonctionnalités de cet outil, il faut se connecter 🤝 </p>
+
+                <button type="button" data-href="{{ path('app_register') }}" class="btn btn--success">Je rejoins la tribu 🏕️</button><br>
                 <small>Déjà un compte ? je me <a href="{{ path('app_login') }}" class="underline">connecter ici</a>🔒</small>
+            </div>
+            <div class="text-center pb-5">
+                <p>Si c'est pas ton truc, tu peux quand m&ecirc;me visiter 😎</p>
+                <button type="button" data-href="{{ path('plant_index') }}" class="btn btn--secondary">Je fais un petit tour ! 🌳</button>
             </div>
         {% endif %}
     </div>
