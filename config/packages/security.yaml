@@ -6,10 +6,17 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)
+        chain_provider:
+            chain:
+                providers:
+                    - 'app_user_provider'
+                    - 'wordpress_user_provider'
         app_user_provider:
             entity:
                 class: App\Entity\User
                 property: username
+        wordpress_user_provider:
+            id: App\Security\WordpressUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -25,6 +32,8 @@ security:
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
+                    - App\Security\WordpressAuthenticator
+                entry_point: App\Security\LoginFormAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -42,5 +51,8 @@ security:
         - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/oauth_login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/plant/index, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/plant/card, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: ROLE_USER }

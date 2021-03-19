@@ -59,6 +59,16 @@ class User implements UserInterface
      */
     private $confirmation_token;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $wordpressID;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $wordpressUsername;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -209,5 +219,40 @@ class User implements UserInterface
         $this->confirmation_token = $confirmation_token;
 
         return $this;
+    }
+
+    public function getWordpressID(): ?string
+    {
+        return $this->wordpressID;
+    }
+
+    public function setWordpressID(?string $wordpressID): self
+    {
+        $this->wordpressID = $wordpressID;
+
+        return $this;
+    }
+
+    public function getWordpressUsername(): ?string
+    {
+        return $this->wordpressUsername;
+    }
+
+    public function setWordpressUsername(?string $wordpressUsername): self
+    {
+        $this->wordpressUsername = $wordpressUsername;
+
+        return $this;
+    }
+
+    static function randomPassword() {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-{}#[]=+*!&$%?,;:';
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 10; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
     }
 }

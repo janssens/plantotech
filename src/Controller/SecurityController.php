@@ -7,11 +7,13 @@ use App\Repository\UserRepository;
 use App\Service\ConfigService;
 use App\Service\MailService;
 use phpDocumentor\Reflection\Types\Integer;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -26,19 +28,22 @@ class SecurityController extends AbstractController
     private $userRepository;
     private $csrfTokenManager;
     private $config;
+    private $urlGenerator;
     private $mailer;
 
     public function __construct(
         UserRepository $userRepository,
         CsrfTokenManagerInterface $csrfTokenManager,
         ConfigService $configService,
-        MailService $mailerService
+        MailService $mailerService,
+        UrlGeneratorInterface $urlGenerator
     )
     {
         $this->userRepository = $userRepository;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->config = $configService;
         $this->mailer = $mailerService;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -64,6 +69,26 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig',array('last_username' => $lastUsername));
+    }
+
+    /**
+     * @Route("/oauth_login", name="app_oauth")
+     */
+    public function oauth_login(){
+
+        $url = $this->config->getValue('app/oauth_url')."oauth/authorize";
+
+        $redirect_url = $this->urlGenerator->generate('app_login',array('wordpress-oauth-provider'=>true),UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $query_string = http_build_query([
+            'client_id' => $this->config->getValue('app/oauth_client_id'),
+            'redirect_uri' => $redirect_url,
+            'response_type' => "code",
+            'scope' => "basic",
+            'state' => $this->csrfTokenManager->getToken('wordpress-oauth')->getValue()
+        ]);
+
+        return new RedirectResponse($url.'?'.$query_string);
     }
 
     /**
@@ -180,16 +205,7 @@ class SecurityController extends AbstractController
      * @return int
      */
     private function _sendForgotPassword(User $user,SessionInterface $session){
-        $email = (new TemplatedEmail())
-            ->from($this->config->getValue('app/main_email'))
-            ->to($user->getEmail())
-            ->subject('['.$this->config->getValue('app/website_name').'] Mot de passe oublié ?')
-            ->htmlTemplate('emails/forgot_password.html.twig')
-            ->textTemplate('emails/forgot_password.txt.twig')
-            ->context([
-                'user' => $user,
-            ]);
-        if ($e = $this->mailer->sendMail($email)){
+        if ($e = $this->mailer->sendMail($user->getEmail(),'Mot de passe oublié ?','forgot_password',['user'=>$user])){
             $session->getFlashBag()->add('error', 'oups, l\'email de rappel na pas pu être envoyé.'.
                 ' On réessaie ensemble dans un moment ?');
             $session->getFlashBag()->add('warning', $e->getMessage());
@@ -204,16 +220,7 @@ class SecurityController extends AbstractController
      * @return int
      */
     private function _sendConfirm(User $user,SessionInterface $session,int $count = 0){
-        $email = (new TemplatedEmail())
-            ->from($this->config->getValue('app/main_email'))
-            ->to($user->getEmail())
-            ->subject('['.$this->config->getValue('app/website_name').'] Confirme ton nouveau compte')
-            ->htmlTemplate('emails/confirm.html.twig')
-            ->textTemplate('emails/confirm.txt.twig')
-            ->context([
-                'user' => $user,
-            ]);
-        if ($e = $this->mailer->sendMail($email)){
+        if ($e = $this->mailer->sendMail($user->getEmail(),'Confirme ton nouveau compte','confirm',['user' => $user,])){
             $session->getFlashBag()->add('error', 'oups, l\'email de confirmation na pas pu être envoyé.'.
                 ' On réessaie ensemble dans un moment ?');
             $session->getFlashBag()->add('warning', $e->getMessage());

@@ -109,4 +109,41 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
+    public function getUserFromWordpressOAuth(string $wordpressID, string $wordpressUsername, string $email): ?User
+    {
+        $user = $this->findOneByEmail($email);
+        if (!$user){
+            return null;
+        }
+        if ($user->getWordpressID() !== $wordpressID){
+            $user = $this->updateUserWithWordpressData($wordpressID,$wordpressUsername,$user);
+        }
+        return $user;
+    }
+
+    public function updateUserWithWordpressData(string $wordpressID, string $wordpressUsername, User $user): ?User
+    {
+        $user->setWordpressID($wordpressID)
+            ->setWordpressUsername($wordpressUsername);
+        $this->_em->flush();
+
+        return $user;
+    }
+
+    public function createUserFromWordpressOAuth(string $wordpressId,string $wordpressUsername,string $email,string $randomPassword): ?User
+    {
+        $user = new User();
+        $user->setWordpressUsername($wordpressUsername)
+            ->setWordpressID($wordpressId)
+            ->setUsername($wordpressUsername)
+            ->setEmail($email)
+            ->setIsActive(true)
+            ->setPassword($randomPassword);
+
+        $this->_em->persist($user);
+        $this->_em->flush();
+
+        return $user;
+    }
+
 }

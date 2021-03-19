@@ -1,10 +1,19 @@
 monolog:
+    channels:
+        - wordpress_oauth
     handlers:
+        wordpress_auth:
+            level: info
+            type: rotating_file
+            max_files: 10
+            path: "%kernel.logs_dir%/security/wordpress-oauth/%kernel.environment%.log"
+            channels:
+                - wordpress_oauth
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event"]
+            channels: ["!event","!wordpress_oauth"]
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
         #firephp:

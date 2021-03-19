@@ -48,13 +48,18 @@ form{
     @apply text-xs font-semibold px-1;
   }
   input[type=text],input[type=password],input[type=email]{
-    @apply w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500
+    @apply w-full px-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500
   }
   textarea{
     @apply w-full px-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500
   }
   .trap{
     visibility: hidden;
+  }
+}
+.login,.register{
+  input[type=text], input[type=password], input[type=email] {
+    @apply -ml-10 pl-10 pr-3
   }
 }
 .ico{
@@ -87,11 +92,11 @@ form{
 }
 
 $themeColours: (
-        "1": #b8e994,
-        "2": #78e08f,
-        "3": #38ada9,
-        "4": #82ccdd,
-        "5": #60a3bc,
+  "1": #b8e994,
+  "2": #78e08f,
+  "3": #38ada9,
+  "4": #82ccdd,
+  "5": #60a3bc,
 );
 
 @each $i, $color in $themeColours {
@@ -154,7 +159,6 @@ $themeColours: (
 .bg-img{
   background-image: var(--bg-image);
 }
-
 .border-955441{
   border-color: #955441;
 }
