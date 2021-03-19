@@ -8,22 +8,34 @@ use App\Entity\Plant;
 use App\Entity\PlantFamily;
 use App\Entity\Port;
 use App\Entity\Property;
+use App\Service\ConfigService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
     private $entityManager;
+    private $configService;
     private $mois_fr;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager,ConfigService $configService)
     {
         $this->entityManager = $entityManager;
+        $this->configService = $configService;
         $this->mois_fr = [1=>'janvier',2=>'février',3=>'mars',4=>'avril',5=>'mai',6=>'juin',7=>'juillet',8=>'aout',
             9=>'septembre',10=>'octobre',11=>'novembre',12=>'decembre'];
+    }
+
+    /**
+     * @return ConfigService
+     */
+    private function getConfigService(): ConfigService
+    {
+        return $this->configService;
     }
 
     public function getFilters()
@@ -37,7 +49,9 @@ class AppExtension extends AbstractExtension
 
     public function getFunctions()
     {
-        return [];
+        return [
+            new TwigFunction('config',[$this,'config'])
+        ];
     }
 
     public function autolink($text)
@@ -51,6 +65,12 @@ class AppExtension extends AbstractExtension
         return $object->$function();
     }
 
+    /**
+     * @param $number
+     * @param $type
+     * @param false $label
+     * @return string
+     */
     public function humanize($number, $type, $label = false)
     {
         $prefix = '';
@@ -67,6 +87,11 @@ class AppExtension extends AbstractExtension
             default:
                 return $number;
         }
+    }
+
+    public function config($path)
+    {
+        return $this->getConfigService()->getValue($path);
     }
 
     public static function camelCase($str, array $noStrip = [])
