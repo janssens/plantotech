@@ -3,14 +3,17 @@
 {% block title %}App admin{% endblock %}
 
 {% block body %}
-    <h1>Admin page</h1>
-    <a href="{{ path('app_admin_users') }}">users admin</a>
-    <b>configuration</b>
-    <form action="{{ path('app_admin') }}" method="post">
-        {% for c in config %}
-            <label for="{{ c.path }}">{{ c.label }}</label><br>
-            <input type="{{ c.frontendType }}" value="{{ c.value }}" name="{{ c.path }}"> <br>
-        {% endfor %}
-        <button type="submit" class="btn--primary">Enregistrer</button>
-    </form>
+    <h1 class="content-center text-center text-3xl p-5">Admin page</h1>
+    <div class="p-2 m-2">
+        <b>configuration</b>
+        <form action="{{ path('app_admin') }}" method="post">
+            {% for c in config %}
+                <label for="{{ c.path }}">{{ c.label }}</label><br>
+                <input type="{{ c.frontendType }}" value="{{ c.value }}" name="{{ c.path }}"> <br>
+            {% endfor %}
+            <br>
+            <button type="submit" class="btn btn--primary">Enregistrer</button>
+        </form>
+    </div>
+
 {% endblock %}
