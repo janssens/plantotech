@@ -91,7 +91,7 @@ class WordpressUserProvider implements UserProviderInterface{
         curl_close($curl);
 
         if (isset($response['error'])){
-            throw new \Exception('['.$response['error'].'] '.$response['error_description']);
+            throw new ServiceUnavailableHttpException(null,'['.$response['error'].'] '.$response['error_description']);
         }
 
         if (!isset($response['access_token'])||!$response['access_token']){
