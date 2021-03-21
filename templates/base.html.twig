@@ -11,7 +11,12 @@
     <body class="">
         <div class="w-full bb bg-white flex p-3">
             <div class="flex-none">
-                <a href="{{ base_url }}">Accueil</a> / <a href="{{ path('plant_index') }}">🌿 les plantes</a>
+                🏡 <a class="inline-block hover:underline" href="{{ base_url }}">Accueil</a> | 🌿 <a class="inline-block hover:underline" href="{{ path('plant_index') }}">les plantes</a>
+            </div>
+            <div class="flex none">
+                {% if config('app/return_link') %}
+                    <a class="block ml-4 bg-gray-100 hover:bg-green-700 hover:text-yellow-100 transition-all px-2 py-0.5 rounded" href="{{ config('app/return_link') }}"><i class="mdi mdi-arrow-left"></i> {{ config('app/return_label') }}</a>
+                {% endif %}
             </div>
             <div class="flex-grow"></div>
             <div class="text-right flex-none">

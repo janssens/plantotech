@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Config;
+use App\Entity\Plant;
 use App\Entity\User;
+use App\Service\ConfigService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +18,13 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AdminController extends AbstractController
 {
+    private $configService;
+
+    public function __construct(ConfigService $configService)
+    {
+        $this->configService = $configService;
+    }
+
     /**
      * @Route("/", name="app_admin")
      */
@@ -26,10 +35,23 @@ class AdminController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             /** @var Config $c */
             foreach ($config as $c){
-                $new_value = $request->request->get($c->getPath());
-                if ($new_value != $c->getValue()){
-                    $c->setValue($new_value);
-                    $em->persist($c);
+                if ($c->getFrontendType() == 'file'){
+                    $image = $request->files->get($c->getPath());
+                    if ($image){
+                        $file = Plant::makeSlug($this->configService->getValue('app/website_name')).'_logo.'.$image->guessExtension();
+                        $image->move(
+                            $this->getParameter('app_images_directory'),
+                            $file
+                        );
+                        $c->setValue('/uploads/'.$file);
+                        $em->persist($c);
+                    }
+                }else{
+                    $new_value = $request->request->get($c->getPath());
+                    if ($new_value != $c->getValue()){
+                        $c->setValue($new_value);
+                        $em->persist($c);
+                    }
                 }
             }
             $em->flush();

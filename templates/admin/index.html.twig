@@ -6,9 +6,12 @@
     <h1 class="content-center text-center text-3xl p-5">Admin page</h1>
     <div class="p-2 m-2">
         <b>configuration</b>
-        <form action="{{ path('app_admin') }}" method="post">
+        <form action="{{ path('app_admin') }}" method="post" enctype="multipart/form-data">
             {% for c in config %}
                 <label for="{{ c.path }}">{{ c.label }}</label><br>
+                {% if c.frontendType == 'file' and c.value %}
+                    <img src="{{ c.value }}" alt="{{ c.label }}" width="200" style="max-height: 200px;max-width: 200px;">
+                {% endif %}
                 <input type="{{ c.frontendType }}" value="{{ c.value }}" name="{{ c.path }}"> <br>
             {% endfor %}
             <br>

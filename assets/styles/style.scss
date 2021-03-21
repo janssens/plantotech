@@ -16,7 +16,7 @@ p > a{
   @apply text-gray-900 underline hover:no-underline hover:text-black;
 }
 h1{
-  @apply w-full text-center
+  @apply w-full text-center font-sans font-black;
 }
 .btn{
   @apply focus:outline-none text-white text-sm py-2.5 px-5 border-b-4  rounded-md

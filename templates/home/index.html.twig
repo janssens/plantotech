@@ -3,12 +3,13 @@
 {% block title %}Plantotech{% endblock %}
 
 {% block body %}
-    <h1 class="content-center text-center text-3xl p-5">
-        Plantothèque des Alvéoles
+    <h1 class="content-center text-3xl p-5">
+        {{ config('app/website_name') }}
     </h1>
 
     <div class="text-center">
-        <img class="max-w-sm m-auto" src="{{ asset('build/img/home.svg') }}" alt="Plantothèque">
+        <img class="max-w-sm m-auto" src="{{ config('app/logo') }}" alt="{{ config('app/website_name') }}">
+        <img class="max-w-sm w-40 m-auto" src="{{ asset('build/img/home.svg') }}" alt="le jardin foret">
     </div>
 
     <div class="m-auto max-w-full w-1/2">
@@ -29,7 +30,7 @@
     <div class="m-2">
         {% if is_granted('ROLE_USER') %}
             <div class="text-center">
-                <button type="button" data-href="{{ path('plant_index') }}" class="btn btn--dark">Entrer dans la jungle ! 🌳 </button>
+                <button type="button" data-href="{{ path('plant_index') }}" class="btn btn--success">Entrer dans la jungle ! 🌳 </button>
             </div>
         {% else %}
             <div class="text-center pb-5">
