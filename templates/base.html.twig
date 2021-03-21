@@ -17,7 +17,7 @@
             <div class="text-right flex-none">
                 {% if is_granted('ROLE_USER') %}
                    <b> {% if is_granted('ROLE_ADMIN') %}🌳{% else %}🧘{% endif %} {{ app.user.username }} </b> | {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('app_admin') }}">⚙ admin</a> | {% endif %} <a href="{{ path('app_logout') }}"><i class="mdi mdi-lock-off"></i>déconnection</a>
+                    <a href="{{ path('app_admin') }}">⚙ admin</a> | {% endif %} <a href="{{ path('app_logout') }}"><i class="mdi mdi-lock-off"></i>déconnexion</a>
                 {% else %}
                     <a href="{{ path('app_login') }}">connexion</a> | <a href="{{ path('app_register') }}">s'inscrire</a>
                 {% endif %}
