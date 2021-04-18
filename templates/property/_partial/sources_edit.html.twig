@@ -1,0 +1,25 @@
+<div id="sources" class="">
+    <div data-code="source" data-type="property" data-id="0" class="border-b">
+        <ul>
+            {% for source in plant.sources %}
+                <li class="my-1 h-10 block flex" id="source{{ source.id }}">
+                    <form action="{{ path('plant_source_edit',{'id':plant.id,'source':source.id}) }}" onsubmit="return false;" class="seamless h-full flex-1 pl-2">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_source_edit_'~source.id) }}" >
+                        <input type="text" value="{{ source.name }}" name="value" class="bg-transparent h-full text-sm w-full" />
+                    </form>
+                    <form action="{{ path('plant_source_delete',{'id':plant.id,'source':source.id}) }}" onsubmit="return false;" class="seamless h-full w-10 flex-shrink-0">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_source_delete_'~source.id) }}" >
+                        <button type="submit" class="text-red-600 w-full h-10 hover:text-black" data-type="delete" data-target="#source{{ source.id }}"><i class="mdi mdi-trash-can"></i></button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <form action="{{ path('plant_source_new',{'id':plant.id}) }}" onsubmit="return false;" class="seamless">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_source_new') }}" >
+        <div class="flex">
+            <input type="text" value="" required="required" name="value" placeholder="https://..." class="w-full flex-1 flex-shrink-0 p-2" />
+            <button type="submit" class="w-10 h-10 text-gray-100 bg-gray-800 hover:bg-gray-700" id="add_source" ><i class="mdi mdi-plus-box"></i></button>
+        </div>
+    </form>
+</div>

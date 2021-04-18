@@ -21,6 +21,7 @@ use App\Entity\Source;
 use App\Form\PlantType;
 use App\Repository\PlantAttributeRepository;
 use App\Repository\PlantRepository;
+use http\Exception\BadMethodCallException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -247,18 +248,19 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/detailed/{id}/{slug}", name="plant_detailed")
+     * @Route("/edit/{id}/{slug}", name="plant_edit")
+     * @IsGranted("ROLE_EDIT")
      * @param Plant $plant
      * @param string $slug
      * @return Response
      */
-    public function detailed(Plant $plant,string $slug)
+    public function edit(Plant $plant,string $slug)
     {
         if ($plant->getSlug() != $slug){
-            return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
+            return $this->redirectToRoute('plant_edit',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
         }
         $root_families = $this->getDoctrine()->getRepository(AttributeFamily::class)->findBy(array('parent'=>null));
-        return $this->render('plant/show.html.twig', [
+        return $this->render('plant/edit.html.twig', [
             'families' => $root_families,
             'plant' => $plant,
         ]);
@@ -289,11 +291,12 @@ class PlantController extends AbstractController
     /**
      * @Route("/{id}/edit_flowerings_crops", name="plant_flowerings_crops_edit", methods={"POST"})
      * @IsGranted("ROLE_EDIT")
+     * @return JsonResponse
      */
-    public function flowerings_crops_edit(Request $request, Plant $plant): Response
+    public function flowerings_crops_edit(Request $request, Plant $plant): JsonResponse
     {
         if (!$request->isXmlHttpRequest()){
-            return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
+            return new JsonResponse(array('error'=>true,'message'=>'ajax only'));
         }
         $token = new CsrfToken('plant_flowerings_crops_edit' , $request->request->get('_csrf_token'));
         if (!$this->csrfTokenManager->isTokenValid($token)) {
@@ -303,30 +306,32 @@ class PlantController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $flowering = $em->getRepository(Attribute::class)->findOneBy(array('code'=>'flowering'));
         $flowering_values = $em->getRepository(AttributeValue::class)->findBy(array('attribute'=>$flowering));
-        /** @var AttributeValue $flowering */
-        foreach ($flowering_values as $flowering_value){
-            if (in_array($flowering_value->getCode(),array_keys($request->request->get('flowerings')))){
-                $plant->addAttributeValue($flowering_value);
-            }else{
-                $plant->removeAttributeValue($flowering_value);
+        if ($flowerings = $request->request->get('flowerings')) {
+            /** @var AttributeValue $flowering */
+            foreach ($flowering_values as $flowering_value) {
+                if (in_array($flowering_value->getCode(), array_keys($flowerings))) {
+                    $plant->addAttributeValue($flowering_value);
+                } else {
+                    $plant->removeAttributeValue($flowering_value);
+                }
             }
         }
         $crop = $em->getRepository(Attribute::class)->findOneBy(array('code'=>'crop'));
         $crop_values = $em->getRepository(AttributeValue::class)->findBy(array('attribute'=>$crop));
-        /** @var AttributeValue $crop */
-        foreach ($crop_values as $crop_value){
-            if (in_array($crop_value->getCode(),array_keys($request->request->get('crops')))){
-                $plant->addAttributeValue($crop_value);
-            }else{
-                $plant->removeAttributeValue($crop_value);
+        if ($crops = $request->request->get('crops')){
+            /** @var AttributeValue $crop */
+            foreach ($crop_values as $crop_value){
+                if (in_array($crop_value->getCode(),array_keys($crops))){
+                    $plant->addAttributeValue($crop_value);
+                }else{
+                    $plant->removeAttributeValue($crop_value);
+                }
             }
         }
         $em->persist($plant);
         $em->flush();
 
-        return $this->render('property/_partial/flowerings_crops_line.html.twig', [
-            'plant' => $plant
-        ]);
+        return new JsonResponse(array('success'=>true));
     }
 
     /**
@@ -351,7 +356,7 @@ class PlantController extends AbstractController
             $em->persist($source);
             $em->flush();
         }
-        return $this->render('property/_partial/sources_line.html.twig', [
+        return $this->render('property/_partial/sources_edit.html.twig', [
             'plant' => $plant
         ]);
     }
@@ -359,11 +364,12 @@ class PlantController extends AbstractController
     /**
      * @Route("/{id}/delete_source/{source}", name="plant_source_delete", methods={"POST"})
      * @IsGranted("ROLE_EDIT")
+     * @return JsonResponse
      */
     public function source_delete(Request $request, Plant $plant,Source $source): Response
     {
         if (!$request->isXmlHttpRequest()){
-            return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
+            return new JsonResponse(array('error'=>true,'message'=>'ajax only'));
         }
         if ($request->isMethod('POST')) {
             $token = new CsrfToken('plant_source_delete_' . $source->getId(), $request->request->get('_csrf_token'));
@@ -375,55 +381,54 @@ class PlantController extends AbstractController
                 $em->remove($source);
                 $em->flush();
             }
-            return $this->render('property/_partial/sources_line.html.twig', [
-                'plant' => $plant
-            ]);
+            return new JsonResponse(array('success'=>true));
         }
     }
 
     /**
      * @Route("/{id}/edit_source/{source}", name="plant_source_edit", methods={"POST"})
      * @IsGranted("ROLE_EDIT")
+     * @return JsonResponse
      */
     public function source_edit(Request $request, Plant $plant,Source $source): Response
     {
         if (!$request->isXmlHttpRequest()){
-            return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
+            return new JsonResponse(array('error'=>true,'message'=>'ajax only'));
         }
         if ($request->isMethod('POST')) {
             $token = new CsrfToken('plant_source_edit_' . $source->getId(), $request->request->get('_csrf_token'));
             if (!$this->csrfTokenManager->isTokenValid($token)) {
                 throw new InvalidCsrfTokenException();
             }
-            $value = $request->request->get('value');
+            $url = $request->request->get('value');
             if ($plant === $source->getPlant()){
                 $em = $this->getDoctrine()->getManager();
-                if ($value){
-                    $source->setName($value);
+                if ($url){
+                    $source->setName($url);
                     $em->persist($source);
                 }else{
                     $em->remove($source);
                 }
                 $em->flush();
+                return new JsonResponse(array('success'=>true));
             }
-            return $this->render('property/_partial/sources_line.html.twig', [
-                'plant' => $plant
-            ]);
+            return new JsonResponse(array('error'=>true));
         }
+        return new JsonResponse(array());
     }
 
     /**
-     * @Route("/{id}/edit_property/{property}", name="plant_property_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit_property/{code}", name="plant_property_edit", methods={"GET","POST"})
      * @IsGranted("ROLE_EDIT")
+     * @return JsonResponse
      */
-    public function property_edit(Request $request, Plant $plant,Property $property): Response
+    public function property_edit(Request $request, Plant $plant,string $code): JsonResponse
     {
         if (!$request->isXmlHttpRequest()){
-            return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
+            return new JsonResponse(array('error'=>true,'message'=>'ajax only'));
         }
-
         if ($request->isMethod('POST')) {
-            $token = new CsrfToken('plant_property_edit_' . $property->getCode(), $request->request->get('_csrf_token'));
+            $token = new CsrfToken('plant_property_edit_' . $code, $request->request->get('_csrf_token'));
             if (!$this->csrfTokenManager->isTokenValid($token)) {
                 throw new InvalidCsrfTokenException();
             }
@@ -439,41 +444,20 @@ class PlantController extends AbstractController
             $em->persist($plant);
             $em->flush();
             //
-            $templates = $property->getTemplates('line');
-            $template_file = '';
-            foreach ($templates as $template){
-                if ( $this->get('twig')->getLoader()->exists($template) ) {
-                    $template_file = $template;
-                    break;
-                }
-            }
-            return $this->render($template_file, [
-                'plant' => $plant,
-                'property' => $property
-            ]);
+            return new JsonResponse(array('success'=>true));
         }
-        $templates = $property->getEditTemplates('line');
-        $template_file = '';
-        foreach ($templates as $template){
-            if ( $this->get('twig')->getLoader()->exists($template) ) {
-                $template_file = $template;
-                break;
-            }
-        }
-        return $this->render($template_file, [
-            'plant' => $plant,
-            'property' => $property
-        ]);
+        return new JsonResponse(array());
     }
 
     /**
      * @Route("/{id}/edit_attribute/{attribute}", name="plant_attribute_edit", methods={"GET","POST"})
      * @IsGranted("ROLE_EDIT")
+     * @return JsonResponse
      */
-    public function attribute_edit(Request $request, Plant $plant,Attribute $attribute): Response
+    public function attribute_edit(Request $request, Plant $plant,Attribute $attribute): JsonResponse
     {
         if (!$request->isXmlHttpRequest()){
-            return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
+            return new JsonResponse(array('error'=>true,'message'=>'ajax only'));
         }
         if ($request->isMethod('POST')) {
             $token = new CsrfToken('plant_attribute_edit_'.$attribute->getCode(), $request->request->get('_csrf_token'));
@@ -548,17 +532,10 @@ class PlantController extends AbstractController
             $em->persist($plant);
             $em->flush();
 
-            return $this->render('attribute/_partial/line.html.twig', [
-                'edit' => true,
-                'plant' => $plant,
-                'attribute' => $attribute
-            ]);
+            return new JsonResponse(array("success"=>true));
         }
 
-        return $this->render('attribute/_partial/line_edit.html.twig', [
-            'plant' => $plant,
-            'attribute' => $attribute
-        ]);
+        return new JsonResponse(array());
     }
 
     /**
@@ -571,21 +548,26 @@ class PlantController extends AbstractController
             return $this->redirectToRoute('plant_show', array('id' => $plant->getId(), 'slug' => $plant->getSlug()));
         }
         $em = $this->getDoctrine()->getManager();
-        if ($images_url = $request->get('images_url')){
-            if (count($images_url)){
-                foreach ($images_url as $url){
-                    if ($u = Image::urlOk($url)){
-                        $name = Image::grab_image($u,$this->getParameter('app_images_directory'));
-                        $img = new Image();
-                        $img->setName($name);
-                        $img->setOrigin($u);
-                        $plant->addImage($img);
-                        $em->persist($img);
-                    }
-                }
+        if ($request->get('refresh')){
+            return $this->render('property/_partial/gallery_edit.html.twig', [
+                'plant' => $plant
+            ]);
+        }
+        if ($url = $request->get('value')){
+            $token = new CsrfToken('plant_img_new', $request->request->get('_csrf_token'));
+            if (!$this->csrfTokenManager->isTokenValid($token)) {
+                throw new InvalidCsrfTokenException();
             }
-            $em->flush();
-            return $this->render('property/_partial/gallery_line_edit.html.twig', [
+            if ($u = Image::urlOk($url)){
+                $name = Image::grab_image($u,$this->getParameter('app_images_directory'));
+                $img = new Image();
+                $img->setName($name);
+                $img->setOrigin($u);
+                $plant->addImage($img);
+                $em->persist($img);
+                $em->flush();
+            }
+            return $this->render('property/_partial/gallery_edit.html.twig', [
                 'plant' => $plant
             ]);
         }
@@ -617,15 +599,17 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="plant_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="plant_edit_old", methods={"GET","POST"})
+     * @IsGranted("ROLE_EDIT")
      */
-    public function edit(Request $request, Plant $plant): Response
+    public function old_edit(Request $request, Plant $plant): Response
     {
-        return $this->redirectToRoute('plant_detailed',array('id'=>$plant->getId(),'slug'=>$plant->getSlug(),'edit'=>1));
+        return $this->redirectToRoute('plant_edit',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
     }
 
     /**
      * @Route("/{id}", name="plant_delete", methods={"DELETE"})
+     * @IsGranted("ROLE_EDIT")
      */
     public function delete(Request $request, Plant $plant): Response
     {
@@ -640,13 +624,14 @@ class PlantController extends AbstractController
 
     /**
      * @Route("{id}/delete/image/{image}", name="plant_delete_image", methods={"POST"})
+     * @IsGranted("ROLE_EDIT")
+     * @return JsonResponse
      */
-    public function deleteImage(Plant $plant, Image $image, Request $request){
-
-        if (!$request->isXmlHttpRequest()) {
-            return $this->redirectToRoute('plant_show', array('id' => $plant->getId(), 'slug' => $plant->getSlug()));
+    public function deleteImage(Plant $plant, Image $image, Request $request): JsonResponse
+    {
+        if (!$request->isXmlHttpRequest()){
+            return new JsonResponse(array('error'=>true,'message'=>'ajax only'));
         }
-
         $token = new CsrfToken('plant_delete_image_'.$image->getId(), $request->request->get('_csrf_token'));
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
@@ -663,11 +648,11 @@ class PlantController extends AbstractController
             $em->remove($image);
             $em->persist($plant);
             $em->flush();
+
+            return new JsonResponse(array('success'=>true));
         }
 
-        return $this->render('property/_partial/gallery_line_edit.html.twig', [
-            'plant' => $plant
-        ]);
+        return new JsonResponse(array());
 
     }
 

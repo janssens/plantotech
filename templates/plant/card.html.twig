@@ -21,14 +21,20 @@
 {% block title %}{{ plant.LatinName }} - {{ plant.name }}{% endblock %}
 
 {% block body %}
-    <div class="min-w-screen min-h-screen flex items-center justify-center px-5 py-5">
-        <div class="p-10 xs:p-0 mx-auto md:w-full">
-            <div class="bg-white shadow w-full rounded-xl overflow-hidden">
-                <div class="w-full bg-gray-900 text-white mb-1 p-2 ">
+    <div class="min-w-screen min-h-screen flex items-center justify-center md:px-5 md:py-5">
+        <div class="md:p-10 p-0 mx-auto md:w-full">
+            <div class="bg-white shadow w-full max-w-screen-lg mx-auto md:rounded-xl overflow-hidden">
+                <div class="w-full bg-gray-900 text-white mb-1 p-2 relative">
                     <h1 class="uppercase text-3xl font-black">{{ plant.name }}</h1>
                     <h2 class="text-center w-full italic text-2xl">{{ plant.LatinName }}</h2>
                     {% if plant.Family %}
                         <h3 class="text-lg"><span class="uppercase font-bold">Famille : </span><a class="hover:underline" href="{{ path('plant_index',{'family':plant.Family.id}) }}">{{ plant.Family.Name }}</a></h3>
+                    {% endif %}
+                    {% if is_granted('ROLE_EDIT') %}
+                        <div class="block absolute -top-1 -right-1 w-10 h-10 text-center text-gray-100 bg-green-700 rounded-full text-xl leading-10 hover:bg-green-100 hover:text-green-800 animate-ping" ></div>
+                        <a href="{{ path('plant_edit',{'id':plant.id,'slug':plant.slug}) }}" class="block absolute -top-1 -right-1 w-10 h-10 text-center text-gray-100 bg-green-700 rounded-full text-xl leading-10 hover:bg-green-100 hover:text-green-800" title="éditer la fiche plante">
+                            <i class="mdi mdi-pencil"></i>
+                        </a>
                     {% endif %}
                 </div>
                 <div class="px-5 py-7">
@@ -44,8 +50,11 @@
                         </div>
                     </div>
                     <div class="grid grid-rows-4 grid-cols-3 grid-flow-row gap-1 h-96">
-                        <div class="col-span-2 row-span-4 bg-img bg-no-repeat bg-center bg-contain bg-bottom" style="--bg-image: url({{ asset('build/img/silhouettes/ico/'~plant.getMainAttributeValuesByCode('port').first.code~'.png') }})" >
+                        <div class="col-span-2 row-span-4 bg-img bg-no-repeat bg-center bg-contain bg-bottom">
+                            {% include properties_and_attributes['gallery'].templates('main_image') with {'element': properties_and_attributes['gallery'],'plant' : plant} %}
                         </div>
+{#                        <div class="col-span-2 row-span-4 bg-img bg-no-repeat bg-center bg-contain bg-bottom" style="--bg-image: url({{ asset('build/img/silhouettes/ico/'~plant.getMainAttributeValuesByCode('port').first.code~'.png') }})" >#}
+{#                        </div>#}
                         <div>{% include properties_and_attributes['insolation'].templates('block') with {'element': properties_and_attributes['insolation'],'plant' : plant} %}</div>
                         <div>{% include properties_and_attributes['rusticity'].templates('block') with {'element': properties_and_attributes['rusticity'],'plant' : plant} %}</div>
 {#        TODO:                 "rusticity_comment"#}
@@ -53,14 +62,18 @@
                         <div>{% include properties_and_attributes['drought_tolerance'].templates('block') with {'element': properties_and_attributes['drought_tolerance'],'plant' : plant} %}</div>
 {#        TODO:                 "humidity"#}
                     </div>
-                    <div class="grid grid-rows-1 grid-cols-3 grid-flow-row gap-1 h-36">
-                        <div class="col-span-2 relative bg-img bg-no-repeat bg-center bg-contain bg-top" style="--bg-image: url({{ asset('build/img/silhouettes/ico/root_'~plant.attributeValuesByCode('root').first.code~'.png') }});background-color: #eee1d1">
-                            <div class="absolute bottom-0 w-full text-center">
-                                {% include properties_and_attributes['root'].templates('line') with {'element': properties_and_attributes['root'],'plant' : plant} %}
-{#        TODO:                       "sucker"#}
-                            </div>
+                    <div class="grid grid-rows-2 grid-cols-3 gap-1">
+                        <div class="col-span-2">
+                            {% include properties_and_attributes['gallery'].templates('line') with {'element': properties_and_attributes['gallery'],'plant' : plant,'hide_first' : 1} %}
                         </div>
-                        <div>
+                        <div class="text-center">
+                            <img class="mx-auto" src="{{ asset('build/img/silhouettes/ico/'~plant.getMainAttributeValuesByCode('port').first.code~'.png') }}" alt="{{ plant.attributeValuesByCode('root').first.code }}">
+                            <img class="mx-auto" style="background-color: #eee1d1" src="{{ asset('build/img/silhouettes/ico/root_'~plant.attributeValuesByCode('root').first.code~'.png') }}" alt="{{ plant.attributeValuesByCode('root').first.code }}">
+                        </div>
+                        <div class="col-span-3" >
+                            {% include properties_and_attributes['port'].templates('line') with {'element': properties_and_attributes['port'],'plant' : plant} %}
+                            {% include properties_and_attributes['sucker'].templates('line') with {'element': properties_and_attributes['sucker'],'plant' : plant} %}
+                            {% include properties_and_attributes['root'].templates('line') with {'element': properties_and_attributes['root'],'plant' : plant} %}
                             {% include properties_and_attributes['soil'].templates('line') with {'element': properties_and_attributes['soil'],'plant' : plant} %}
                             {% include properties_and_attributes['humus'].templates('line') with {'element': properties_and_attributes['humus'],'plant' : plant} %}
                             {% include properties_and_attributes['argile'].templates('line') with {'element': properties_and_attributes['argile'],'plant' : plant} %}
@@ -70,7 +83,7 @@
                         </div>
                     </div>
                     <div class="my-5">
-                        {% include properties_and_attributes['gallery'].templates('line') with {'element': properties_and_attributes['gallery'],'plant' : plant} %}
+
                     </div>
                     <div class="grid grid-cols-12 grid-flow-row gap-1">
                         <div class="grid grid-cols-4 gap-4 col-span-8 theme-afbf6a">

@@ -1,0 +1,10 @@
+<div data-code="{{ property.code }}" data-type="property" data-id="{{ property.id }}" class="border-b" >
+    <form action="{{ path('plant_property_edit',{'id':plant.id,'code':property.code}) }}" onsubmit="return false;" class="seamless">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_property_edit_'~property.code) }}" >
+        <div>
+            hauteur : <input style="width: 60px" type="text" data-type="digit" value="{{ plant.minHeight }}" name="min_height">-<input style="width: 60px" type="text" data-type="digit" value="{{ plant.maxHeight }}" name="max_height">m
+            <br>
+            largeur : <input style="width: 60px" type="text" data-type="digit" value="{{ plant.minWidth }}" name="min_width">-<input style="width: 60px" type="text" data-type="digit" value="{{ plant.maxWidth }}" name="max_width">m
+        </div>
+    </form>
+</div>

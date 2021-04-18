@@ -1,7 +1,9 @@
 {% if plant.images | length %}
-    <div class="flex flex-wrap">
+    <div class="flex flex-wrap justify-start">
         {% for image in plant.images %}
-            <a href="{{ asset(image.src) }}" data-fslightbox class="block"><img width="150px" src="{{ asset(image.src)|imagine_filter('square') }}" alt=""></a>
+            {% if (loop.index != 1) or (hide_first != 1) %}
+                <a href="{{ asset(image.src) }}" data-fslightbox class="block flex-none"><img width="150px" class="border-4 border-white shadow-lg m-2" src="{{ asset(image.src)|imagine_filter('square') }}" alt=""></a>
+            {% endif %}
         {% endfor %}
     </div>
 {% else %}

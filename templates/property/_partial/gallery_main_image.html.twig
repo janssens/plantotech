@@ -1,0 +1,7 @@
+{% if plant.images | length %}
+    {% set image = plant.images.first %}
+    <a href="{{ asset(image.src) }}" data-fslightbox class="block w-full h-full bg-cover bg-img border-4 border-white shadow-lg" style="--bg-image: url({{ asset(image.src) }})">
+    </a>
+{% else %}
+
+{% endif %}

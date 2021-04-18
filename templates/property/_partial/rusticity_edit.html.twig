@@ -1,0 +1,6 @@
+<div data-code="{{ element.code }}" data-type="property" data-id="{{ element.id }}" class="border-b p-1" >
+    <form action="{{ path('plant_property_edit',{'id':plant.id,'code':property.code}) }}" onsubmit="return false;">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_property_edit_'~property.code) }}" >
+        {{ property.name }} : <input type="number" value="{{ plant | get(property.code) }}" name="{{ property.code }}" class="text-right w-10">°C
+    </form>
+</div>

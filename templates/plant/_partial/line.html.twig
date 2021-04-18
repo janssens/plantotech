@@ -27,7 +27,7 @@
             </div>
         </a>
         {% if is_granted('ROLE_EDIT') %}
-            <a href="{{ path('plant_edit',{'id':plant.id}) }}">
+            <a href="{{ path('plant_edit',{'id':plant.id,'slug':plant.slug}) }}">
                 <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
                     <i class="mdi mdi-pencil"></i>
                 </div>

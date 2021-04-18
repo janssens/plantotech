@@ -1,0 +1,35 @@
+label.checkbox,label.radio{
+  cursor: pointer;
+  input[type=checkbox],input[type=radio]{
+    display: none;
+  }
+  i.mdi{
+    &.unchecked {
+      display: inline-block;
+    }
+    &.checked{
+      display: none;
+    }
+  }
+  &.checked{
+    i.mdi {
+      &.unchecked{
+        display: none;
+      }
+      &.checked {
+        display: inline-block;
+      }
+    }
+  }
+}
+input.error{
+  @apply border border-red-600 text-red-600;
+}
+form[name^="img_delete"]{
+  button{
+    @apply transition-opacity;
+    &:hover{
+      opacity: 0.5;
+    }
+  }
+}

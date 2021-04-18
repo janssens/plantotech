@@ -563,6 +563,13 @@ class Plant
         });
     }
 
+    public function getAttributeUniqueValueByCode($code = ''){
+        if ($values = $this->getAttributeValuesByCode($code)){
+            return $values->first();
+        }
+        return false;
+    }
+
     public function getAttributeValuesByCodeAsArray($code = ''){
         $return = array();
         /** @var AttributeValue $attributeValue */

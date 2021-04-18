@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% if is_granted('ROLE_EDIT') %}
+    {% set edit = (app.request.query.all.edit is defined and app.request.query.all.edit) %}
+{% else %}
+    {% set edit = false %}
+{% endif %}
+
+{% block head %}
+    <link rel="canonical" href="{{ path('plant_edit',{'id':plant.id,'slug':plant.slug}) }}" />
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('edit') }}
+{% endblock %}
+
+{% block title %}{{ plant.LatinName }} - {{ plant.name }}{% endblock %}
+
+{% block body %}
+
+    <div class="text-center">
+        <a href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}"><i class="mdi mdi-arrow-left"></i> Retour sur la fiche</a>
+    </div>
+        <h1 class="text-3xl w-full flex">
+            <div data-code="latinName" data-type="property" data-id="" class="flex-1">
+                <form action="{{ path('plant_property_edit',{'id':plant.id,'code':'latinName'}) }}" onsubmit="return false;" class="seamless">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_property_edit_latinName') }}" >
+                    <input type="text" value="{{ plant.latinName }}" name="latin_name" class="uppercase bg-transparent text-right font-black overflow-visible w-full">
+                </form>
+            </div>
+            <div class="flex-none w-10">-</div>
+            <div data-code="name" data-type="property" data-id="" class="flex-1">
+                <form action="{{ path('plant_property_edit',{'id':plant.id,'code':'name'}) }}" onsubmit="return false;" class="seamless">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_property_edit_name') }}" >
+                    <input type="text" value="{{ plant.name }}" name="name" class="uppercase bg-transparent text-left font-black overflow-visible w-full">
+                </form>
+            </div>
+        </h1>
+    {% if plant.Family %}
+    <h2 class="text-center"><a href="{{ path('plant_index',{'family':plant.Family.id}) }}">{{ plant.Family.Name }}</a></h2>
+    {% else %}
+        <h2 style="color: orange;" class="text-center">Aucune famille spécifiée</h2>
+    {% endif %}
+    <div class="px-20 py-2 bg-gray-300 masonry editable" id="plant_page">
+        {% for family in families %}
+            {% if family.children | length %}
+                <div class="m-1 bg-gray-100 max-w-md rounded overflow-hidden">
+                    <h4 class="text-center uppercase font-black bg-gray-800 text-gray-100 w-full p-2">{{ family.name }}</h4>
+                    {% for child in family.children %}
+                        {% if child.propertyOrAttributes | length %}
+                            {% if child.name %}<h5 class="bg-gray-700 text-gray-100 p-1 w-full text-center">{{ child.name }}</h5>{% endif %}
+                            {% for element in child.propertyOrAttributes %}
+                                {% include element.templates('edit') with {'property': element,'plant' : plant} %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}

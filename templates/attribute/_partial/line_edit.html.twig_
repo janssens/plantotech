@@ -5,7 +5,7 @@
         <label for="value"><input type="checkbox" {% if plant.attributeValuesByCode(attribute.code) | length %}checked="checked"{% endif %} name="value" value="{{ attribute.code }}">&nbsp;{{ attribute.name }}</label>
     {% else %}
         {% if attribute.mainValue is not null %}
-            <b>{{ attribute.mainValue.label }}</b> :
+            <span class="font-black uppercase">{{ attribute.mainValue.label }}</span> :
             {% if attribute.typeUnique %}
                 {% set attribute_value = plant.mainAttributeValuesByCode(attribute.code).first %}
                 <input type="text" value="{% if attribute_value %}{{ attribute_value.value }}{% endif %}" name="main_value">
@@ -22,7 +22,7 @@
             {% endif %}
             <br>
         {% endif %}
-        <b>{{ attribute.name }}</b> :
+        <span class="font-black uppercase">{{ attribute.name }}</span> :
         {% if attribute.typeUnique %}
             {% set attribute_value = plant.attributeValuesByCode(attribute.code).first %}
             <input type="text" value="{% if attribute_value %}{{ attribute_value.value }}{% endif %}" name="value">

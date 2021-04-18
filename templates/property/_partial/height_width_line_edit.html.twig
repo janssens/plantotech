@@ -1,8 +1,0 @@
-
-<form action="{{ path('plant_property_edit',{'id':plant.id,'property':property.id}) }}" onsubmit="return propertyLineEditSubmit(this)">
-    <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_property_edit_'~property.code) }}" >
-    <div><b>hauteur</b> <input style="width: 60px" type="number" value="{{ plant.minHeight }}" name="min_height">-<input style="width: 60px" type="number" value="{{ plant.maxHeight }}" name="max_height">m
-        <br>
-        <b>largeur</b> <input style="width: 60px" type="number" value="{{ plant.minWidth }}" name="min_width">-<input style="width: 60px" type="number" value="{{ plant.maxWidth }}" name="max_width">m </div>
-    <input type="submit" value="Ok">
-</form>

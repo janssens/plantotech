@@ -3,11 +3,25 @@
 @tailwind utilities;
 @tailwind forms;
 
-@import "~mdi/scss/materialdesignicons";
+@import "~@mdi/font/scss/materialdesignicons";
 @import "~dropzone/dist/dropzone.css";
 
 @import "sources/vars";
+@import "sources/edit";
 @import "sources/fonts";
+
+/* Add the lines below */
+@layer utilities {
+  @variants responsive {
+    .masonry {
+      column-count: 4;
+      column-gap: 1.5em;
+      & > * {
+        break-inside: avoid;
+      }
+    }
+  }
+}
 
 body{
   background: $bg_color;
@@ -43,12 +57,12 @@ h1{
   @apply border-gray-600 bg-gray-500 hover:bg-gray-400
 }
 
-form{
+form:not(.seamless){
   label{
     @apply text-xs font-semibold px-1;
   }
   input[type=text],input[type=password],input[type=email]{
-    @apply w-full px-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500
+    @apply w-full pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500
   }
   textarea{
     @apply w-full px-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500
@@ -116,6 +130,9 @@ $themeColours: (
 }
 .tag{
   @apply py-1 px-3 rounded-full mr-1;
+}
+.attribute-value{
+  @apply py-0.5 px-1 m-0.5 inline-block rounded-lg;
 }
 #filters_list{
   .cat{

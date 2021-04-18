@@ -1,0 +1,5 @@
+{#<form action="{{ path('plant_property_edit',{'id':plant.id,'code':property.code}) }}" onsubmit="return propertyLineEditSubmit(this)">#}
+{#    <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_property_edit_'~property.code) }}" >#}
+{#    <b>{{ property.name }} :</b><input type="text" value="{{ plant | get(property.code) }}" name="{{ property.code }}">#}
+{#    <input type="submit" value="Ok">#}
+{#</form>#}

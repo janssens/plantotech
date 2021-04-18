@@ -1,0 +1,75 @@
+<div data-code="{{ element.code }}" data-type="property" data-id="{{ element.id }}" class="border-b" >
+    {% set flowerings = plant.getAttributeValuesByCodeAsArray('flowering') %}
+    {% set crops = plant.getAttributeValuesByCodeAsArray('crop') %}
+    <form action="{{ path('plant_flowerings_crops_edit',{'id':plant.id}) }}" onsubmit="return false;">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_flowerings_crops_edit') }}" >
+        <table class="flowerings_crops mx-auto">
+            <thead>
+                <tr>
+                    <th colspan="12">Floraison</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="w-1/12 text-center">J</td>
+                <td class="w-1/12 text-center">F</td>
+                <td class="w-1/12 text-center">M</td>
+                <td class="w-1/12 text-center">A</td>
+                <td class="w-1/12 text-center">M</td>
+                <td class="w-1/12 text-center">J</td>
+                <td class="w-1/12 text-center">J</td>
+                <td class="w-1/12 text-center">A</td>
+                <td class="w-1/12 text-center">S</td>
+                <td class="w-1/12 text-center">O</td>
+                <td class="w-1/12 text-center">N</td>
+                <td class="w-1/12 text-center">D</td>
+            </tr>
+            <tr>
+                {% for m in 1..12 %}
+                    <td class="w-1/12">
+                        <label for="value_for_flowerings_{{ m }}" class="checkbox{% if flowerings[m] is defined %} checked{% endif %} w-5 h-5 block text-center overflow-hidden">
+                            <i class="text-sm mdi mdi mdi-flower-poppy checked"></i>
+                            <i class="text-sm mdi mdi mdi-circle-small unchecked"></i>
+                            <input id="value_for_flowerings_{{ m }}" type="checkbox" name="flowerings[{{ m }}]" value="1" {% if flowerings[m] is defined %}checked="checked"{% endif %}>
+                        </label>
+                    </td>
+                {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+        <table  class="flowerings_crops  mx-auto">
+            <thead>
+                <tr>
+                    <th colspan="12">Fructification</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="w-1/12 text-center">J</td>
+                <td class="w-1/12 text-center">F</td>
+                <td class="w-1/12 text-center">M</td>
+                <td class="w-1/12 text-center">A</td>
+                <td class="w-1/12 text-center">M</td>
+                <td class="w-1/12 text-center">J</td>
+                <td class="w-1/12 text-center">J</td>
+                <td class="w-1/12 text-center">A</td>
+                <td class="w-1/12 text-center">S</td>
+                <td class="w-1/12 text-center">O</td>
+                <td class="w-1/12 text-center">N</td>
+                <td class="w-1/12 text-center">D</td>
+            </tr>
+                <tr>
+                    {% for m in 1..12 %}
+                        <td class="w-1/12">
+                            <label for="value_for_crops_{{ m }}" class="checkbox{% if crops[m] is defined %} checked{% endif %} w-5 h-5 block text-center overflow-hidden">
+                                <i class="text-sm mdi mdi mdi-fruit-cherries checked"></i>
+                                <i class="text-sm mdi mdi mdi-circle-small unchecked"></i>
+                                <input id="value_for_crops_{{ m }}" type="checkbox" name="crops[{{ m }}]" value="1" {% if crops[m] is defined %}checked="checked"{% endif %}>
+                            </label>
+                        </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>

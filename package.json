@@ -2,6 +2,7 @@
     "devDependencies": {
         "@symfony/stimulus-bridge": "^2.0.0",
         "@symfony/webpack-encore": "^1.0.0",
+        "@mdi/font": "^5.9.55",
         "autoprefixer": "^10.2.5",
         "core-js": "^3.0.0",
         "dropzone": "^5.8.0",
@@ -9,7 +10,6 @@
         "fslightbox": "^3.2.3",
         "glob-all": "^3.2.1",
         "jquery": "^3.6.0",
-        "mdi-component": "^0.4.1",
         "path": "^0.12.7",
         "postcss": "^8.2.7",
         "postcss-loader": "^5.1.0",
@@ -28,6 +28,5 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
-    },
-    "dependencies": {}
+    }
 }
