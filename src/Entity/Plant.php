@@ -296,6 +296,14 @@ class Plant
 
     public function getHeight(): string
     {
+        if ($this->min_height === null){
+            if ($this->max_height === null) {
+                return '';
+            }
+        }
+        if ($this->max_height === null) {
+            return $this->min_height;
+        }
         if ($this->min_height == $this->max_height)
             return $this->min_height;
         return $this->min_height.'-'.$this->max_height;
@@ -327,6 +335,14 @@ class Plant
 
     public function getWidth(): string
     {
+        if ($this->min_width === null){
+            if ($this->max_width === null) {
+                return '';
+            }
+        }
+        if ($this->max_width === null) {
+            return $this->min_width;
+        }
         if ($this->min_width == $this->max_width)
             return $this->min_width;
         return $this->min_width.'-'.$this->max_width;

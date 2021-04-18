@@ -67,8 +67,14 @@
                             {% include properties_and_attributes['gallery'].templates('line') with {'element': properties_and_attributes['gallery'],'plant' : plant,'hide_first' : 1} %}
                         </div>
                         <div class="text-center">
-                            <img class="mx-auto" src="{{ asset('build/img/silhouettes/ico/'~plant.getMainAttributeValuesByCode('port').first.code~'.png') }}" alt="{{ plant.attributeValuesByCode('root').first.code }}">
-                            <img class="mx-auto" style="background-color: #eee1d1" src="{{ asset('build/img/silhouettes/ico/root_'~plant.attributeValuesByCode('root').first.code~'.png') }}" alt="{{ plant.attributeValuesByCode('root').first.code }}">
+                            {% set port = plant.getMainAttributeValuesByCode('port').first %}
+                            {% if port %}
+                                <img class="mx-auto" src="{{ asset('build/img/silhouettes/ico/'~port.code~'.png') }}" alt="{{ port.code }}">
+                            {% endif %}
+                            {% set root = plant.attributeValuesByCode('root').first %}
+                            {% if root %}
+                                <img class="mx-auto" style="background-color: #eee1d1" src="{{ asset('build/img/silhouettes/ico/root_'~root.code~'.png') }}" alt="{{ root.code }}">
+                            {% endif %}
                         </div>
                         <div class="col-span-3" >
                             {% include properties_and_attributes['port'].templates('line') with {'element': properties_and_attributes['port'],'plant' : plant} %}

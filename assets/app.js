@@ -23,3 +23,8 @@ $("#flash .close").on('click',function (){
         $(this).remove();
     });
 });
+$(document).on('click','[data-toggle]',function (event){
+    event.preventDefault();
+    let query = $(this).data('toggle');
+    $(query).toggleClass('hidden');
+})

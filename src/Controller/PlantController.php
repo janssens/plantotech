@@ -207,31 +207,13 @@ class PlantController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // On récupère les images transmises
-            $images = $form->get('images')->getData();
-
-            // On boucle sur les images
-            foreach($images as $image){
-                // On génère un nouveau nom de fichier
-                $file = md5(uniqid()).'.'.$image->guessExtension();
-
-                // On copie le fichier dans le dossier uploads
-                $image->move(
-                    $this->getParameter('app_images_directory'),
-                    $file
-                );
-
-                // On crée l'image dans la base de données
-                $img = new Image();
-                $img->setName($file);
-                $plant->addImage($img);
-            }
+            $plant->setAuthor($this->getUser()->getUsername());
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($plant);
             $entityManager->flush();
 
-            return $this->redirectToRoute('plant_index');
+            return $this->redirectToRoute('plant_edit',['id'=>$plant->getId(),'slug'=>$plant->getSlug()]);
         }
 
         return $this->render('plant/new.html.twig', [
@@ -437,6 +419,9 @@ class PlantController extends AbstractController
             foreach ($parameters as $key => $value){
                 if ($key === '_csrf_token'){
                     continue;
+                }
+                if (in_array($key,['min_height','max_height','min_width','max_width'])){
+                    $value = intval($value);
                 }
                 $plant->{Property::camelCase("set_".$key)}($value);
             }

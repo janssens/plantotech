@@ -35,41 +35,13 @@ class PlantType extends AbstractType
         $builder
             ->add('latin_name',TextType::class,['label'=>'nom latin'])
             ->add('name')
-            ->add('rusticity')
-            ->add('rusticity_comment')
-            ->add('temperature')
-            ->add('woody',CheckboxType::class,["required"=>false,"false_values"=>[null,0]])
-            ->add('min_width')
-            ->add('max_width')
-            ->add('min_height')
-            ->add('max_height')
-            ->add('min_sexual_maturity')
-            ->add('max_sexual_maturity')
-            ->add('native_place',TextType::class,['label'=>'origine',"required"=>false])
-            ->add('botany_leaf')
-            ->add('botany_branch')
-            ->add('botany_root')
-            ->add('botany_flower')
-            ->add('botany_fruit')
-            ->add('botany_seed')
-            ->add('density')
-            ->add('interest')
-            ->add('specificity')
-            ->add('author')
             ->add('family', EntityType::class, array(
                 'class' => PlantFamily::class,
                 'choices' => $this->_familyRepository->findAlphabetical(),
                 'placeholder' => '-- Choisissez une famille --',
                 'choice_label' => 'name',
                 'required' => false
-            ))
-            ->add('images', FileType::class,[
-                'label' => false,
-                'multiple' => true,
-                'mapped' => false,
-                'required' => false
-            ])
-            //->add('sources')
+            ));
         ;
     }
 

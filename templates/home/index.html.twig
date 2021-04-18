@@ -12,7 +12,7 @@
         <img class="max-w-sm w-40 m-auto" src="{{ asset('build/img/home.svg') }}" alt="le jardin foret">
     </div>
 
-    <div class="m-auto max-w-full w-1/2">
+    <div class="m-auto w-full md:w-1/2 p-3">
         Bonjour {% if is_granted('ROLE_USER') %}{{ app.user.username }} 👋{% endif %} !
 
         <p>

@@ -11,13 +11,21 @@
 <td class="py-3 px-6 text-left whitespace-nowrap">
     <div class="flex items-center">
         <div class="mr-2">
-            <img class="h-6" src="{{ asset('build/img/silhouettes/ico/'~plant.getMainAttributeValuesByCode('port').first.code~'.png') }}" alt="silouette {{ plant.getMainAttributeValuesByCode('port').first.value }}" class="main">
+            {% set port = plant.getMainAttributeValuesByCode('port').first %}
+            {% if port %}
+            <img class="h-6" src="{{ asset('build/img/silhouettes/ico/'~port.code~'.png') }}" alt="silouette {{ port.value }}" class="main">
+            {% endif %}
         </div>
-        <span class="port port--{{ plant.getMainAttributeValuesByCode('port').first.code }} hidden lg:block">{{ plant.getMainAttributeValuesByCode('port').first.value }}</span>
+        {% if port %}
+        <span class="port port--{{ port.code }} hidden lg:block">{{ port.value }}</span>
+        {% endif %}
     </div>
 </td>
 <td class="py-3 px-6 text-center hidden xl:table-cell">
-    <span class="stratum stratum--{{ plant.getAttributeValuesByCode('stratum').first.code }}">{{ plant.getAttributeValuesByCode('stratum').first.value }}</span>
+    {% set stratum = plant.getAttributeValuesByCode('stratum').first %}
+    {% if stratum %}
+    <span class="stratum stratum--{{ stratum.code }}">{{ stratum.value }}</span>
+    {% endif %}
 </td>
 <td class="py-3 px-6 text-center">
     <div class="flex item-center justify-center">

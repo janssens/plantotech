@@ -1,17 +1,6 @@
 {{ form_start(form) }}
     {{ form_widget(form) }}
-    <label for="">Image url</label>
-    <input type="text" placeholder="https://..." name="images_url[0]" value="">
-    <button>+</button>
-	{% if app.request.attributes.get('_route') == 'plant_edit' %}
-        <h2>Images</h2>
-        {% for image in plant.images %}
-            <div>
-                <img src="{{ asset(image.src) }}" alt="" width="150">
-
-                <a href="{{ path('plant_delete_image', {id: image.id})}}" data-delete data-token="{{ csrf_token('delete' ~ image.id )}}">Supprimer</a>
-            </div>
-        {% endfor %}
-    {% endif %}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <br>
+    <a href="{{ path('plant_index') }}" class="btn--info btn"><i class="mdi mdi-arrow-left"></i>&nbsp;retour</a>
+    <button class="btn btn--primary">Créer</button>
 {{ form_end(form) }}

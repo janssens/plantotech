@@ -84,9 +84,9 @@
                 {% endfor %}
             </div>
         {% endif %}
-        <a href="" class="fixed top-1 left-1 text-2xl"><i class="mdi mdi-menu"></i></a>
-        <div class="md:hidden w-full h-screen bg-gray-900 text-gray-100 p-1 fixed top-0 left-0 right-0" style="display: none">
-            <a href="" class="fixed top-1 right-1 text-2xl"><i class="mdi mdi-close"></i></a>
+        <a href="#" data-toggle="#menu_mobile" class="fixed -top-10 -left-10 text-2xl text-white rounded-full bg-gray-900 w-20 h-20 block pl-10 pt-10 md:hidden"><i class="mdi mdi-menu"></i></a>
+        <div class="md:hidden w-full h-screen bg-gray-900 text-gray-100 p-1 fixed top-0 left-0 right-0 hidden" id="menu_mobile">
+            <a href="#" class="fixed top-1 right-1 text-2xl" data-toggle="#menu_mobile"><i class="mdi mdi-close"></i></a>
             <ul class="text-center text-lg">
                 <li class="mb-1">🏡 <a class="inline-block hover:underline" href="{{ base_url }}">Accueil</a></li>
                 <li class="mb-1">🌿 <a class="inline-block hover:underline" href="{{ path('plant_index') }}">Liste des plantes</a></li>
