@@ -1,0 +1,47 @@
+name: Deploy
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+      - name: 🛠️ composer-php
+        uses: nick-zh/composer@php7.4
+      - name: ➕ Yarn install
+        uses: comchangs/action-yarn@v0.1-beta
+      - name: 🛠️ yarn install && 🔥 build
+        run: |
+          yarn install
+          yarn build
+      - name: 🚀 deploy src 📁
+        uses: up9cloud/action-rsync@master
+        env:
+          HOST: ${{ secrets.SSH_HOST }}
+          USER: ${{ secrets.SSH_USER }}
+          PORT: ${{ secrets.SSH_PORT }}
+          KEY: ${{secrets.SSH_KEY}}
+          SOURCE: ./src
+          TARGET: ${{ secrets.SSH_ROOT_PATH }}src
+      - name: 🚀 deploy templates 📄
+        uses: up9cloud/action-rsync@master
+        env:
+          HOST: ${{ secrets.SSH_HOST }}
+          USER: ${{ secrets.SSH_USER }}
+          PORT: ${{ secrets.SSH_PORT }}
+          KEY: ${{secrets.SSH_KEY}}
+          SOURCE: ./templates
+          TARGET: ${{ secrets.SSH_ROOT_PATH }}templates
+      - name: 🚀 deploy builds 📐📏
+        uses: up9cloud/action-rsync@master
+        env:
+          HOST: ${{ secrets.SSH_HOST }}
+          USER: ${{ secrets.SSH_USER }}
+          PORT: ${{ secrets.SSH_PORT }}
+          KEY: ${{secrets.SSH_KEY}}
+          SOURCE: ./public/build
+          TARGET: ${{ secrets.SSH_ROOT_PATH }}public/build
+          POST_SCRIPT: php bin/console cache:clear
