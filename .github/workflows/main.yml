@@ -42,4 +42,6 @@ jobs:
           KEY: ${{secrets.SSH_KEY}}
           SOURCE: ./public/build
           TARGET: ${{ secrets.SSH_ROOT_PATH }}public/build
-          POST_SCRIPT: php bin/console cache:clear
+          POST_SCRIPT: |
+            cd ${{ secrets.SSH_ROOT_PATH }} 
+            php bin/console cache:clear
