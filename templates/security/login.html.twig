@@ -1,8 +1,8 @@
 {% block title %}Connecte toi :){% endblock %}
 {% extends 'base.html.twig' %}
 {% block body %}
-    <div class="min-w-screen min-h-screen flex items-center justify-center px-5 py-5">
-        <div class="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
+    <div class="min-w-screen min-h-screen flex items-center justify-center p-0 md:p-5">
+        <div class="md:p-10 p-2 mx-auto md:w-full md:max-w-md">
             <div class="bg-white shadow w-full rounded-xl divide-y divide-gray-200">
                 <div class="px-5 py-7">
                     <div class="w-full text-center mb-5">
@@ -15,7 +15,7 @@
                                 <label for="password">E-mail ou nom d'utilisateur</label>
                                 <div class="flex">
                                     <div class="ico"><i class="mdi mdi-account-outline"></i></div>
-                                    <input type="text" id="username" name="_username" value="{{ last_username }}" class="outline-none" placeholder="Rob1913"/>
+                                    <input type="text" id="username" name="_username" value="{{ last_username }}" class="outline-none iconed" placeholder="Rob1913"/>
                                 </div>
                             </div>
                         </div>
@@ -24,7 +24,7 @@
                                 <label for="password">Mot de passe</label>
                                 <div class="flex">
                                     <div class="ico"><i class="mdi mdi-lock-outline"></i></div>
-                                    <input required type="password" id="password" name="_password" placeholder="************" class="outline-none">
+                                    <input required type="password" id="password" name="_password" placeholder="************" class="outline-none iconed">
                                 </div>
                             </div>
                         </div>

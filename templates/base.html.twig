@@ -2,6 +2,9 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="{% block meta_description %}Base de donnée de plantes permacoles{% endblock %}" />
+        <meta name="author" content="Gaetan Janssens" />
         {% block head %}{% endblock %}
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}
@@ -85,11 +88,12 @@
             </div>
         {% endif %}
         <a href="#" data-toggle="#menu_mobile" class="fixed -top-10 -left-10 text-2xl text-white rounded-full bg-gray-900 w-20 h-20 block pl-10 pt-10 md:hidden"><i class="mdi mdi-menu"></i></a>
-        <div class="md:hidden w-full h-screen bg-gray-900 text-gray-100 p-1 fixed top-0 left-0 right-0 hidden" id="menu_mobile">
+        <div class="md:hidden w-full h-screen bg-gray-900 text-gray-100 p-1 fixed top-0 left-0 right-0 hidden z-50" id="menu_mobile">
             <a href="#" class="fixed top-1 right-1 text-2xl" data-toggle="#menu_mobile"><i class="mdi mdi-close"></i></a>
-            <ul class="text-center text-lg">
-                <li class="mb-1">🏡 <a class="inline-block hover:underline" href="{{ base_url }}">Accueil</a></li>
-                <li class="mb-1">🌿 <a class="inline-block hover:underline" href="{{ path('plant_index') }}">Liste des plantes</a></li>
+            <ul class="text-xl">
+                <li class="mb-1"><i class="mdi mdi-home"></i><a class="h-10 pl-10 inline-block hover:underline" href="{{ base_url }}">Accueil</a></li>
+                <li class="mb-1"><i class="mdi mdi-view-list"></i><a class="h-10 pl-10 inline-block hover:underline" href="{{ path('plant_index') }}">Liste des plantes</a></li>
+                <li class="mb-1"><i class="mdi mdi-mail"></i><a class="h-10 pl-10 inline-block hover:underline" href="{{ path('contact') }}">Contact</a></li>
                 {% if config('app/return_link') %}
                     <li class="mb-1">
                         <a class="inline bg-green-900 hover:bg-green-700 hover:text-yellow-100 transition-all py-0.5 px-2 rounded" href="{{ config('app/return_link') }}"><i class="mdi mdi-arrow-left"></i> {{ config('app/return_label') }}</a>

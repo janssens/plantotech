@@ -24,7 +24,7 @@
                                 <label for="username" >Mon prénom</label>
                                 <div class="flex">
                                     <div class="ico"><i class="mdi mdi-account-outline"></i></div>
-                                    <input autofocus required name="username" id="username" type="text" class="outline-none" placeholder="Maïté" {% if name is defined %}value="{{ name }}"{% endif %}>
+                                    <input autofocus required name="username" id="username" type="text" class="outline-none iconed" placeholder="Maïté" {% if name is defined %}value="{{ name }}"{% endif %}>
                                 </div>
                             </div>
                         </div>
@@ -33,7 +33,7 @@
                                 <label for="email">Mon e-mail</label>
                                 <div class="flex">
                                     <div class="ico"><i class="mdi mdi-email-outline"></i></div>
-                                    <input required id="email" type="email" name="email" class="outline-none" placeholder="maite@france3.fr" {% if email is defined %}value="{{ email }}"{% endif %}>
+                                    <input required id="email" type="email" name="email" class="outline-none iconed" placeholder="maite@france3.fr" {% if email is defined %}value="{{ email }}"{% endif %}>
                                 </div>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                                 <label for="subject">Sujet</label>
                                 <div class="flex">
                                     <div class="ico"><i class="mdi mdi-information-outline"></i></div>
-                                    <input type="text" id="subject" name="subject" placeholder="La battavia n'y est pas ?" {% if subject is defined %}value="{{ subject }}"{% endif %} required>
+                                    <input type="text" id="subject" name="subject" class=" iconed" placeholder="La battavia n'y est pas ?" {% if subject is defined %}value="{{ subject }}"{% endif %} required>
                                 </div>
                             </div>
                         </div>

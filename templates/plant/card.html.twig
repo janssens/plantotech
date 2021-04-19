@@ -1,14 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% if is_granted('ROLE_EDIT') %}
-    {% set edit = (app.request.query.all.edit is defined and app.request.query.all.edit) %}
-{% else %}
-    {% set edit = false %}
-{% endif %}
-
 {% block head %}
     <link rel="canonical" href="{{ path('plant_show',{'id':plant.id,'slug':plant.slug}) }}" />
 {% endblock %}
+{% block meta_description %}{{ plant.LatinName }} - {{ plant.name }}{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}

@@ -1,7 +1,7 @@
-{% if (plant.attributeValuesByCode(element.code) | length) or (edit) %}
+{% if (plant.attributeValuesByCode(element.code) | length) %}
     <div data-code="{{ element.code }}" data-type="attribute" data-id="{{ element.id }}" class="show">
         {% if element.typeNone %}
-            <span class="">{% if edit %}{% if plant.attributeValuesByCode(element.code) | length %}✅{% else %}🔲{% endif %}&nbsp;{% endif %}<a class="hover:underline capitalize" href="{{ path('plant_index',{ (element.code) : '1'}) }}">{{ element.name }}</a></span>
+            <span class=""><a class="hover:underline capitalize" href="{{ path('plant_index',{ (element.code) : '1'}) }}">{{ element.name }}</a></span>
         {% else %}
             {% if element.mainValue is not null %}
                 {% for attribute_value in plant.mainAttributeValuesByCode(element.code) %}
