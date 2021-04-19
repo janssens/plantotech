@@ -23,7 +23,7 @@ jobs:
           PORT: ${{ secrets.SSH_PORT }}
           KEY: ${{secrets.SSH_KEY}}
           SOURCE: ./src
-          TARGET: ${{ secrets.SSH_ROOT_PATH }}src
+          TARGET: ${{ secrets.SSH_ROOT_PATH }}
       - name: 🚀 deploy templates 📄
         uses: up9cloud/action-rsync@master
         env:
@@ -32,7 +32,7 @@ jobs:
           PORT: ${{ secrets.SSH_PORT }}
           KEY: ${{secrets.SSH_KEY}}
           SOURCE: ./templates
-          TARGET: ${{ secrets.SSH_ROOT_PATH }}templates
+          TARGET: ${{ secrets.SSH_ROOT_PATH }}
       - name: 🚀 deploy builds 📐📏
         uses: up9cloud/action-rsync@master
         env:
@@ -41,7 +41,7 @@ jobs:
           PORT: ${{ secrets.SSH_PORT }}
           KEY: ${{secrets.SSH_KEY}}
           SOURCE: ./public/build
-          TARGET: ${{ secrets.SSH_ROOT_PATH }}public/build
+          TARGET: ${{ secrets.SSH_ROOT_PATH }}public
           POST_SCRIPT: |
             cd ${{ secrets.SSH_ROOT_PATH }} 
             php bin/console cache:clear
