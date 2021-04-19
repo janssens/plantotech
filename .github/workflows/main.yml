@@ -11,8 +11,6 @@ jobs:
         uses: actions/checkout@v2
       - name: 🛠️ composer-php
         uses: nick-zh/composer@php7.4
-      - name: ➕ Yarn install
-        uses: comchangs/action-yarn@v0.1-beta
       - name: 🛠️ yarn install && 🔥 build
         run: |
           yarn install
