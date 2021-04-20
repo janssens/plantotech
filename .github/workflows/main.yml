@@ -24,6 +24,15 @@ jobs:
           KEY: ${{secrets.SSH_KEY}}
           SOURCE: ./src
           TARGET: ${{ secrets.SSH_ROOT_PATH }}
+      - name: 🚀 deploy config ⚙️
+        uses: up9cloud/action-rsync@master
+        env:
+          HOST: ${{ secrets.SSH_HOST }}
+          USER: ${{ secrets.SSH_USER }}
+          PORT: ${{ secrets.SSH_PORT }}
+          KEY: ${{secrets.SSH_KEY}}
+          SOURCE: ./config
+          TARGET: ${{ secrets.SSH_ROOT_PATH }}
       - name: 🚀 deploy templates 📄
         uses: up9cloud/action-rsync@master
         env:
