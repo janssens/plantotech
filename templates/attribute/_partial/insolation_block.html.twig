@@ -1,4 +1,4 @@
-{% if (plant.attributeValuesByCode(element.code) | length) or (edit) %}
+{% if (plant.attributeValuesByCode(element.code) | length) %}
     {% if plant.getMainAttributeValuesByCode('insolation').first %}
         {% set insolation = plant.getMainAttributeValuesByCode('insolation').first.code %}
     {% else %}

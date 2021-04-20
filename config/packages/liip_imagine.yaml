@@ -10,3 +10,9 @@ liip_imagine:
                 thumbnail:
                     size: [200, 200]
                     mode: outbound
+        card:
+            quality: 90
+            filters:
+                resize:
+                    size: [ 600, 600 ]
+                    mode: outbound

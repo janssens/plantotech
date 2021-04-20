@@ -1,4 +1,4 @@
-{% if (plant.attributeValuesByCode(element.code) | length) or (edit) %}
+{% if (plant.attributeValuesByCode(element.code) | length) %}
     {% set attribute_value = plant.attributeValuesByCode(element.code).first.value %}
     <div data-code="{{ element.code }}" data-type="attribute" data-id="{{ element.id }}" class="show">
         <span class="uppercase">{{ element.name }}</span>

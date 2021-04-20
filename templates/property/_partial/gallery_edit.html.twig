@@ -8,7 +8,7 @@
                     <div class="text-center leading-10 py-5 absolute top-0 left-0 right-0 bottom-0 text-5xl">
                         <i class="mdi mdi-trash-can"></i>
                     </div>
-                    <button data-type="delete" data-target="#img_delete{{ image.id }}" class="bg-cover absolute top-0 left-0 right-0 bottom-0 w-full block" style="background-image: url({{ image.src }})">
+                    <button data-type="delete" data-target="#img_delete{{ image.id }}" class="bg-cover absolute top-0 left-0 right-0 bottom-0 w-full block" style="background-image: url({{ asset(image.src)|imagine_filter('square') }})">
                     </button>
                 </form>
             {% endfor %}

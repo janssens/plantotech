@@ -13,6 +13,7 @@ use App\Entity\Insolation;
 use App\Entity\Ph;
 use App\Entity\Plant;
 use App\Entity\PlantAttribute;
+use App\Entity\PlantFamily;
 use App\Entity\Port;
 use App\Entity\Property;
 use App\Entity\PropertyOrAttribute;
@@ -20,6 +21,7 @@ use App\Entity\Soil;
 use App\Entity\Source;
 use App\Form\PlantType;
 use App\Repository\PlantAttributeRepository;
+use App\Repository\PlantFamilyRepository;
 use App\Repository\PlantRepository;
 use http\Exception\BadMethodCallException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -242,8 +244,10 @@ class PlantController extends AbstractController
             return $this->redirectToRoute('plant_edit',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
         }
         $root_families = $this->getDoctrine()->getRepository(AttributeFamily::class)->findBy(array('parent'=>null));
+        $plant_families = $this->getDoctrine()->getRepository(PlantFamily::class)->findAll();
         return $this->render('plant/edit.html.twig', [
             'families' => $root_families,
+            'plant_families' => $plant_families,
             'plant' => $plant,
         ]);
     }
@@ -313,7 +317,7 @@ class PlantController extends AbstractController
         $em->persist($plant);
         $em->flush();
 
-        return new JsonResponse(array('success'=>true));
+        return new JsonResponse(array('success'=>true,'message'=>'enregistré'));
     }
 
     /**
@@ -363,7 +367,7 @@ class PlantController extends AbstractController
                 $em->remove($source);
                 $em->flush();
             }
-            return new JsonResponse(array('success'=>true));
+            return new JsonResponse(array('success'=>true,'message'=>'source supprimée'));
         }
     }
 
@@ -392,7 +396,7 @@ class PlantController extends AbstractController
                     $em->remove($source);
                 }
                 $em->flush();
-                return new JsonResponse(array('success'=>true));
+                return new JsonResponse(array('success'=>true,'message'=>'enregistré'));
             }
             return new JsonResponse(array('error'=>true));
         }
@@ -429,7 +433,7 @@ class PlantController extends AbstractController
             $em->persist($plant);
             $em->flush();
             //
-            return new JsonResponse(array('success'=>true));
+            return new JsonResponse(array('success'=>true,'message'=>'enregistré'));
         }
         return new JsonResponse(array());
     }
@@ -517,9 +521,40 @@ class PlantController extends AbstractController
             $em->persist($plant);
             $em->flush();
 
-            return new JsonResponse(array("success"=>true));
+            return new JsonResponse(array('success'=>true,'message'=>'enregistré'));
         }
 
+        return new JsonResponse(array());
+    }
+
+    /**
+     * @Route("/{id}/edit_family/", name="plant_edit_family", methods={"GET","POST"})
+     * @IsGranted("ROLE_EDIT")
+     * @return JsonResponse
+     */
+    public function family_edit(Request $request, Plant $plant): JsonResponse
+    {
+        if (!$request->isXmlHttpRequest()){
+            return new JsonResponse(array('error'=>true,'message'=>'ajax only'));
+        }
+        if ($request->isMethod('POST')) {
+            $token = new CsrfToken('plant_edit_family', $request->request->get('_csrf_token'));
+            if (!$this->csrfTokenManager->isTokenValid($token)) {
+                throw new InvalidCsrfTokenException();
+            }
+            $id = $request->request->get('value');
+            $em = $this->getDoctrine()->getManager();
+            if ($id){
+                $newFamily = $em->getRepository(PlantFamily::class)->find($id);
+                $plant->setFamily($newFamily);
+            }else{
+                $plant->setFamily(null);
+            }
+            $em->persist($plant);
+            $em->flush();
+            //
+            return new JsonResponse(array('success'=>true,'message'=>'enregistré'));
+        }
         return new JsonResponse(array());
     }
 
@@ -634,7 +669,7 @@ class PlantController extends AbstractController
             $em->persist($plant);
             $em->flush();
 
-            return new JsonResponse(array('success'=>true));
+            return new JsonResponse(array('success'=>true,'message'=>'image supprimée'));
         }
 
         return new JsonResponse(array());

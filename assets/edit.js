@@ -138,6 +138,27 @@ function sourceLineSubmit(form){
     }
     return false;
 }
+let family = document.getElementById('family');
+let familylabel = document.querySelector('label[for=family]');
+familylabel.addEventListener('click',function (event){
+    event.target.classList.add('hidden');
+    family.classList.remove('hidden');
+    family.focus();
+});
+family.addEventListener('change',function (event){
+    let id = family.value;
+    $.ajax({
+        method: "POST",
+        url: family.closest('form').getAttribute('action'),
+        data: $(family.closest('form')).serialize()
+    }).done(function( ret ) {
+        handleReturn(ret);
+        familylabel.innerHTML = family.options[family.selectedIndex].text;
+        familylabel.classList.remove('hidden');
+        family.classList.add('hidden');
+    });
+});
+
 $(document).on('click','#add_img',function (event){
     newImageUrl(this.closest('form'));
 });
@@ -145,12 +166,19 @@ function newImageUrl(form){
     let val = form.querySelector('[name=value]').value;
     if (val.length > 5 && validURL(val)){
         form.classList.add('hidden');
+        let $g = $('#gallery').find('.image-list');
+        $g.animate({opacity:0},1000);
         $.ajax({
             method: "POST",
             url: $(form).attr('action'),
             data: $(form).serialize()
         }).done(function( ret ) {
-            $('#gallery').find('.image-list').replaceWith($('<div></div>').html(ret).find('.image-list').html());
+            $g.animate({opacity:1},100,function (){
+                $g.replaceWith($('<div></div>').html(ret).find('.image-list'));
+                $g.animate({opacity:1},100);
+            });
+            form.querySelector('input[type=text]').value = '';
+            form.classList.remove('hidden');
         });
     }else{
         form.querySelector('[name=value]').classList.add('error');
@@ -162,7 +190,31 @@ function newImageUrl(form){
     return false;
 }
 function handleReturn(json){
-    console.log(json);
+    if (json.success){
+        let $s = $('#success');
+        $s.hide(100,function () {
+            $s.find('.message').html('');
+        });
+        $s.find('.message').html(json.message);
+        $s.show();
+        setTimeout(function (){
+            $s.hide(500,function () {
+                $s.find('.message').html('');
+            });
+        },1000);
+    }else if(json.error){
+        let $e = $('#error');
+        $e.hide(100,function () {
+            $e.find('.message').html('');
+        });
+        $e.find('.message').html(json.message);
+        $e.show();
+        setTimeout(function (){
+            $e.hide(500,function () {
+                $e.find('.message').html('');
+            });
+        },1000);
+    }
 }
 function validURL(str) {
     var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
