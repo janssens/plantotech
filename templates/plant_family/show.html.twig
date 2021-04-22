@@ -3,24 +3,36 @@
 {% block title %}PlantFamily{% endblock %}
 
 {% block body %}
-    <h1>PlantFamily</h1>
+<div class="md:p-5">
+    <h1>Famille : {{ plant_family.name }}</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ plant_family.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ plant_family.name }}</td>
-            </tr>
-        </tbody>
-    </table>
+    {% if plant_family.plants | length %}
+        <h2 class="text-center text-xl">Plantes associées</h2>
+        <div class="bg-white shadow-md rounded my-6">
+            <table class="min-w-max w-full table-auto">
+                <thead>
+                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <th class="py-3 px-6 text-left">Nom Commun</th>
+                    <th class="py-3 px-6 text-left hidden md:table-cell">Nom Latin</th>
+                    <th class="py-3 px-6 text-center">Port</th>
+                    <th class="py-3 px-6 text-center hidden xl:table-cell">Strate</th>
+                    <th class="py-3 px-6 text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                {% for plant in plant_family.plants %}
+                    <tr class="border-b border-gray-200 {% if loop.index0 is odd %}bg-gray-50{% endif %} hover:bg-gray-100">
+                        {% include "plant/_partial/line.html.twig" %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
 
     <a href="{{ path('plant_family_index') }}">back to list</a>
 
-    <a href="{{ path('plant_family_edit', {'id': plant_family.id}) }}">edit</a>
+    <a href="{{ path('plant_family_edit', {'id': plant_family.id}) }}" class="btn btn--primary">edit</a>
 
     {{ include('plant_family/_delete_form.html.twig') }}
+</div>
 {% endblock %}

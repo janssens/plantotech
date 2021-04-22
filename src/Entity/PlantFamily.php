@@ -25,7 +25,7 @@ class PlantFamily
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Plant::class, mappedBy="y")
+     * @ORM\OneToMany(targetEntity=Plant::class, mappedBy="family")
      */
     private $plants;
 

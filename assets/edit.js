@@ -91,7 +91,22 @@ function inputKeyup(el){
         }
     }
 }
-
+//Custom function that changes a select element's option.
+function select(selectId, optionValToSelect){
+    //Get the select element by it's unique ID.
+    var selectElement = document.getElementById(selectId);
+    //Get the options.
+    var selectOptions = selectElement.options;
+    //Loop through these options using a for loop.
+    for (var opt, j = 0; opt = selectOptions[j]; j++) {
+        //If the option of value is equal to the option we want to select.
+        if (opt.value == optionValToSelect) {
+            //Select the option and break out of the for loop.
+            selectElement.selectedIndex = j;
+            break;
+        }
+    }
+}
 function attributeLineEditSubmit(form){
     $.ajax({
         method: "POST",
@@ -140,23 +155,60 @@ function sourceLineSubmit(form){
 }
 let family = document.getElementById('family');
 let familylabel = document.querySelector('label[for=family]');
+let family_name = document.getElementById('family_name');
+let family_name_submit = document.getElementById('family_name_submit');
 familylabel.addEventListener('click',function (event){
     event.target.classList.add('hidden');
     family.classList.remove('hidden');
     family.focus();
 });
-family.addEventListener('change',function (event){
-    let id = family.value;
+family_name_submit.addEventListener('click',function (event){
+    family_name.classList.add('hidden');
+    family_name_submit.classList.add('hidden');
+    family.classList.remove('hidden');
     $.ajax({
         method: "POST",
         url: family.closest('form').getAttribute('action'),
         data: $(family.closest('form')).serialize()
     }).done(function( ret ) {
         handleReturn(ret);
-        familylabel.innerHTML = family.options[family.selectedIndex].text;
-        familylabel.classList.remove('hidden');
-        family.classList.add('hidden');
+        if (ret.success){
+            familylabel.innerHTML = family_name.value;
+            familylabel.classList.remove('hidden');
+            family.classList.add('hidden');
+            if (ret.data && ret.data.family_id){
+                var opt = document.createElement('option');
+                opt.value = ret.data.family_id;
+                opt.innerHTML = family_name.value;
+                family.appendChild(opt);
+                select('family',ret.data.family_id);
+                family_name.value = '';
+            }
+        }else{
+            family_name.classList.remove('hidden');
+            family_name_submit.classList.remove('hidden');
+            family.classList.add('hidden');
+        }
     });
+});
+family.addEventListener('change',function (event){
+    let id = family.value;
+    if (id === '0'){
+        family_name.classList.remove('hidden');
+        family_name_submit.classList.remove('hidden');
+        family.classList.add('hidden');
+    }else{
+        $.ajax({
+            method: "POST",
+            url: family.closest('form').getAttribute('action'),
+            data: $(family.closest('form')).serialize()
+        }).done(function( ret ) {
+            handleReturn(ret);
+            familylabel.innerHTML = family.options[family.selectedIndex].text;
+            familylabel.classList.remove('hidden');
+            family.classList.add('hidden');
+        });
+    }
 });
 
 $(document).on('click','#add_img',function (event){
@@ -190,6 +242,10 @@ function newImageUrl(form){
     return false;
 }
 function handleReturn(json){
+    let display_delay = 1000;
+    if (json.delay){
+        display_delay = json.delay;
+    }
     if (json.success){
         let $s = $('#success');
         $s.hide(100,function () {
@@ -201,7 +257,7 @@ function handleReturn(json){
             $s.hide(500,function () {
                 $s.find('.message').html('');
             });
-        },1000);
+        },display_delay);
     }else if(json.error){
         let $e = $('#error');
         $e.hide(100,function () {
@@ -213,7 +269,7 @@ function handleReturn(json){
             $e.hide(500,function () {
                 $e.find('.message').html('');
             });
-        },1000);
+        },display_delay);
     }
 }
 function validURL(str) {

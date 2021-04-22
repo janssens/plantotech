@@ -244,7 +244,7 @@ class PlantController extends AbstractController
             return $this->redirectToRoute('plant_edit',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
         }
         $root_families = $this->getDoctrine()->getRepository(AttributeFamily::class)->findBy(array('parent'=>null));
-        $plant_families = $this->getDoctrine()->getRepository(PlantFamily::class)->findAll();
+        $plant_families = $this->getDoctrine()->getRepository(PlantFamily::class)->findBy(array(),array('name' => 'ASC'));;
         return $this->render('plant/edit.html.twig', [
             'families' => $root_families,
             'plant_families' => $plant_families,
@@ -544,16 +544,42 @@ class PlantController extends AbstractController
             }
             $id = $request->request->get('value');
             $em = $this->getDoctrine()->getManager();
-            if ($id){
+            if ($id and intval($id)>0){
                 $newFamily = $em->getRepository(PlantFamily::class)->find($id);
                 $plant->setFamily($newFamily);
-            }else{
+                $em->persist($plant);
+                $em->flush();
+                //
+                return new JsonResponse(array('success'=>true,'message'=>'enregistré'));
+            }else if ($id === '-1') {
                 $plant->setFamily(null);
+                $em->persist($plant);
+                $em->flush();
+                //
+                return new JsonResponse(array('success'=>true,'message'=>'enregistré'));
+            }else if ($id === '0'){
+                $name = strtolower($request->request->get('name'));
+                if (!$name){
+                    return new JsonResponse(array('error'=>true,'message'=>'Veuillez choisir un nom pour la nouvelle famille','delay'=>5000));
+                }
+                if (strlen($name)<3){
+                    return new JsonResponse(array('error'=>true,'message'=>'Ce nom est trop court','delay'=>5000));
+                }
+                $exist = $em->getRepository(PlantFamily::class)->findBy(['name'=>$name]);
+                if ($exist){
+                    return new JsonResponse(array('error'=>true,'message'=>'Cette famille existe déjà !','delay'=>5000));
+                }
+                $newFamily = new PlantFamily();
+                $newFamily->setName($name);
+                $em->persist($newFamily);
+                $plant->setFamily($newFamily);
+                $em->persist($plant);
+                $em->flush();
+                //
+                return new JsonResponse(array('success'=>true,'message'=>'enregistré','data'=>['family_id'=>$newFamily->getId()]));
             }
-            $em->persist($plant);
-            $em->flush();
-            //
-            return new JsonResponse(array('success'=>true,'message'=>'enregistré'));
+            //wrong value
+            return new JsonResponse(array('error'=>true,'message'=>'oups'));
         }
         return new JsonResponse(array());
     }

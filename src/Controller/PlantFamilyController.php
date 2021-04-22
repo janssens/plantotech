@@ -2,16 +2,19 @@
 
 namespace App\Controller;
 
+use App\Entity\Plant;
 use App\Entity\PlantFamily;
 use App\Form\PlantFamilyType;
 use App\Repository\PlantFamilyRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/plant/family")
+ * @Route("/plant_family")
+ * @IsGranted("ROLE_EDIT")
  */
 class PlantFamilyController extends AbstractController
 {
@@ -85,6 +88,11 @@ class PlantFamilyController extends AbstractController
     {
         if ($this->isCsrfTokenValid('delete'.$plantFamily->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
+            /** @var Plant $plant */
+            foreach ($plantFamily->getPlants() as $plant){
+                $plant->setFamily(null);
+                $entityManager->persist($plant);
+            }
             $entityManager->remove($plantFamily);
             $entityManager->flush();
         }

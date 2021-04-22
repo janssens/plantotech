@@ -1,11 +1,9 @@
 {% if (plant.attributeValuesByCode(element.code) | length) %}
     <div data-code="{{ element.code }}" data-type="attribute" data-id="{{ element.id }}" class="show">
         {% if element.typeNone %}
-            <span class="">{% if edit %}
-            {% if plant.attributeValuesByCode(element.code) | length %}
-                <i class="mdi mdi-checkbox-marked-circle-outline"></i>{% else %}
-                <i class="mdi mdi-checkbox-blank-circle-outline"></i>{% endif %}&nbsp;
-            {% endif %}<a href="{{ path('plant_index',{ (element.code) : '1'}) }}">{{ element.name }}</a></span>
+            <span class="">
+                <a href="{{ path('plant_index',{ (element.code) : '1'}) }}">{{ element.name }}</a>
+            </span>
         {% else %}
             {% if element.mainValue is not null %}
                 <span class="">{{ element.mainValue.label }}</span> :
