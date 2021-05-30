@@ -10,7 +10,8 @@ function sendMessage(){
     if(top.location === self.location)
     {
         console.log('this page should be called in an iframe from '+parent_url);
-        //window.location.href = parent_url;
+        if (!embed_admin)
+            window.location.href = parent_url;
     }else{
         let data = {};
         data.path = window.location.pathname;
