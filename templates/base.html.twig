@@ -23,7 +23,7 @@
             </div>
             <div class="flex-grow"></div>
             <div class="text-right flex-none">
-                {% if config('app/embed') %}
+                {% if not config('app/embed') %}
                     {% if is_granted('ROLE_USER') %}
                        <b> {% if is_granted('ROLE_ADMIN') %}🌳{% else %}🧘{% endif %} {{ app.user.username }} </b> | {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('app_admin') }}">⚙ admin</a> | {% endif %} <a href="{{ path('app_logout') }}"><i class="mdi mdi-lock-off"></i>déconnexion</a>
