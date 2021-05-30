@@ -55,7 +55,13 @@ function ajaxSubmit($form,data){
             if (data_string){
                 full_url += '?' + data_string;
             }
-            window.history.pushState({'data': data_string}, '',  full_url);
+            if (typeof embed == 'undefined'){
+                window.history.pushState({data: data_string}, '',  full_url);
+            }else{
+                window.history.pushState({data: data_string}, '',  full_url);
+                let myPushState = new CustomEvent("mypushstate", {detail:{state: data_string}});
+                window.dispatchEvent(myPushState);
+            }
         }
     });
 }

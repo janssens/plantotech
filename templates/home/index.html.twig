@@ -3,12 +3,16 @@
 {% block title %}Plantotech{% endblock %}
 
 {% block body %}
+    {% if not config('app/embeded') %}
     <h1 class="content-center text-3xl p-5">
         {{ config('app/website_name') }}
     </h1>
+    {% endif %}
 
     <div class="text-center">
+        {% if not config('app/embed') and config('app/logo') %}
         <img class="max-w-sm m-auto" src="{{ config('app/logo') }}" alt="{{ config('app/website_name') }}">
+        {% endif %}
         <img class="max-w-sm w-40 m-auto" src="{{ asset('build/img/home.svg') }}" alt="le jardin foret">
     </div>
 
@@ -28,7 +32,7 @@
     </div>
 
     <div class="m-2">
-        {% if is_granted('ROLE_USER') %}
+        {% if is_granted('ROLE_USER') or config('app/embed') %}
             <div class="text-center">
                 <button type="button" data-href="{{ path('plant_index') }}" class="btn btn--success">Entrer dans la jungle ! 🌳 </button>
             </div>

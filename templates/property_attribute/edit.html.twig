@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editer {% if propertyOrAttribute.isProperty %}une propriété{% else %}un attribut{% endif %}{% endblock %}
+
+{% block body %}
+    <h1>Editer {% if propertyOrAttribute.isProperty %}propriété{% else %}attribut{% endif %} {{ propertyOrAttribute.name }}</h1>
+
+    {{ include('property_attribute/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('property_attribute_index') }}">retourn à la liste</a>
+
+    {{ include('property_attribute/_delete_form.html.twig') }}
+{% endblock %}

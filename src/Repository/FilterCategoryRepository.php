@@ -47,4 +47,16 @@ class FilterCategoryRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /**
+     * @return FilterCategory[] Returns an array of FilterCategory objects
+     */
+    public function findAlphabetical()
+    {
+        return $this->createQueryBuilder('f')
+            ->orderBy('f.name', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

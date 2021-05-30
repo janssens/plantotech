@@ -17,7 +17,7 @@
                 🏡 <a class="inline-block hover:underline" href="{{ base_url }}">Accueil</a> | 🌿 <a class="inline-block hover:underline" href="{{ path('plant_index') }}">les plantes</a>
             </div>
             <div class="flex none">
-                {% if config('app/return_link') %}
+                {% if config('app/return_link') and not config('app/embed') %}
                     <a class="block ml-4 bg-gray-100 hover:bg-green-700 hover:text-yellow-100 transition-all px-2 py-0.5 rounded" href="{{ config('app/return_link') }}"><i class="mdi mdi-arrow-left"></i> {{ config('app/return_label') }}</a>
                 {% endif %}
             </div>
@@ -102,19 +102,30 @@
             </ul>
             <hr class="mt-10">
             <ul class="text-center">
-                {% if is_granted('ROLE_USER') %}
-                    <li> {% if is_granted('ROLE_ADMIN') %}🌳{% else %}🧘{% endif %} {{ app.user.username }} </li>
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <li>⚙ <a href="{{ path('app_admin') }}" class="inline-block hover:underline">admin</a></li>
+                {% if config('app/embed') %}
+                    {% if is_granted('ROLE_USER') %}
+                        <li> {% if is_granted('ROLE_ADMIN') %}🌳{% else %}🧘{% endif %} {{ app.user.username }} </li>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li>⚙ <a href="{{ path('app_admin') }}" class="inline-block hover:underline">admin</a></li>
+                        {% endif %}
+                        <li><a href="{{ path('app_logout') }}" class="inline-block hover:underline"><i class="mdi mdi-lock-off"></i>déconnexion</a></li>
+                    {% else %}
+                        <li><a href="{{ path('app_login') }}" class="inline-block hover:underline">connexion</a> | <a href="{{ path('app_register') }}">s'inscrire</a></li>
                     {% endif %}
-                    <li><a href="{{ path('app_logout') }}" class="inline-block hover:underline"><i class="mdi mdi-lock-off"></i>déconnexion</a></li>
-                {% else %}
-                    <li><a href="{{ path('app_login') }}" class="inline-block hover:underline">connexion</a> | <a href="{{ path('app_register') }}">s'inscrire</a></li>
                 {% endif %}
             </ul>
         </div>
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
+            {% if config('app/embed') %}
+                {{ encore_entry_script_tags('embed') }}
+            {% endif %}
         {% endblock %}
+        {% if config('app/embed') %}
+            <script>
+                let embed = true;
+                let parent_url = "{{ config('app/parent_url') }}";
+            </script>
+        {% endif %}
     </body>
 </html>

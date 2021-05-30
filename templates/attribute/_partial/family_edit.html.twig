@@ -1,0 +1,16 @@
+<form action="{{ path('plant_edit_family',{'id':plant.id}) }}" onsubmit="return false;" class="seamless">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('plant_edit_family') }}" >
+    Famille :
+    <label for="family" class="cursor-pointer">{% if not plant.Family %}-- Aucune --{% else %}{{ plant.Family.Name }}{% endif %}</label>
+    <select name="value" id="family" class="hidden">
+        <option value="-1" {% if not plant.family %}selected="selected"{% endif %}>-- Aucune --</option>
+        <option value="0">-- (+) Ajouter --</option>
+        {% for family in families %}
+            <option value="{{ family.id }}" {% if plant.family and plant.family.id == family.id %}selected="selected"{% endif %}>{{ family.name }}</option>
+        {% endfor %}
+    </select>
+    <div class="flex flex-wrap justify-center">
+        <input type="text" id="family_name" name="name" value="" class="hidden border border-black">
+        <button id="family_name_submit" class="hidden bg-gray-900 text-white">Ok</button>
+    </div>
+</form>

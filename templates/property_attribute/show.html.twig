@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% if propertyOrAttribute.isProperty %}Propriété{% else %}Attribut{% endif %} {{ propertyOrAttribute.name }}{% endblock %}
+
+{% block body %}
+    <h1 class="content-center text-center text-3xl p-5">{% if propertyOrAttribute.isProperty %}Propriété{% else %}Attribut{% endif %} {{ propertyOrAttribute.name }}</h1>
+
+    <table class="table m-2">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ propertyOrAttribute.id }}</td>
+            </tr>
+            <tr>
+                <th>Code</th>
+                <td>{{ propertyOrAttribute.code }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ propertyOrAttribute.name }}</td>
+            </tr>
+            <tr>
+                <th>Position</th>
+                <td>{{ propertyOrAttribute.position }}</td>
+            </tr>
+            <tr>
+                <th>Famille</th>
+                <td>{% if (propertyOrAttribute.family is not null) %}{{ propertyOrAttribute.family.name }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Filtre</th>
+                <td>{% if (propertyOrAttribute.filterCategory is not null) %}{{ propertyOrAttribute.filterCategory.name }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="flex">
+        <a class="btn btn--dark" href="{{ path('property_attribute_index') }}"><i class="mdi mdi-arrow-left"></i>Retour</a>
+        <a class="btn btn--success" href="{{ path('property_attribute_edit', {'id': propertyOrAttribute.id}) }}"><i class="mdi mdi-pen"></i>edit</a>
+    </div>
+
+{% endblock %}

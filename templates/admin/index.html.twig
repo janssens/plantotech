@@ -12,7 +12,12 @@
                 {% if c.frontendType == 'file' and c.value %}
                     <img src="{{ c.value }}" alt="{{ c.label }}" width="200" style="max-height: 200px;max-width: 200px;">
                 {% endif %}
-                <input type="{{ c.frontendType }}" value="{{ c.value }}" name="{{ c.path }}"> <br>
+                {% if c.frontendType == 'boolean'  %}
+                    <input type="radio" value="1" name="{{ c.path }}" {% if (c.value) %}checked="checked"{% endif %}> OUI <br>
+                    <input type="radio" value="0" name="{{ c.path }}" {% if not (c.value) %}checked="checked"{% endif %}> NON <br>
+                {% else %}
+                    <input type="{{ c.frontendType }}" value="{{ c.value }}" name="{{ c.path }}"> <br>
+                {% endif %}
             {% endfor %}
             <br>
             <button type="submit" class="btn btn--primary">Enregistrer</button>

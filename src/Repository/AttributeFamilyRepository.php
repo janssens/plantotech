@@ -47,4 +47,16 @@ class AttributeFamilyRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /**
+     * @return AttributeFamily[] Returns an array of AttributeFamily objects
+     */
+    public function findAlphabetical()
+    {
+        return $this->createQueryBuilder('f')
+            ->orderBy('f.name', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

@@ -5,7 +5,7 @@
 {% block body %}
     <h1 class="content-center text-center text-3xl p-5">{% if is_granted('ROLE_USER') %}Rechercher des plantes{% else %}Toutes les plantes{% endif %}</h1>
 
-    {% if is_granted('ROLE_USER') %}
+    {% if is_granted('ROLE_USER') or config('app/embed') %}
     <div class="grid grid-cols-12">
         <div class="col-span-12">
             <h2>Mes critères</h2>

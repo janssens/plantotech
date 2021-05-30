@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les propriétés{% endblock %}
+
+{% block body %}
+    {% set array = {
+        'propriétés': properties,
+        'attributs': attributes,
+    }
+    %}
+    {% for key,values in array %}
+    <h1 class="content-center text-center text-3xl p-5">Liste des {{ key }}</h1>
+    <div class="bg-white shadow-md rounded my-6">
+        <table class="min-w-max w-full table-auto">
+            <thead>
+            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                <th class="py-3 px-6 text-left">Id</th>
+                <th class="py-3 px-6 text-left">Code</th>
+                <th class="py-3 px-6 text-center">Name</th>
+                <th class="py-3 px-6 text-center">Position</th>
+                <th class="py-3 px-6 text-center">Famille</th>
+                <th class="py-3 px-6 text-center">Filtre</th>
+            </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+            {% for value in values %}
+                <tr class="border-b border-gray-200 {% if loop.index0 is odd %}bg-gray-50{% endif %} hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                        <div class="flex items-center">
+                            <span class="font-medium">
+                                <a href="{{ path('property_attribute_show', {'id': value.id}) }}">
+                                    {{ value.id }}
+                                </a>
+                            </span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                        <div class="flex items-center">
+                            <a href="{{ path('property_attribute_show', {'id': value.id}) }}">
+                            {{ value.code }}
+                            </a>
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                        <div class="flex items-center">
+                            {{ value.name }}
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-center whitespace-nowrap">
+                        <div class="flex items-center">
+                            {{ value.position }}
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-center whitespace-nowrap">
+                        <div class="flex items-center">
+                            {% if (value.family is not null) %}{{ value.family.name }}{% endif %}
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-center whitespace-nowrap">
+                        <div class="flex items-center">
+                            {% if (value.filterCategory is not null) %}{{ value.filterCategory.name }}{% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endfor %}
+    <div class="m-2 p-2">
+{#        <a class="btn btn--success" href="{{ path('user_new') }}">#}
+<i class="mdi mdi-plus"></i>New
+{#</a>#}
+    </div>
+{% endblock %}

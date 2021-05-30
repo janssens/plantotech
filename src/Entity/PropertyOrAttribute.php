@@ -95,7 +95,7 @@ class PropertyOrAttribute
         return $this;
     }
 
-    public function getFamily(): AttributeFamily
+    public function getFamily(): ?AttributeFamily
     {
         return $this->family;
     }
