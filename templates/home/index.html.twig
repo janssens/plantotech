@@ -20,14 +20,23 @@
         Bonjour {% if is_granted('ROLE_USER') %}{{ app.user.username }} 👋{% endif %} !
 
         <p>
-            Cette base de donnée est le fruit d’un travail collaboratif commencé en 2018, coordonnée et dirigé par <a href="https://www.atelier-alveoles.fr/">l’Atelier des Alvéoles</a>.
+            Cette base de donnée est le fruit d’un travail collaboratif initié en 2018, coordonnée et dirigé par <a href="https://www.alveoles.fr/">Les Alvéoles</a>.
             <br>
-            Nous avons cherché à rassembler toutes les informations utiles pour concevoir et cultiver un jardin-foret, selon le design de permaculture.
+            Nous avons cherché à rassembler toutes les informations utiles pour concevoir et cultiver un jardin-foret avec les principes et la méthodologie de design en permaculture.
             <br>
             Le vivant ne se laisse pas facilement ranger dans des cases... aussi, malgré tous nos efforts, certains critères peuvent être sujet à discussion.
             {% if is_granted('ROLE_USER') %}<br>
             Nous vous laissons le soin de confronter ces informations à d’autres sources. Ce travail évolue avec vous, n’hésites pas à nous faire part de vos suggestions,
             ajout, coquilles relevées,... Vous pouvez pour cela utiliser <a href="{{ path('contact') }}">ce formulaire</a>.{% endif %}
+            <br>
+            Bonne visite !
+        </p>
+        <p>
+            PS : il existe une version papier de cette base de données appelé &ldquo; Kit Caragana &rdquo;, composé de 160 fiches-plantes,
+            que vous pouvez commander sur <a href="https://alveoles.fr/shop">notre boutique en ligne</a>.
+            Vous y trouverez également le livre d’Antoine Talin
+            &ldquo; Forêt comestible et haie fruitière. Créer un jardin nourricier multi-étagé &rdquo;, notre offre de formation complète ainsi que le catalogue
+            des arbres pour jardin-forêt de la pépinière des Alvéoles.
         </p>
     </div>
 
