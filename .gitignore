@@ -9,6 +9,8 @@
 /var/
 /vendor/
 /*.sql
+/*.sql.gz
+/docker/build/db/*
 /*.zip
 ###< symfony/framework-bundle ###
 
