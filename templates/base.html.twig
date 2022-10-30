@@ -5,13 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{% block meta_description %}Base de donnée de plantes permacoles{% endblock %}" />
         <meta name="author" content="Gaetan Janssens" />
+        <link href="https://api.fontshare.com/v2/css?f[]=nunito@500&display=swap" rel="stylesheet">
         {% block head %}{% endblock %}
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
     </head>
-    <body class="">
+    <body class="bg-img" style="--bg-image : url({{ asset('build/img/papier.jpg') }});">
         <div class="w-full bb bg-white md:flex p-3 hidden">
             <div class="flex-none">
                 🏡 <a class="inline-block hover:underline" href="{{ base_url }}">Accueil</a> | 🌿 <a class="inline-block hover:underline" href="{{ path('plant_index') }}">les plantes</a>
@@ -33,7 +34,7 @@
                 {% endif %}
             </div>
         </div>
-        <div class="container-center min-h-screen">
+        <div class="container-center min-h-screen mx-auto w-full md:w-3/4 lg:1/2 bg-white">
             {% block body %}{% endblock %}
         </div>
         <footer class="h-10 bg-white w-full border-t text-center p-1">

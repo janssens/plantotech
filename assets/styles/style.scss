@@ -24,7 +24,7 @@
 }
 
 body{
-  background: $bg_color;
+  background: $bg_color cover no-repeat;
 }
 p > a{
   @apply text-gray-900 underline hover:no-underline hover:text-black;
@@ -42,7 +42,8 @@ h1{
   @apply border-gray-600 bg-gray-500 hover:bg-gray-400
 }
 .btn--success{
-  @apply border-green-600 bg-green-500 hover:bg-green-400
+  background: #86a45e;
+  @apply border-green-900 hover:bg-green-500
 }
 .btn--danger{
   @apply border-red-600 bg-red-500 hover:bg-red-400

@@ -3,6 +3,12 @@
 {% block title %}Plantotech{% endblock %}
 
 {% block body %}
+    <div class="text-center">
+        {% if not config('app/embed') and config('app/logo') %}
+            <img class="max-w-sm m-auto" src="{{ config('app/logo') }}" alt="{{ config('app/website_name') }}">
+        {% endif %}
+    </div>
+
     {% if not config('app/embeded') %}
     <h1 class="content-center text-3xl p-5">
         {{ config('app/website_name') }}
@@ -10,13 +16,13 @@
     {% endif %}
 
     <div class="text-center">
-        {% if not config('app/embed') and config('app/logo') %}
-        <img class="max-w-sm m-auto" src="{{ config('app/logo') }}" alt="{{ config('app/website_name') }}">
-        {% endif %}
-        <img class="max-w-sm w-40 m-auto" src="{{ asset('build/img/home.svg') }}" alt="le jardin foret">
+        <img class="max-w-sm w-40 m-auto"
+             width="336px" height="351px"
+             src="{{ asset('build/img/kit-caragana.png') }}"
+             alt="exemple de fiche plante papier" />
     </div>
 
-    <div class="m-auto w-full md:w-1/2 p-3">
+    <div class="m-auto p-3">
         Bonjour {% if is_granted('ROLE_USER') %}{{ app.user.username }} 👋{% endif %} !
 
         <p>
