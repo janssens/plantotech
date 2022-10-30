@@ -3,66 +3,67 @@
 {% block title %}Plantotech{% endblock %}
 
 {% block body %}
-    <div class="text-center">
-        {% if not config('app/embed') and config('app/logo') %}
-            <img class="max-w-sm m-auto" src="{{ config('app/logo') }}" alt="{{ config('app/website_name') }}">
+    <div class="w-full bg-white">
+        <div class="text-center">
+            {% if not config('app/embed') and config('app/logo') %}
+                <img class="max-w-sm m-auto" src="{{ config('app/logo') }}" alt="{{ config('app/website_name') }}">
+            {% endif %}
+        </div>
+
+        {% if not config('app/embeded') %}
+            <h1 class="content-center text-3xl p-5">
+                {{ config('app/website_name') }}
+            </h1>
         {% endif %}
+
+        <div class="text-center">
+            <img class="max-w-sm w-40 m-auto"
+                 width="336px" height="351px"
+                 src="{{ asset('build/img/kit-caragana.png') }}"
+                 alt="exemple de fiche plante papier" />
+        </div>
+
+        <div class="m-auto p-3">
+            Bonjour {% if is_granted('ROLE_USER') %}{{ app.user.username }} 👋{% endif %} !
+
+            <p>
+                Cette base de donnée est le fruit d’un travail collaboratif initié en 2018, coordonnée et dirigé par <a href="https://www.alveoles.fr/">Les Alvéoles</a>.
+                <br>
+                Nous avons cherché à rassembler toutes les informations utiles pour concevoir et cultiver un jardin-foret avec les principes et la méthodologie de design en permaculture.
+                <br>
+                Le vivant ne se laisse pas facilement ranger dans des cases... aussi, malgré tous nos efforts, certains critères peuvent être sujet à discussion.
+                {% if is_granted('ROLE_USER') %}<br>
+                    Nous vous laissons le soin de confronter ces informations à d’autres sources. Ce travail évolue avec vous, n’hésites pas à nous faire part de vos suggestions,
+                    ajout, coquilles relevées,... Vous pouvez pour cela utiliser <a href="{{ path('contact') }}">ce formulaire</a>.{% endif %}
+                <br>
+                Bonne visite !
+            </p>
+            <p>
+                PS : il existe une version papier de cette base de données appelé &ldquo; Kit Caragana &rdquo;, composé de 160 fiches-plantes,
+                que vous pouvez commander sur <a href="https://alveoles.fr/shop">notre boutique en ligne</a>.
+                Vous y trouverez également le livre d’Antoine Talin
+                &ldquo; Forêt comestible et haie fruitière. Créer un jardin nourricier multi-étagé &rdquo;, notre offre de formation complète ainsi que le catalogue
+                des arbres pour jardin-forêt de la pépinière des Alvéoles.
+            </p>
+        </div>
+
+        <div class="m-2">
+            {% if is_granted('ROLE_USER') or config('app/embed') %}
+                <div class="text-center">
+                    <button type="button" data-href="{{ path('plant_index') }}" class="btn btn--success">Entrer dans la jungle ! 🌳 </button>
+                </div>
+            {% else %}
+                <div class="text-center pb-5">
+                    <p>Pour utiliser toutes les fonctionnalités de cet outil, il faut se connecter 🤝 </p>
+
+                    <button type="button" data-href="{{ path('app_register') }}" class="btn btn--success">Je rejoins la tribu 🏕️</button><br>
+                    <small>Déjà un compte ? je me <a href="{{ path('app_login') }}" class="underline">connecter ici</a>🔒</small>
+                </div>
+                <div class="text-center pb-5">
+                    <p>Si c'est pas ton truc, tu peux quand m&ecirc;me visiter 😎</p>
+                    <button type="button" data-href="{{ path('plant_index') }}" class="btn btn--secondary">Je fais un petit tour ! 🌳</button>
+                </div>
+            {% endif %}
+        </div>
     </div>
-
-    {% if not config('app/embeded') %}
-    <h1 class="content-center text-3xl p-5">
-        {{ config('app/website_name') }}
-    </h1>
-    {% endif %}
-
-    <div class="text-center">
-        <img class="max-w-sm w-40 m-auto"
-             width="336px" height="351px"
-             src="{{ asset('build/img/kit-caragana.png') }}"
-             alt="exemple de fiche plante papier" />
-    </div>
-
-    <div class="m-auto p-3">
-        Bonjour {% if is_granted('ROLE_USER') %}{{ app.user.username }} 👋{% endif %} !
-
-        <p>
-            Cette base de donnée est le fruit d’un travail collaboratif initié en 2018, coordonnée et dirigé par <a href="https://www.alveoles.fr/">Les Alvéoles</a>.
-            <br>
-            Nous avons cherché à rassembler toutes les informations utiles pour concevoir et cultiver un jardin-foret avec les principes et la méthodologie de design en permaculture.
-            <br>
-            Le vivant ne se laisse pas facilement ranger dans des cases... aussi, malgré tous nos efforts, certains critères peuvent être sujet à discussion.
-            {% if is_granted('ROLE_USER') %}<br>
-            Nous vous laissons le soin de confronter ces informations à d’autres sources. Ce travail évolue avec vous, n’hésites pas à nous faire part de vos suggestions,
-            ajout, coquilles relevées,... Vous pouvez pour cela utiliser <a href="{{ path('contact') }}">ce formulaire</a>.{% endif %}
-            <br>
-            Bonne visite !
-        </p>
-        <p>
-            PS : il existe une version papier de cette base de données appelé &ldquo; Kit Caragana &rdquo;, composé de 160 fiches-plantes,
-            que vous pouvez commander sur <a href="https://alveoles.fr/shop">notre boutique en ligne</a>.
-            Vous y trouverez également le livre d’Antoine Talin
-            &ldquo; Forêt comestible et haie fruitière. Créer un jardin nourricier multi-étagé &rdquo;, notre offre de formation complète ainsi que le catalogue
-            des arbres pour jardin-forêt de la pépinière des Alvéoles.
-        </p>
-    </div>
-
-    <div class="m-2">
-        {% if is_granted('ROLE_USER') or config('app/embed') %}
-            <div class="text-center">
-                <button type="button" data-href="{{ path('plant_index') }}" class="btn btn--success">Entrer dans la jungle ! 🌳 </button>
-            </div>
-        {% else %}
-            <div class="text-center pb-5">
-                <p>Pour utiliser toutes les fonctionnalités de cet outil, il faut se connecter 🤝 </p>
-
-                <button type="button" data-href="{{ path('app_register') }}" class="btn btn--success">Je rejoins la tribu 🏕️</button><br>
-                <small>Déjà un compte ? je me <a href="{{ path('app_login') }}" class="underline">connecter ici</a>🔒</small>
-            </div>
-            <div class="text-center pb-5">
-                <p>Si c'est pas ton truc, tu peux quand m&ecirc;me visiter 😎</p>
-                <button type="button" data-href="{{ path('plant_index') }}" class="btn btn--secondary">Je fais un petit tour ! 🌳</button>
-            </div>
-        {% endif %}
-    </div>
-
 {% endblock %}
