@@ -1,7 +1,7 @@
 {
     "devDependencies": {
         "@symfony/stimulus-bridge": "^2.0.0",
-        "@symfony/webpack-encore": "^1.0.0",
+        "@symfony/webpack-encore": "^4.2.0",
         "@mdi/font": "^5.9.55",
         "autoprefixer": "^10.2.5",
         "core-js": "^3.0.0",
