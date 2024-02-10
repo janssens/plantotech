@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edition des familles d'attributs{% endblock %}
+
+{% block body %}
+    <h1 class="content-center text-center text-3xl p-5">Gestion des familles d'attributs</h1>
+    <div class="p-2 m-2">
+        <a href="{{ path('app_admin') }}" class="btn--info btn"><i class="mdi mdi-arrow-left"></i>&nbsp;retour admin</a>
+    </div>
+    <div class="p-2 m-2">
+        {% for id,family in families %}
+            <div class="m-1 bg-gray-100 w-full rounded overflow-hidden">
+                <h4 class="text-center uppercase font-black bg-gray-800 text-gray-100 w-full p-2">#{{ id }} {{ family['name'] }}</h4>
+                {% for child in family['children'] %}
+                        <h5 class="bg-gray-700 text-gray-100 p-1 w-full text-center">{{ child['name'] }}</h5>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

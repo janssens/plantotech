@@ -14,3 +14,9 @@ docker compose exec fpm composer install
 docker compose exec fpm yarn install
 docker compose exec fpm yarn build
 ```
+
+http://127.0.0.1:10302/
+
+```bash
+docker compose exec fpm php bin/console
+```

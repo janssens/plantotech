@@ -35,6 +35,12 @@ class AttributeValue
      */
     private $plants;
 
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Variety::class, inversedBy="attributes",cascade={"persist"})
+     */
+    private $varieties;
+
     /**
      * @ORM\Column(type="string", length=50)
      */
@@ -105,6 +111,14 @@ class AttributeValue
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Variety[]
+     */
+    public function getVarieties(): Collection
+    {
+        return $this->varieties;
     }
 
     public function getCode(): ?string

@@ -40,6 +40,18 @@ class PlantRepository extends ServiceEntityRepository
             ;
     }
 
+    /**
+     * @return Plant[] Returns an array of Plant objects
+     */
+    public function findAlphabetical()
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.name', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return Plant[] Returns an array of Plant objects
     //  */

@@ -5,7 +5,11 @@
 {% block body %}
     <h1 class="content-center text-center text-3xl p-5">Admin page</h1>
     <div class="p-2 m-2">
-        <b>configuration</b>
+        <a href="{{ path('app_admin_users') }}" class="btn btn--primary">Gestion des utilisateurs</a>
+        <a href="{{ path('attribute_family_edit') }}" class="btn btn--primary">Gestion des familles d'attributs</a>
+    </div>
+    <div class="p-2 m-2">
+        <h1>configuration</h1>
         <form action="{{ path('app_admin') }}" method="post" enctype="multipart/form-data">
             {% for c in config %}
                 <label for="{{ c.path }}">{{ c.label }}</label><br>

@@ -1,0 +1,8 @@
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    <br>
+    {% if variety.parent %}
+    <a href="{{ path('plant_show',{'id':variety.parent.id,'slug':variety.parent.slug}) }}" class="btn--info btn"><i class="mdi mdi-arrow-left"></i>&nbsp;retour</a>
+    {% endif %}
+    <button class="btn btn--primary">Créer</button>
+{{ form_end(form) }}

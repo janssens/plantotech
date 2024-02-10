@@ -24,9 +24,15 @@ class Source
 
     /**
      * @ORM\ManyToOne(targetEntity=Plant::class, inversedBy="sources")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $plant;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Variety::class, inversedBy="sources")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $variety;
 
     public function getId(): ?int
     {
@@ -54,6 +60,16 @@ class Source
     {
         $this->plant = $plant;
 
+        return $this;
+    }
+    public function getVariety(): ?Variety
+    {
+        return $this->variety;
+    }
+
+    public function setVariety(?Variety $variety): self
+    {
+        $this->variety = $variety;
         return $this;
     }
 }

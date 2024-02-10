@@ -24,9 +24,15 @@ class Image
 
     /**
      * @ORM\ManyToOne(targetEntity=Plant::class, inversedBy="images")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $Plant;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Variety::class, inversedBy="images")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $variety;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -46,7 +52,6 @@ class Image
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -58,7 +63,16 @@ class Image
     public function setPlant(?Plant $Plant): self
     {
         $this->Plant = $Plant;
+        return $this;
+    }
+    public function getVariety(): ?Variety
+    {
+        return $this->variety;
+    }
 
+    public function setVariety(?Variety $variety): self
+    {
+        $this->variety = $variety;
         return $this;
     }
 
@@ -113,7 +127,6 @@ class Image
     public function setOrigin(?string $origin): self
     {
         $this->origin = $origin;
-
         return $this;
     }
 }

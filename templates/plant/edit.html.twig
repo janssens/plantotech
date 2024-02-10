@@ -44,6 +44,11 @@
     <h2 class="text-center">
         {% include 'property/_partial/family_edit.html.twig' with {'plant' : plant,'families' : plant_families} %}
     </h2>
+    {% if is_granted('ROLE_EDIT') %}
+        <div id="actions" class="text-right">
+            <a class="btn btn--primary" href="{{ path('variety_new') }}"><i class="mdi mdi-plus-box"></i>&nbsp;Ajouter une variété.</a>
+        </div>
+    {% endif %}
     <div class="px-2 md:px-20 py-2 bg-gray-300 masonry editable" id="plant_page">
         {% for family in families %}
             {% if family.children | length %}

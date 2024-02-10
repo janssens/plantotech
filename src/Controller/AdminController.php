@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\AttributeFamily;
 use App\Entity\Config;
 use App\Entity\Plant;
 use App\Entity\User;
@@ -62,10 +63,34 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/attributeFamily/", name="attribute_family_edit")
+     * @param Request $request
+     * @return void
+     */
+    public function attributeFamilyEdit(Request $request)
+    {
+        $families = $this->getDoctrine()->getRepository(AttributeFamily::class)->findAll();
+        $f = [];
+        /** @var AttributeFamily $family */
+        foreach ($families as $family)
+        {
+            if (!$family->getParent()){
+                $f[$family->getId()] = array('name' => $family->getName(),'children' => []);
+            }else{
+                if (!isset($f[$family->getParent()->getId()])){
+                    $f[$family->getParent()->getId()] = array('name' => $family->getParent()->getName(),'children' => []);
+                }
+                $f[$family->getParent()->getId()]['children'][$family->getId()] = array('name' => $family->getName());
+            }
+        }
+        return $this->render('admin/family_attribute.html.twig',array('families'=>$f));
+    }
+
+    /**
      * @Route("/users/", name="app_admin_users")
      */
     public function user(Request $request){
         $users = $this->getDoctrine()->getRepository(User::class)->findAll();
-        return $this->render('admin/users.html.twig',array('users'=>$users));
+        return $this->render('user/index.html.twig',array('users'=>$users));
     }
 }

@@ -17,6 +17,12 @@ class Attribute extends PropertyOrAttribute
     const TYPE_MULTIPLE = 3;
     const TYPE_UNIQUE = 4;
 
+    const ATTACHED_TO_SPECIES = 1;
+
+    const ATTACHED_TO_VARIETY = 2;
+
+    const ATTACHED_TO_BOTH = 3;
+
     /**
      * @ORM\Column(type="smallint")
      */
@@ -31,6 +37,11 @@ class Attribute extends PropertyOrAttribute
      * @ORM\OneToOne(targetEntity=MainValue::class, mappedBy="attribute", cascade={"persist", "remove"})
      */
     private $mainValue;
+
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $attachedTo;
 
     public function __construct()
     {
@@ -142,6 +153,18 @@ class Attribute extends PropertyOrAttribute
         $filename = "attribute/_partial/".$this->getCode()."_".$type.".html.twig";
         $default = "attribute/_partial/default_".$type.".html.twig";
         return array($filename,$default);
+    }
+
+    public function getAttachedTo(): ?int
+    {
+        return $this->attachedTo;
+    }
+
+    public function setAttachedTo(int $attachedTo): self
+    {
+        $this->attachedTo = $attachedTo;
+
+        return $this;
     }
 
 }

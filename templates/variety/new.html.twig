@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Variété{% endblock %}
+
+{% block body %}
+<div class="min-w-screen min-h-screen flex items-center justify-center md:px-5 md:py-5">
+    <div class="md:p-10 p-0 mx-auto md:w-full">
+        <div class="bg-white shadow w-full max-w-screen-lg mx-auto md:rounded-xl overflow-hidden p-5">
+                <h1>Créer une nouvelle variété</h1>
+                <div class="">
+                    {{ include('variety/_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
