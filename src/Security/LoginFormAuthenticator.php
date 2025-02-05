@@ -5,6 +5,8 @@ namespace App\Security;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -16,9 +18,11 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
+class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
     private $userRepository;
@@ -30,7 +34,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         UserRepository $userRepository,
         RouterInterface $router,
         CsrfTokenManagerInterface $csrfTokenManager,
-        UserPasswordEncoderInterface $passwordEncoder
+        UserPasswordHasherInterface $passwordEncoder
     )
     {
         $this->userRepository = $userRepository;
@@ -39,16 +43,21 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $this->passwordEncoder = $passwordEncoder;
     }
 
-    protected function getLoginUrl()
+    protected function getLoginUrl(Request $r): string
     {
         return $this->router->generate('app_login');
     }
 
-    public function supports(Request $request)
+    public function supports(Request $request): bool
     {
         // do your work when we're POSTing to the login page
         return $request->attributes->get('_route') === 'app_login'
             && $request->isMethod('POST');
+    }
+
+    public function authenticate(Request $request): Passport
+    {
+        
     }
 
     public function getCredentials(Request $request)
@@ -81,7 +90,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         return $user->getIsActive() && $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): null|Response
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);

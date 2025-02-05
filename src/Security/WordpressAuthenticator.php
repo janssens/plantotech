@@ -15,9 +15,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
-class WordpressAuthenticator extends AbstractGuardAuthenticator
+ ;
+
+class WordpressAuthenticator extends AbstractAuthenticator
 {
     private $csrfTokenManager;
     private $urlGenerator;
@@ -33,7 +36,7 @@ class WordpressAuthenticator extends AbstractGuardAuthenticator
         $this->wordpressUserProvider = $wordpressUserProvider;
     }
 
-    public function supports(Request $request)
+    public function supports(Request $request): bool
     {
         return $request->query->has('wordpress-oauth-provider');
     }
@@ -65,14 +68,14 @@ class WordpressAuthenticator extends AbstractGuardAuthenticator
         return true;
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         return new JsonResponse([
             'message' => 'Authentification refusée'
         ], Response::HTTP_UNAUTHORIZED);
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey):Response
     {
         return new RedirectResponse($this->urlGenerator->generate('home'));
     }
@@ -87,5 +90,10 @@ class WordpressAuthenticator extends AbstractGuardAuthenticator
     public function supportsRememberMe()
     {
         // todo
+    }
+
+    public function authenticate(Request $request): Passport
+    {
+        
     }
 }

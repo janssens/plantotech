@@ -11,6 +11,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 abstract class CsvCommand extends Command
@@ -22,7 +23,7 @@ abstract class CsvCommand extends Command
 
     const DEFAULT_LABEL = '-- N/A --';
 
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface  $passwordEncoder, ParameterBagInterface $parameterBag)
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordEncoder, ParameterBagInterface $parameterBag)
     {
         $this->_entityManager = $entityManager;
         $this->_parameterBag = $parameterBag;

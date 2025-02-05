@@ -18,11 +18,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'app:import-from-db',description: 'Load data from db.')]
 class ImportCommand extends Command
 {
-// the name of the command (the part after "bin/console")
-protected static $defaultName = 'app:import-from-db';
 
     // simple key value
     const PLANT_KEY_LATIN_NAME = "nom_latin";
@@ -230,7 +230,7 @@ protected static $defaultName = 'app:import-from-db';
             ->addOption('limit','l', InputOption::VALUE_OPTIONAL, 'limit',3306);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $port = $input->getOption('port');
         $host = $input->getArgument('host');

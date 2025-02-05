@@ -46,17 +46,13 @@ class SecurityController extends AbstractController
         $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * @Route("/logout", name="app_logout")
-     */
+    #[Route('/logout', name: 'app_logout')]
     public function logout()
     {
         throw new \Exception('Will be intercepted before getting here');
     }
 
-    /**
-     * @Route("/login", name="app_login")
-     */
+    #[Route('/login', name: 'app_login')]
     public function login(Request $request,AuthenticationUtils $authenticationUtils)
     {
         // get the login error if there is one
@@ -71,9 +67,7 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig',array('last_username' => $lastUsername));
     }
 
-    /**
-     * @Route("/oauth_login", name="app_oauth")
-     */
+    #[Route('/oauth_login', name: 'app_oauth')]
     public function oauth_login(){
 
         $url = $this->config->getValue('app/oauth_url')."oauth/authorize";
@@ -91,9 +85,7 @@ class SecurityController extends AbstractController
         return new RedirectResponse($url.'?'.$query_string);
     }
 
-    /**
-     * @Route("/login/activate/{token}", name="app_activate")
-     */
+    #[Route("/login/activate/{token}", name: 'app_activate')]
     public function activate(Request $request,$token)
     {
         $user = $this->userRepository->findOneBy(array('confirmation_token'=>$token));
@@ -163,9 +155,7 @@ class SecurityController extends AbstractController
         return $this->render('security/reset_password.html.twig',array('user'=>$user));
     }
 
-    /**
-     * @Route("/login/forgot_password", name="app_forgot_password")
-     */
+    #[Route("/login/forgot_password", name: 'app_forgot_password')]
     public function forgotPassword(Request $request)
     {
         if ($request->isMethod('POST')) {
@@ -231,9 +221,7 @@ class SecurityController extends AbstractController
 
 
 
-    /**
-     * @Route("/register", name="app_register")
-     */
+    #[Route("/register", name: 'app_register')]
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
 

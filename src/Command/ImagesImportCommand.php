@@ -35,11 +35,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'app:images:import',description: 'Import images using a csv')]
 class ImagesImportCommand extends CsvCommand
 {
-// the name of the command (the part after "bin/console")
-protected static $defaultName = 'app:images:import';
 
     protected function configure()
     {
@@ -54,7 +54,7 @@ protected static $defaultName = 'app:images:import';
             ->addOption('default_mapping',null,InputOption::VALUE_NONE,'');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $file = $input->getArgument('file');

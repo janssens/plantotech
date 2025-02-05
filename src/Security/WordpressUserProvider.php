@@ -127,7 +127,7 @@ class WordpressUserProvider implements UserProviderInterface{
         return $data;
     }
 
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof User || !$user->getWordpressID()){
             throw new UnsupportedUserException();
@@ -149,6 +149,11 @@ class WordpressUserProvider implements UserProviderInterface{
         }
 
         return $user;
+    }
+
+    public function loadUserByIdentifier(string $identifier): UserInterface
+    {
+        throw new UsernameNotFoundException('Utilisateur inexistant.');
     }
 
     public function supportsClass(string $class): bool

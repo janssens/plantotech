@@ -26,16 +26,15 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'app:user:promote',description: 'Promote an existing user')]
 class PromoteUserCommand extends Command
 {
-// the name of the command (the part after "bin/console")
-protected static $defaultName = 'app:user:promote';
-
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface  $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface  $passwordEncoder)
     {
         $this->entityManager = $entityManager;
 
@@ -51,7 +50,7 @@ protected static $defaultName = 'app:user:promote';
             ->addArgument('role',  InputArgument::REQUIRED, 'role');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $username = $input->getArgument('username');

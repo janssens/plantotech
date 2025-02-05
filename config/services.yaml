@@ -6,7 +6,7 @@
 parameters:
     app_images_directory: '%kernel.project_dir%/public/uploads'
     app_base_url: '%env(string:APP_BASE_URL)%'
-
+    doctrine.default_connection: 'default'
 services:
     # default configuration for services in *this* file
     _defaults:

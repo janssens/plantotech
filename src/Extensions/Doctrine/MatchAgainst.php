@@ -17,7 +17,7 @@ class MatchAgainst extends FunctionNode
     /** @var bool */
     protected $queryExpansion = false;
 
-    public function parse(Parser $parser)
+    public function parse(Parser $parser): void
     {
         // match
         $parser->match(Lexer::T_IDENTIFIER);
@@ -50,7 +50,7 @@ class MatchAgainst extends FunctionNode
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 
-    public function getSql(SqlWalker $walker)
+    public function getSql(SqlWalker $walker): string
     {
         $fields = [];
         foreach ($this->pathExp as $pathExp) {

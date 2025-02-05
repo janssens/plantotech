@@ -35,9 +35,7 @@ use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-/**
- * @Route("/plant")
- */
+#[Route('/plant')]
 class PlantController extends AbstractController
 {
     private $csrfTokenManager;
@@ -47,9 +45,7 @@ class PlantController extends AbstractController
         $this->csrfTokenManager = $csrfTokenManager;
     }
 
-    /**
-     * @Route("/index", name="plant_index")
-     */
+    #[Route('/index', name: 'plant_index')]
     public function index(Request $request)
     {
         $is_ajax = $request->get('_ajax') === '1';
