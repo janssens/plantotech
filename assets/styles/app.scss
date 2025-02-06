@@ -3,12 +3,13 @@
 @tailwind utilities;
 @tailwind forms;
 
-@import "~@mdi/font/scss/materialdesignicons";
+// @import "~@mdi/font/scss/materialdesignicons";
 @import "~dropzone/dist/dropzone.css";
 
 @import "sources/vars";
 @import "sources/edit";
 @import "sources/fonts";
+
 
 /* Add the lines below */
 @layer utilities {

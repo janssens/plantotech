@@ -1,8 +1,14 @@
-// tailwind.config.js
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-    theme: {
-        fontFamily: {
-            'sans': ['Nunito','Roboto', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", "Helvetica Neue", 'Arial', "Noto Sans", 'sans-serif', "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"],
-        }
-    }
+  content: [
+    "./assets/**/*.js",
+    "./templates/**/*.html.twig",
+  ],
+  theme: {
+    fontFamily: {
+      'sans': ['Nunito','Roboto', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", "Helvetica Neue", 'Arial', "Noto Sans", 'sans-serif', "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"],
+    },
+    extend: {},
+  },
+  plugins: [],
 }

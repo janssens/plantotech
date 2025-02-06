@@ -9,7 +9,7 @@
         {% block head %}{% endblock %}
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
+            <link rel="stylesheet" href="{{ asset('styles/app.scss') }}">
         {% endblock %}
     </head>
     <body class="bg-img" style="--bg-image : url({{ asset('build/img/papier.jpg') }});">
@@ -119,6 +119,7 @@
             </ul>
         </div>
         {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
             {{ encore_entry_script_tags('app') }}
             {% if config('app/embed') %}
                 {{ encore_entry_script_tags('embed') }}

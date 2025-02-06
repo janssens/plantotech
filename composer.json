@@ -30,6 +30,8 @@
         "symfony/validator": "7.2.*",
         "symfony/webpack-encore-bundle": "*",
         "symfony/yaml": "7.2.*",
+        "symfonycasts/sass-bundle": "^0.8.2",
+        "symfonycasts/tailwind-bundle": "^0.7.1",
         "twig/extra-bundle": "*"
     },
     "config": {
@@ -64,7 +66,8 @@
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"
