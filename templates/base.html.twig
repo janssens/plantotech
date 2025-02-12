@@ -120,9 +120,9 @@
         </div>
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
-            {{ encore_entry_script_tags('app') }}
+            <link rel="stylesheet" href="{{ asset('app.js') }}">
             {% if config('app/embed') %}
-                {{ encore_entry_script_tags('embed') }}
+                <link rel="stylesheet" href="{{ asset('embed.js') }}">
             {% endif %}
         {% endblock %}
         {% if config('app/embed') %}
