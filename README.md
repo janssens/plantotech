@@ -1,9 +1,7 @@
-# plantotech
-A plants 🌱 database to make the planet eden again
+# 🌱 plantoteque
+A plants database to make the planet eden again
 
-
-running at https://plantes.universite-alveoles.fr
-
+running at https://plantes.alveoles.fr
 
 ## Run dev server using docker
 
