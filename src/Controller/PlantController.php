@@ -23,6 +23,7 @@ use App\Form\PlantType;
 use App\Repository\PlantAttributeRepository;
 use App\Repository\PlantFamilyRepository;
 use App\Repository\PlantRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use http\Exception\BadMethodCallException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -46,7 +47,7 @@ class PlantController extends AbstractController
     }
 
     #[Route('/index', name: 'plant_index')]
-    public function index(Request $request)
+    public function index(Request $request,EntityManagerInterface $entityManager)
     {
         $is_ajax = $request->get('_ajax') === '1';
         $filters = array();
@@ -64,7 +65,7 @@ class PlantController extends AbstractController
         $s = $request->query->get('q');
         if ($s){
             $restricted = true;
-            $matched_names = $this->getDoctrine()->getRepository(Plant::class)->findByString($s);
+            $matched_names = $entityManager->getRepository(Plant::class)->findByString($s);
             $ids = array();
             /** @var Plant $match */
             foreach ($matched_names as $match){
@@ -79,7 +80,7 @@ class PlantController extends AbstractController
         $rusticity = $request->get('rusticity');
         if ($rusticity){
             $restricted = true;
-            $matched_plants = $this->getDoctrine()->getRepository(Plant::class)->findByRusticity($rusticity);
+            $matched_plants = $entityManager->getRepository(Plant::class)->findByRusticity($rusticity);
             $ids = array();
             /** @var Plant $match */
             foreach ($matched_plants as $match){
@@ -98,7 +99,7 @@ class PlantController extends AbstractController
         foreach (array($request->query->all(),$request->request->all()) as $bag){
             foreach ($bag as $key => $value){
                 if (!in_array($key,array('q','rusticity','family','_ajax'))){ //attribute
-                    $property_or_attribute = $this->getDoctrine()->getRepository(PropertyOrAttribute::class)->findOneBy(array('code'=>$key));
+                    $property_or_attribute = $entityManager->getRepository(PropertyOrAttribute::class)->findOneBy(array('code'=>$key));
                     if ($property_or_attribute){
                         $used_attributes[$key] = $property_or_attribute;
                         $attributes_value[$key] = $value;
@@ -116,7 +117,7 @@ class PlantController extends AbstractController
             foreach ($used_attributes as $code => $attribute){
                 if ($attribute->isAttribute()){
                     if ($attribute->isTypeNone()) {
-                        $av = $this->getDoctrine()->getRepository(AttributeValue::class)->findOneBy(array('value' => null, 'attribute' => $attribute));
+                        $av = $entityManager->getRepository(AttributeValue::class)->findOneBy(array('value' => null, 'attribute' => $attribute));
                         if ($av) {
                             $av = array($av);
                         }
@@ -124,7 +125,7 @@ class PlantController extends AbstractController
                         if (!is_array($attributes_value[$code])){
                             $attributes_value[$code] = array($attributes_value[$code]);
                         }
-                        $av = $this->getDoctrine()->getRepository(AttributeValue::class)->findBy(array('id'=>$attributes_value[$code]));
+                        $av = $entityManager->getRepository(AttributeValue::class)->findBy(array('id'=>$attributes_value[$code]));
                     }
                 }else{
                     continue;
@@ -157,12 +158,12 @@ class PlantController extends AbstractController
         if (!$restricted)
             unset($restrict['id']);
 
-        $plants = $this->getDoctrine()->getRepository(Plant::class)->findBy(array_merge($filters,$restrict));
+        $plants = $entityManager->getRepository(Plant::class)->findBy(array_merge($filters,$restrict));
         if ($request->get('rusticity')){
             $filters['rusticity'] = $request->get('rusticity');
         }
 
-        $attributes_collection = $this->getDoctrine()->getRepository(Attribute::class)->findAll();
+        $attributes_collection = $entityManager->getRepository(Attribute::class)->findAll();
         $attributes = array();
         foreach ($attributes_collection as $attribute){
             $attributes[$attribute->getCode()] = $attribute;
@@ -184,7 +185,7 @@ class PlantController extends AbstractController
             return $this->render('plant/index.html.twig', [
                 'controller_name' => 'PlantController',
                 'plants' => $plants,
-                'filter_categories' => $this->getDoctrine()->getRepository(FilterCategory::class)->findAll(),
+                'filter_categories' => $entityManager->getRepository(FilterCategory::class)->findAll(),
                 'filters' => $filters,
                 'attributes_values' => $attributes_value,
                 'excluded_attributes' => $excluded_attributes,
