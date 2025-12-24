@@ -3,7 +3,10 @@
 {% set months = ['j','f','m','a','m','j','j','a','s','o','n','d'] %}
 {% if flowerings | length or crops | length %}
         <div class="grid grid-flow-col">
-            <div class="col-span-2 bg-img bg-contain bg-no-repeat bg-center" style="--bg-image: url({{ asset('build/img/picto/fleur.svg') }})"></div>
+            <div class="col-span-2 flex items-center gap-4">
+                <div class="bg-img bg-contain bg-no-repeat bg-center h-5 w-5" style="--bg-image: url({{ asset('build/img/picto/fleur.svg') }})" ></div>
+                <div>Floraison</div>
+            </div>
             {% for m in 1..12 %}
                 <div class="text-center">
                     {% if flowerings[m] is defined %}
@@ -15,7 +18,10 @@
             {% endfor %}
         </div>
         <div class="grid grid-flow-col">
-            <div class="col-span-2 bg-img bg-contain bg-no-repeat bg-center" style="--bg-image: url({{ asset('build/img/picto/fructif.svg') }})"></div>
+            <div class="col-span-2 flex items-center gap-4">
+                <div class="bg-img bg-contain bg-no-repeat bg-center h-5 w-5" style="--bg-image: url({{ asset('build/img/picto/fructif.svg') }})" ></div>
+                <div>Fructification</div>
+            </div>
             {% for m in 1..12 %}
                 <div class="text-center">
                     {% if crops[m] is defined %}

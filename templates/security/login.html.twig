@@ -1,7 +1,7 @@
 {% block title %}Connecte toi :){% endblock %}
 {% extends 'base.html.twig' %}
 {% block body %}
-    <div class="min-w-screen min-h-screen flex items-center justify-center p-0 md:p-5">
+    <div class="flex items-center justify-center my-8 p-0 md:p-5">
         <div class="md:p-10 p-2 mx-auto md:w-full md:max-w-md">
             <div class="bg-white shadow w-full rounded-xl divide-y divide-gray-200">
                 <div class="px-5 py-7">
@@ -14,7 +14,7 @@
                             <div class="w-full px-3 mb-3">
                                 <label for="password">E-mail ou nom d'utilisateur</label>
                                 <div class="flex">
-                                    <div class="ico"><i class="mdi mdi-account-outline"></i></div>
+                                    <div class="ico">{{ mdi('account-outline') }}</i></div>
                                     <input type="text" id="username" name="_username" value="{{ last_username }}" class="outline-none iconed" placeholder="Rob1913"/>
                                 </div>
                             </div>
@@ -23,7 +23,7 @@
                             <div class="w-full px-3 mb-3">
                                 <label for="password">Mot de passe</label>
                                 <div class="flex">
-                                    <div class="ico"><i class="mdi mdi-lock-outline"></i></div>
+                                    <div class="ico">{{ mdi('lock-outline') }}</div>
                                     <input required type="password" id="password" name="_password" placeholder="************" class="outline-none iconed">
                                 </div>
                             </div>
@@ -31,21 +31,22 @@
                         <label>
                             <input type="checkbox" class="checkbox border rounded-lg" value="_remember_me"> Se souvenir de moi
                         </label>
-                        <button type="submit" class="btn btn--success w-full">
-                            Login <i class="mdi mdi-arrow-right"></i>
+                        <button type="submit" class="btn btn--success w-full cursor-pointer">
+                            Login 
+                            {# <div class="ico">{{ mdi('arrow-right') }}</div> #}
                         </button>
                     </form>
                 </div>
-                <div class="py-5 text-center">
+                {# <div class="py-5 text-center">
                     <a href="{{ path('app_oauth') }}" class="btn btn--warning">{{ config('app/oauth_text') }}</a>
-                </div>
+                </div> #}
                 <div class="py-5">
                     <div class="grid grid-cols-2 gap-1">
                         <div class="text-center sm:text-left whitespace-nowrap">
-                            <button data-href="{{ path('app_forgot_password') }}" class="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+                            <a href="{{ path('app_forgot_password') }}" class="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
                                 <i class="mdi mdi-lock-open-outline"></i>
                                 <span class="inline-block ml-1">Mot de passe oublié ?</span>
-                            </button>
+                            </a>
                         </div>
                         <div class="text-center sm:text-right  whitespace-nowrap">
     {#                        <button class="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">#}

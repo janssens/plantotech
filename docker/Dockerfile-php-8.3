@@ -5,12 +5,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libxml2-dev \
         libpng-dev \
         libzip-dev \
+        libicu-dev \
+        pkg-config \
         vim curl debconf subversion git apt-transport-https apt-utils \
         build-essential locales acl mailutils wget zip unzip \
         gnupg gnupg1 gnupg2 \
         sudo \
-        ssh \
-    && docker-php-ext-install \
+        ssh
+RUN docker-php-ext-install \
         pdo_mysql \
         soap \
         zip \
@@ -27,10 +29,11 @@ RUN . $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
     && nvm use default
-RUN curl https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
-RUN apt-get update && apt-get install -y npm yarn
+RUN apt-get install -y npm
+RUN npm install --global yarn
+
+RUN apt remove -y webpack
 
 COPY build/php/opcache.ini /usr/local/etc/php/conf.d/
 COPY build/php/custom.ini /usr/local/etc/php/conf.d/

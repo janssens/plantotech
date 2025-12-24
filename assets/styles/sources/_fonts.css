@@ -12,19 +12,31 @@ font-black	font-weight: 900;
 
 @font-face {
     font-family: 'Roboto';
-    src: url('../fonts/roboto/Roboto-Thin-webfont.woff') format('woff');
+    src: url('../../fonts/roboto/Roboto-Thin-webfont.woff') format('woff');
     font-weight: 100;
     font-style: normal;
 }
 @font-face {
     font-family: 'Roboto';
-    src: url('../fonts/roboto/Roboto-Regular-webfont.woff') format('woff');
+    src: url('../../fonts/roboto/Roboto-Regular-webfont.woff') format('woff');
     font-weight: 400;
     font-style: normal;
 }
 @font-face {
     font-family: 'Roboto';
-    src: url('../fonts/roboto/Roboto-Black-webfont.woff') format('woff');
+    src: url('../../fonts/roboto/Roboto-Black-webfont.woff') format('woff');
     font-weight: 800;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'FrancoisOne';
+    src: url('../../fonts/Francois_One/FrancoisOne-Regular.ttf') format('ttf');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'JosefinSans_local';
+    src: url('../../fonts/Josefin_Sans/static/JosefinSans-Regular.ttf') format('ttf');
+    font-weight: 400;
     font-style: normal;
 }

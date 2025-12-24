@@ -5,27 +5,21 @@ namespace App\Entity;
 use App\Repository\SourceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=SourceRepository::class)
- */
+#[ORM\Entity(repositoryClass: SourceRepository::class)]
+#[ORM\Table(name: 'source')]
 class Source
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=300)
-     */
-    private $name;
+    #[ORM\Column(length:300)]
+    private string $name;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Plant::class, inversedBy="sources")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Plant::class,inversedBy : "sources")]
+    #[ORM\JoinColumn(nullable:false)]
     private $plant;
 
     public function getId(): ?int

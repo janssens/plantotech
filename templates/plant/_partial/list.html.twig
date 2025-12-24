@@ -11,7 +11,9 @@
                 <th class="py-3 px-6 text-left hidden md:table-cell">Nom Latin</th>
                 <th class="py-3 px-6 text-center">Port</th>
                 <th class="py-3 px-6 text-center hidden xl:table-cell">Strate</th>
+                {% if is_granted('ROLE_EDIT') %}
                 <th class="py-3 px-6 text-center">Actions</th>
+                {% endif %}
             </tr>
             </thead>
             <tbody class="text-gray-600 text-sm font-light">

@@ -1,7 +1,7 @@
 label.checkbox,label.radio{
   cursor: pointer;
   input[type=checkbox],input[type=radio]{
-    display: none;
+    //display: none;
   }
   i.mdi{
     &.unchecked {

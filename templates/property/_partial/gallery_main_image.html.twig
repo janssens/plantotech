@@ -1,4 +1,5 @@
-{% if plant.images | length %}
+{% if plant is not null and 
+    plant.images | length %}
     {% set image = plant.images.first %}
     <a href="{{ asset(image.src)|imagine_filter('card') }}" data-fslightbox class="block w-full h-full bg-cover bg-img border-4 border-white shadow-lg" style="--bg-image: url({{ asset(image.src) }})">
     </a>

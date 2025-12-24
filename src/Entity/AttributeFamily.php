@@ -9,53 +9,36 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
 
-/**
- * @ORM\Entity(repositoryClass=AttributeFamilyRepository::class)
- */
+#[ORM\Entity(repositoryClass: AttributeFamilyRepository::class)]
+#[ORM\Table(name: 'attribute_family')]
 class AttributeFamily
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(length: 255)]
+    private string $name;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $position;
+    #[ORM\Column]
+    private ?int $position;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="families")
-     */
+    #[ORM\ManyToOne(targetEntity: Category::class,inversedBy : "families")]
     private $category;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AttributeFamily::class, inversedBy="children")
-     */
+    #[ORM\ManyToOne(targetEntity: AttributeFamily::class,inversedBy : "children")]
     private $parent;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AttributeFamily::class, mappedBy="parent")
-     */
+    #[ORM\OneToMany(targetEntity: AttributeFamily::class,mappedBy : "parent")]
     private $children;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PropertyOrAttribute::class, mappedBy="family")
-     */
+    #[ORM\OneToMany(targetEntity: PropertyOrAttribute::class,mappedBy : "family")]
     private $propertyOrAttributes;
 
     public function __construct()
     {
-        $this->attributes = new ArrayCollection();
         $this->children = new ArrayCollection();
-        $this->properties = new ArrayCollection();
         $this->propertyOrAttributes = new ArrayCollection();
     }
 

@@ -20,9 +20,12 @@ use App\Entity\PropertyOrAttribute;
 use App\Entity\Soil;
 use App\Entity\Source;
 use App\Form\PlantType;
+use App\Repository\AttributeFamilyRepository;
+use App\Repository\AttributeRepository;
 use App\Repository\PlantAttributeRepository;
 use App\Repository\PlantFamilyRepository;
 use App\Repository\PlantRepository;
+use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use http\Exception\BadMethodCallException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,6 +38,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted as AttributeIsGranted;
 
 #[Route('/plant')]
 class PlantController extends AbstractController
@@ -194,10 +198,8 @@ class PlantController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/new", name="plant_new", methods={"GET","POST"})
-     * @IsGranted("ROLE_ADMIN")
-     */
+    #[Route('/new',name:"plant_new",methods:["GET","POST"])]
+    #[AttributeIsGranted("ROLE_ADMIN")]
     public function new(Request $request): Response
     {
         $plant = new Plant();
@@ -229,19 +231,19 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/edit/{id}/{slug}", name="plant_edit")
-     * @IsGranted("ROLE_EDIT")
      * @param Plant $plant
      * @param string $slug
      * @return Response
      */
-    public function edit(Plant $plant,string $slug)
+    #[Route('/edit/{id}/{slug}',name:"plant_edit",methods:["GET","POST"])]
+    #[AttributeIsGranted("ROLE_EDIT")]
+    public function edit(Plant $plant,string $slug,PlantFamilyRepository $familyRepository, AttributeFamilyRepository $attributeRepository)
     {
         if ($plant->getSlug() != $slug){
             return $this->redirectToRoute('plant_edit',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
         }
-        $root_families = $this->getDoctrine()->getRepository(AttributeFamily::class)->findBy(array('parent'=>null));
-        $plant_families = $this->getDoctrine()->getRepository(PlantFamily::class)->findBy(array(),array('name' => 'ASC'));;
+        $root_families = $attributeRepository->findBy(array('parent'=>null));
+        $plant_families = $familyRepository->findBy(array(),array('name' => 'ASC'));;
         return $this->render('plant/edit.html.twig', [
             'families' => $root_families,
             'plant_families' => $plant_families,
@@ -250,20 +252,22 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/card/{id}/{slug}", name="plant_show")
      * @param Plant $plant
      * @param string $slug
      * @return Response
      */
-    public function card(Plant $plant,string $slug)
+    #[Route("/card/{id}/{slug}", name:"plant_show")]
+    public function card(Plant $plant,string $slug,PropertyRepository $propertyRepository, AttributeRepository $attributeRepository)
     {
         if ($plant->getSlug() != $slug){
             return $this->redirectToRoute('plant_show',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
         }
         $properties_and_attributes = array();
-        /** @var PropertyOrAttribute $element */
-        foreach ($this->getDoctrine()->getRepository(PropertyOrAttribute::class)->findAll() as $element){
-            $properties_and_attributes[$element->getCode()] = $element;
+        foreach ($attributeRepository->findAll() as $attribute){
+            $properties_and_attributes[$attribute->getCode()] = $attribute;
+        }
+        foreach ($propertyRepository->findAll() as $property){
+            $properties_and_attributes[$property->getCode()] = $property;
         }
         return $this->render('plant/card.html.twig', [
             'properties_and_attributes' => $properties_and_attributes,
@@ -272,10 +276,10 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit_flowerings_crops", name="plant_flowerings_crops_edit", methods={"POST"})
-     * @IsGranted("ROLE_EDIT")
      * @return JsonResponse
      */
+    #[Route('/{id}/edit_flowerings_crops',name:"plant_flowerings_crops_edit",methods:["POST"])]
+    #[AttributeIsGranted("ROLE_EDIT")]
     public function flowerings_crops_edit(Request $request, Plant $plant): JsonResponse
     {
         if (!$request->isXmlHttpRequest()){
@@ -317,10 +321,8 @@ class PlantController extends AbstractController
         return new JsonResponse(array('success'=>true,'message'=>'enregistré'));
     }
 
-    /**
-     * @Route("/{id}/new_source", name="plant_source_new", methods={"POST"})
-     * @IsGranted("ROLE_EDIT")
-     */
+    #[Route('/{id}/new_source',name:"plant_source_new",methods:["POST"])]
+    #[AttributeIsGranted("ROLE_EDIT")]
     public function source_new(Request $request, Plant $plant): Response
     {
         if (!$request->isXmlHttpRequest()){
@@ -335,7 +337,7 @@ class PlantController extends AbstractController
             $source = new Source();
             $source->setName($value);
             $source->setPlant($plant);
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->getEntitityManager();
             $em->persist($source);
             $em->flush();
         }
@@ -345,10 +347,10 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/delete_source/{source}", name="plant_source_delete", methods={"POST"})
-     * @IsGranted("ROLE_EDIT")
      * @return JsonResponse
      */
+    #[Route('/{id}/delete_source/{source}',name:"plant_source_delete",methods:["POST"])]
+    #[AttributeIsGranted("ROLE_EDIT")]
     public function source_delete(Request $request, Plant $plant,Source $source): Response
     {
         if (!$request->isXmlHttpRequest()){
@@ -369,10 +371,10 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit_source/{source}", name="plant_source_edit", methods={"POST"})
-     * @IsGranted("ROLE_EDIT")
      * @return JsonResponse
      */
+    #[Route('/{id}/edit_source/{source}',name:"plant_source_edit",methods:["POST"])]
+    #[AttributeIsGranted("ROLE_EDIT")]
     public function source_edit(Request $request, Plant $plant,Source $source): Response
     {
         if (!$request->isXmlHttpRequest()){
@@ -401,10 +403,10 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit_property/{code}", name="plant_property_edit", methods={"GET","POST"})
-     * @IsGranted("ROLE_EDIT")
      * @return JsonResponse
      */
+    #[Route("/{id}/edit_property/{code}", name:"plant_property_edit", methods:['GET','POST'])]
+    #[AttributeIsGranted('ROLE_EDIT')]
     public function property_edit(Request $request, Plant $plant,string $code): JsonResponse
     {
         if (!$request->isXmlHttpRequest()){
@@ -436,10 +438,10 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit_attribute/{attribute}", name="plant_attribute_edit", methods={"GET","POST"})
-     * @IsGranted("ROLE_EDIT")
      * @return JsonResponse
      */
+    #[Route('/{id}/edit_attribute/{attribute}',name:"plant_attribute_edit",methods:["GET","POST"])]
+    #[AttributeIsGranted("ROLE_EDIT")]
     public function attribute_edit(Request $request, Plant $plant,Attribute $attribute): JsonResponse
     {
         if (!$request->isXmlHttpRequest()){
@@ -525,10 +527,10 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit_family/", name="plant_edit_family", methods={"GET","POST"})
-     * @IsGranted("ROLE_EDIT")
      * @return JsonResponse
      */
+    #[Route('/{id}/edit_family/',name:"plant_edit_family",methods:["GET","POST"])]
+    #[AttributeIsGranted("ROLE_EDIT")]
     public function family_edit(Request $request, Plant $plant): JsonResponse
     {
         if (!$request->isXmlHttpRequest()){
@@ -581,10 +583,8 @@ class PlantController extends AbstractController
         return new JsonResponse(array());
     }
 
-    /**
-     * @Route("/{id}/new_img", name="plant_img_new", methods={"POST"})
-     * @IsGranted("ROLE_EDIT")
-     */
+    #[Route('/{id}/new_img',name:"plant_img_new",methods:"POST")]
+    #[AttributeIsGranted("ROLE_EDIT")]
     public function image_new(Request $request, Plant $plant): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -641,19 +641,16 @@ class PlantController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/{id}/edit", name="plant_edit_old", methods={"GET","POST"})
-     * @IsGranted("ROLE_EDIT")
-     */
+
+    #[Route('/{id}/edit',name:"plant_edit_old",methods:["GET","POST"])]
+    #[AttributeIsGranted("ROLE_EDIT")]
     public function old_edit(Request $request, Plant $plant): Response
     {
         return $this->redirectToRoute('plant_edit',array('id'=>$plant->getId(),'slug'=>$plant->getSlug()));
     }
 
-    /**
-     * @Route("/{id}", name="plant_delete", methods={"DELETE"})
-     * @IsGranted("ROLE_EDIT")
-     */
+    #[Route('/{id}',name:"plant_delete",methods:["DELETE"])]
+    #[AttributeIsGranted("ROLE_EDIT")]
     public function delete(Request $request, Plant $plant): Response
     {
         if ($this->isCsrfTokenValid('delete'.$plant->getId(), $request->request->get('_token'))) {
@@ -666,10 +663,10 @@ class PlantController extends AbstractController
     }
 
     /**
-     * @Route("{id}/delete/image/{image}", name="plant_delete_image", methods={"POST"})
-     * @IsGranted("ROLE_EDIT")
      * @return JsonResponse
      */
+    #[Route('/{id}/delete/image/{image}',name:"plant_delete_image",methods:["POST"])]
+    #[AttributeIsGranted("ROLE_EDIT")]
     public function deleteImage(Plant $plant, Image $image, Request $request): JsonResponse
     {
         if (!$request->isXmlHttpRequest()){

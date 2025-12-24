@@ -33,35 +33,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         $user->setPassword($newEncodedPassword);
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
-
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
     /**
      * @param string $role
      *
      * @return array
      */
-    public function findByRole($role)
+    public function findByRole($role): array
     {
-        return $this->createQueryBuilder()
+        return $this->createQueryBuilder('u')
             ->select('u')
             ->from($this->_entityName, 'u')
             ->where('u.roles LIKE :roles')
@@ -70,22 +53,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
-
     public function findOneByRpToken($value): ?User
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.rp_token = :val')
             ->setParameter('val', $value)
             ->getQuery()
-            ->getOneOrNullResult()
-            ;
+            ->getOneOrNullResult();
     }
 
     public function findOneByEmailOrUsername($value): ?User
     {
-        if (strpos($value,'@')===false) {
+        if (strpos($value, '@') === false) {
             return $this->findOneByUsername($value);
-        }else{
+        } else {
             return $this->findOneByEmail($value);
         }
     }
@@ -96,8 +77,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere('u.username = :val')
             ->setParameter('val', $value)
             ->getQuery()
-            ->getOneOrNullResult()
-            ;
+            ->getOneOrNullResult();
     }
 
     public function findOneByEmail($value): ?User
@@ -106,18 +86,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere('u.email = :val')
             ->setParameter('val', $value)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
 
     public function getUserFromWordpressOAuth(string $wordpressID, string $wordpressUsername, string $email): ?User
     {
         $user = $this->findOneByEmail($email);
-        if (!$user){
+        if (!$user) {
             return null;
         }
-        if ($user->getWordpressID() !== $wordpressID){
-            $user = $this->updateUserWithWordpressData($wordpressID,$wordpressUsername,$user);
+        if ($user->getWordpressID() !== $wordpressID) {
+            $user = $this->updateUserWithWordpressData($wordpressID, $wordpressUsername, $user);
         }
         return $user;
     }
@@ -126,12 +105,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $user->setWordpressID($wordpressID)
             ->setWordpressUsername($wordpressUsername);
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
 
         return $user;
     }
 
-    public function createUserFromWordpressOAuth(string $wordpressId,string $wordpressUsername,string $email,string $randomPassword): ?User
+    public function createUserFromWordpressOAuth(string $wordpressId, string $wordpressUsername, string $email, string $randomPassword): ?User
     {
         $user = new User();
         $user->setWordpressUsername($wordpressUsername)
@@ -141,10 +120,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setIsActive(true)
             ->setPassword($randomPassword);
 
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
 
         return $user;
     }
-
 }

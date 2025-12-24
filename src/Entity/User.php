@@ -3,70 +3,50 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- */
-class User implements UserInterface
+
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: 'user')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     */
-    private $username;
+    #[ORM\Column(length:180,unique:true)]
+    private string $username;
 
-    /**
-     * @ORM\Column(type="json")
-     */
+    #[ORM\Column(type:Types::JSON)]
     private $roles = [];
 
-    /**
-     * @var string The hashed password
-     * @ORM\Column(type="string")
-     */
-    private $password;
+    #[ORM\Column]
+    private string $password;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $email;
+    #[ORM\Column(length:255)]
+    private string $email;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $is_active;
+    #[ORM\Column]
+    private bool $is_active;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true, unique=true)
-     */
-    private $rp_token;
+    #[ORM\Column(length:255,unique:true)]
+    private ?string $rp_token;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $rp_token_created_at;
+    #[ORM\Column]
+    private ?DateTime $rp_token_created_at;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true, unique=true)
-     */
-    private $confirmation_token;
+    #[ORM\Column(length:255,unique:true)]
+    private ?string $confirmation_token;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $wordpressID;
+    #[ORM\Column(length:255)]
+    private ?string $wordpressID;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(length:255)]
     private $wordpressUsername;
 
     public function getId(): ?int
@@ -136,14 +116,6 @@ class User implements UserInterface
         $this->password = $password;
 
         return $this;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function getSalt()
-    {
-        // not needed when using the "bcrypt" algorithm in security.yaml
     }
 
     /**

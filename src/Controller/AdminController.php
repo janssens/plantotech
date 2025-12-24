@@ -5,17 +5,17 @@ namespace App\Controller;
 use App\Entity\Config;
 use App\Entity\Plant;
 use App\Entity\User;
+use App\Repository\ConfigRepository;
 use App\Service\ConfigService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted as AttributeIsGranted;
 
-/**
- * @Route("/admin")
- * @IsGranted("ROLE_SUPER_ADMIN")
- */
+#[Route('/admin')]
+#[AttributeIsGranted("ROLE_SUPER_ADMIN")]
 class AdminController extends AbstractController
 {
     private $configService;
@@ -25,14 +25,12 @@ class AdminController extends AbstractController
         $this->configService = $configService;
     }
 
-    /**
-     * @Route("/", name="app_admin")
-     */
-    public function admin(Request $request)
+    #[Route('/',name:"app_admin")]
+    public function admin(Request $request,ConfigRepository $configRepository)
     {
-        $config = $this->getDoctrine()->getRepository(Config::class)->findAll();
+        $config = $configRepository->findAll();
         if ($request->isMethod('POST')) {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->getEntityManager();
             /** @var Config $c */
             foreach ($config as $c){
                 if ($c->getFrontendType() == 'file'){

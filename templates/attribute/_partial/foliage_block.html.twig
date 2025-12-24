@@ -1,5 +1,6 @@
+<span class="attrtitle">Feuillage</span>
 {% if (plant.attributeValuesByCode(element.code) | length) or (edit) %}
-    <div class="bg-contain bg-no-repeat bg-center py-6 text-green-700 show bg-img h-30 w-30 text-center m-auto" data-code="{{ element.code }}" data-type="attribute" data-id="{{ element.id }}" style="--bg-image: url({{ asset('build/img/picto/foliage_'~plant.getAttributeValuesByCode('foliage').first.code~'.png') }})">
+    <div class="bg-contain bg-no-repeat bg-top pt-8 text-green-700 show bg-img h-30 w-30 text-center m-auto" data-code="{{ element.code }}" data-type="attribute" data-id="{{ element.id }}" style="--bg-image: url({{ asset('build/img/picto/foliage_'~plant.getAttributeValuesByCode('foliage').first.code~'.png') }})">
         {% for attribute_value in plant.attributeValuesByCode(element.code) %}
             <a class="hover:underline uppercase text-xl" href="{{ path('plant_index',{ (element.code) : attribute_value.id}) }}">
                 {{ attribute_value.value }}

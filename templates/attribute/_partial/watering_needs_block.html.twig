@@ -1,7 +1,7 @@
 {% if (plant.attributeValuesByCode(element.code) | length) %}
     {% set attribute_value = plant.attributeValuesByCode(element.code).first.value %}
     <div data-code="{{ element.code }}" data-type="attribute" data-id="{{ element.id }}" class="show">
-        <span class="uppercase">{{ element.name }}</span>
+        <span class="attrtitle">{{ element.name }}</span>
 {#        <a href="{{ path('plant_index',{ (element.code) : element.id}) }}">#}
             <div class="grid grid-cols-5">
                 {% for i in 1..5 %}

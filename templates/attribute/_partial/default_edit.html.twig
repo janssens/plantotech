@@ -5,8 +5,6 @@
         {% if element.typeNone %}{# checkbox #}
             {% set checked = plant.attributeValuesByCode(element.code) | length  %}
             <label for="value_for_{{ element.code }}" class="checkbox{% if checked %} checked{% endif %}">
-                <i class="text-lg mdi mdi-checkbox-marked-circle-outline checked"></i>
-                <i class="text-lg mdi mdi-checkbox-blank-circle-outline unchecked"></i>
                 <input id="value_for_{{ element.code }}" type="checkbox" {% if checked %}checked="checked"{% endif %} name="value" value="{{ element.code }}">
                 &nbsp;Oui
             </label>
@@ -24,24 +22,18 @@
                         {% for value in element.availableMainValues %}
                             {% set checked = (value in attribute_values) and (value.mainValue is not null) %}
                             <label for="value_for_{{ element.code }}_{{ value.id }}" class="radio{% if checked %} checked{% endif %}">
-                                <i class="text-lg mdi mdi-radiobox-marked checked"></i>
-                                <i class="text-lg mdi mdi-radiobox-blank unchecked"></i>
                                 <input id="value_for_{{ element.code }}_{{ value.id }}" type="radio" name="main_value" value="{{ value.id }}" {% if checked %}checked="checked"{% endif %}>
                                 &nbsp;{{ value.value }}
                             </label>
                         {% endfor %}
                         <label for="value_for_{{ element.code }}_00" class="radio{% if not attribute_values | length %} checked{% endif %}">
-                            <i class="text-lg mdi mdi-radiobox-marked checked"></i>
-                            <i class="text-lg mdi mdi-radiobox-blank unchecked"></i>
                             <input id="value_for_{{ element.code }}_00" type="radio" value="0" name="main_value" {% if not attribute_values | length %}checked="checked"{% endif %}>
-                            &nbsp;<i class="mdi mdi-blank"></i>
+                            &nbsp;N/A
                         </label>
                     {% else %}
                         {% for value in element.availableMainValues %}
                             {% set checked = (value in attribute_values) and (value.mainValue is not null) %}
                             <label for="value_for_{{ element.code }}_{{ value.id }}" class="checkbox{% if checked %} checked{% endif %}">
-                                <i class="text-lg mdi mdi mdi-checkbox-marked-circle-outline checked"></i>
-                                <i class="text-lg mdi mdi mdi-checkbox-blank-circle-outline unchecked"></i>
                                 <input id="value_for_{{ element.code }}_{{ value.id }}" type="checkbox" name="main_value[]" value="{{ value.id }}" {% if (value in attribute_values) and (value.mainValue is not null) %}checked="checked"{% endif %}>
                                 &nbsp;{{ value.value }}
                             </label><br>
@@ -65,17 +57,13 @@
                         {% for value in values %}
                             {% set checked = (value in attribute_values) and ((element.mainValue is null) or (value.mainValue is null)) %}
                             <label for="value_for_{{ element.code }}_{{ value.id }}" class="radio{% if checked %} checked{% endif %}">
-                                <i class="text-lg mdi mdi-radiobox-marked checked"></i>
-                                <i class="text-lg mdi mdi-radiobox-blank unchecked"></i>
                                 <input id="value_for_{{ element.code }}_{{ value.id }}" type="radio" name="value" value="{{ value.id }}" {% if checked %}checked="checked"{% endif %}>
                                 &nbsp;{{ value.value }}
                             </label><br>
                         {% endfor %}
                         <label for="value_for_{{ element.code }}_00" class="radio{% if not attribute_values | length %} checked{% endif %}">
-                            <i class="text-lg mdi mdi-radiobox-marked checked"></i>
-                            <i class="text-lg mdi mdi-radiobox-blank unchecked"></i>
                             <input id="value_for_{{ element.code }}_00" type="radio" value="0" name="value" {% if not attribute_values | length %}checked="checked"{% endif %}>
-                            &nbsp;<i class="mdi mdi-blank"></i>
+                            &nbsp;N/A
                         </label>
                     {% else %}
                         {% if (element.mainValue is null) %}
@@ -87,8 +75,6 @@
                         {% for value in values %}
                             {% set checked = (value in attribute_values) and ((element.mainValue is null) or (value.mainValue is null)) %}
                             <label for="value_for_{{ element.code }}_{{ value.id }}" class="checkbox{% if checked %} checked{% endif %}">
-                                <i class="text-lg mdi mdi mdi-checkbox-marked-circle-outline checked"></i>
-                                <i class="text-lg mdi mdi mdi-checkbox-blank-circle-outline unchecked"></i>
                                 <input id="value_for_{{ element.code }}_{{ value.id }}" type="checkbox" name="value[]" value="{{ value.id }}" {% if (value in attribute_values) and (value.mainValue is not null) %}checked="checked"{% endif %}>
                                 &nbsp;{{ value.value }}
                             </label><br>

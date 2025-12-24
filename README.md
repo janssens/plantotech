@@ -1,5 +1,6 @@
 # 🌱 plantoteque
-A plants database to make the planet eden again
+
+A plants database
 
 running at https://plantes.alveoles.fr
 
@@ -8,7 +9,11 @@ running at https://plantes.alveoles.fr
 ```bash
 docker compose build
 docker compose up -d
-docker compose exec fpm composer install
-docker compose exec fpm yarn install
-docker compose exec fpm yarn build
+docker compose exec php composer install
+docker compose exec php yarn install
+docker compose exec php yarn build
+```
+
+```
+dc exec php yarn encore dev
 ```

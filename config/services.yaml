@@ -31,3 +31,6 @@ services:
     App\EventListener\RequestListener:
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+    OneToMany\Twig\MailtoExtension:
+        tags: [twig.extension]

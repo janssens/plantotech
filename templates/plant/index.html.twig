@@ -45,7 +45,7 @@
 
     {% if is_granted('ROLE_EDIT') %}
         <div id="actions" class="text-right">
-            <a class="btn btn--primary" href="{{ path('plant_new') }}"><i class="mdi mdi-plus-box"></i>&nbsp;Ajouter une plante.</a>
+            <a class="btn btn--primary" href="{{ path('plant_new') }}">{{ mdi('plus-box','inline fill-white') }}&nbsp;Ajouter une plante.</a>
         </div>
     {% endif %}
 

@@ -3,40 +3,30 @@
 namespace App\Entity;
 
 use App\Repository\AssociationRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AssociationRepository::class)
- */
+#[ORM\Entity(repositoryClass: AssociationRepository::class)]
+#[ORM\Table(name: 'association')]
 class Association
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="smallint")
-     */
-    private $type;
+    #[ORM\Column(type:Types::SMALLINT)]
+    private int $type;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $comment;
+    #[ORM\Column(length:100)]
+    private ?string $comment;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Plant::class, inversedBy="associations")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\JoinColumn(nullable:false)]
+    #[ORM\ManyToOne(targetEntity: Plant::class,inversedBy : "associations")]
     private $plant1;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Plant::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Plant::class,inversedBy : "plants")]
+    #[ORM\JoinColumn(nullable:false)]
     private $plant2;
 
     public function getId(): ?int
