@@ -10,7 +10,7 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
       - name: 🛠️ composer-php
-        uses: nick-zh/composer@php7.4
+        uses: nick-zh/composer@php8.3
       - name: 🛠️ yarn install && 🔥 build
         run: |
           yarn install
