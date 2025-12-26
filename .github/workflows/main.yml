@@ -17,7 +17,7 @@ jobs:
       - name: 🛠️ yarn install && 🔥 build
         run: |
           yarn install
-          yarn encore prod
+          yarn build
       - name: 🚀 deploy src 📁
         uses: up9cloud/action-rsync@master
         env:
