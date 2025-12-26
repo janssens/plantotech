@@ -1,8 +1,7 @@
 security:
-    encoders:
+    password_hashers:
         App\Entity\User:
-            algorithm: auto
-
+            algorithm: 'bcrypt'
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)
@@ -22,18 +21,17 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: lazy
+            lazy: true
             provider: app_user_provider
             remember_me:
                 secret:   '%kernel.secret%'
                 lifetime: 2592000 # 30 days in seconds
             logout:
                 path: app_logout
-            guard:
-                authenticators:
-                    - App\Security\LoginFormAuthenticator
-                    - App\Security\WordpressAuthenticator
-                entry_point: App\Security\LoginFormAuthenticator
+            custom_authenticators:
+                - App\Security\LoginFormAuthenticator
+                - App\Security\WordpressAuthenticator
+            entry_point: App\Security\LoginFormAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -49,10 +47,10 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
-        - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/oauth_login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/plant/index, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/plant/card, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/oauth_login, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/plant/index, roles: PUBLIC_ACCESS }
+        - { path: ^/plant/card, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: ROLE_USER }

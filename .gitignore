@@ -24,6 +24,7 @@
 /reset.sh
 /.idea
 /docs/schema/
+/tmp/
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 /public/build/
@@ -34,3 +35,8 @@ yarn-error.log
 ###> liip/imagine-bundle ###
 /public/media/cache/
 ###< liip/imagine-bundle ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###

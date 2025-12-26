@@ -18,9 +18,6 @@ use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-/**
- * @Route("/")
- */
 class DefaultController extends AbstractController
 {
 
@@ -39,17 +36,13 @@ class DefaultController extends AbstractController
         $this->config = $configService;
     }
 
-    /**
-     * @Route("/", name="home")
-     */
+    #[Route('/', name: 'home')]
     public function index(Request $request)
     {
         return $this->render('home/index.html.twig');
     }
 
-    /**
-     * @Route("/contact", name="contact")
-     */
+    #[Route('/contact', name: 'contact')]
     public function contact(Request $request)
     {
         if ($request->isMethod('POST')) {

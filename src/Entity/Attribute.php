@@ -7,9 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AttributeRepository::class)
- */
+#[ORM\Entity(repositoryClass: AttributeRepository::class)]
+#[ORM\Table(name: 'attribute')]
 class Attribute extends PropertyOrAttribute
 {
     const TYPE_NONE  = 1;
@@ -17,19 +16,13 @@ class Attribute extends PropertyOrAttribute
     const TYPE_MULTIPLE = 3;
     const TYPE_UNIQUE = 4;
 
-    /**
-     * @ORM\Column(type="smallint")
-     */
-    private $type;
+    #[ORM\Column]
+    private ?int $type;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AttributeValue::class, mappedBy="attribute", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: AttributeValue::class,mappedBy : "attribute", orphanRemoval:true)]
     private $availableValues;
 
-    /**
-     * @ORM\OneToOne(targetEntity=MainValue::class, mappedBy="attribute", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: MainValue::class,mappedBy: "attribute", cascade: ['persist','remove'])]
     private $mainValue;
 
     public function __construct()

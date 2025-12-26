@@ -5,26 +5,21 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
-// any CSS you import will output into a single css file (app.css in this case)
-import './styles/style.scss';
 
-import $ from 'jquery';
-// import 'mdi-component';
 import 'fslightbox';
+import 'dropzone/dist/dropzone.css';
 
-$("button").click(function (){
-    let dest = $(this).data('href');
-    if (dest){
-        window.location.href = dest;
-    }
-});
-$("#flash .close").on('click',function (){
-    $(this).closest('.message').hide(500,function (){
-        $(this).remove();
-    });
-});
-$(document).on('click','[data-toggle]',function (event){
-    event.preventDefault();
-    let query = $(this).data('toggle');
-    $(query).toggleClass('hidden');
-})
+// Importe main SCSS
+import './styles/app.scss';
+
+
+// $("#flash .close").on('click',function (){
+//     $(this).closest('.message').hide(500,function (){
+//         $(this).remove();
+//     });
+// });
+// $(document).on('click','[data-toggle]',function (event){
+//     event.preventDefault();
+//     let query = $(this).data('toggle');
+//     $(query).toggleClass('hidden');
+// })

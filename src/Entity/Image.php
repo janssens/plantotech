@@ -5,33 +5,24 @@ namespace App\Entity;
 use App\Repository\ImageRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ImageRepository::class)
- */
+#[ORM\Entity(repositoryClass: ImageRepository::class)]
+#[ORM\Table(name: 'image')]
 class Image
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(length:255)]
+    private string $name;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Plant::class, inversedBy="images")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $Plant;
+    #[ORM\Column(length:255)]
+    private ?string $origin;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $origin;
+    #[ORM\ManyToOne(targetEntity: Plant::class,inversedBy : "images")]
+    #[ORM\JoinColumn(nullable:false)]
+    private $plant;
 
     public function getId(): ?int
     {
@@ -52,12 +43,12 @@ class Image
 
     public function getPlant(): ?Plant
     {
-        return $this->Plant;
+        return $this->plant;
     }
 
     public function setPlant(?Plant $Plant): self
     {
-        $this->Plant = $Plant;
+        $this->plant = $Plant;
 
         return $this;
     }

@@ -7,32 +7,23 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=MainValueRepository::class)
- */
+#[ORM\Entity(repositoryClass: MainValueRepository::class)]
+#[ORM\Table(name: 'main_value')]
 class MainValue
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $label;
+    #[ORM\Column(length:50)]
+    private string $label;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Attribute::class, inversedBy="mainValue", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\OneToOne(targetEntity: Attribute::class,inversedBy : "mainValue",cascade:["persist", "remove"])]
+    #[ORM\JoinColumn(nullable:false)]
     private $attribute;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AttributeValue::class, mappedBy="main_value")
-     */
+    #[ORM\OneToMany(targetEntity: AttributeValue::class,mappedBy : "main_value")]
     private $attribute_values;
 
 

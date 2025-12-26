@@ -5,40 +5,48 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{% block meta_description %}Base de donnée de plantes permacoles{% endblock %}" />
         <meta name="author" content="Gaetan Janssens" />
-        <link href="https://api.fontshare.com/v2/css?f[]=nunito@500&display=swap" rel="stylesheet">
         {% block head %}{% endblock %}
         <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">        
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
+        
     </head>
-    <body class="bg-img" style="--bg-image : url({{ asset('build/img/papier.jpg') }});">
-        <div class="w-full bb bg-white md:flex p-3 hidden">
-            <div class="flex-none">
-                🏡 <a class="inline-block hover:underline" href="{{ base_url }}">Accueil</a> | 🌿 <a class="inline-block hover:underline" href="{{ path('plant_index') }}">les plantes</a>
+    <body>
+        <header class="bg-(--color-bg-two)">
+            <div class="container-center mx-auto w-full md:w-5/6 lg:1/2">
+                <nav>
+                    <ul class="list-none flex gap-4 items-center text-(--color-head)">
+                        <li class=""><a href="https://alveoles.fr" title="Site des alvéoles" class="block h-20 mr-8"><img class="fit-contain max-h-full" src="{{ asset('build/img/logo_alveoles.png') }}" alt="logo les alvéoles"></a></li>
+                        <li class=""><a class="" href="https://alveoles.fr/event">Agenda</a></li>
+                        <li class=""><a class="" href="https://alveoles.fr/catalogue-de-formations">Formations</a></li>
+                        <li class=""><a class="" href="https://alveoles.fr/permatheque">Permathèque</a></li>
+                        <li class=""><a class="" href="https://alveoles.fr/pepiniere">Pépinière</a></li>
+                        <li class=""><a class="" href="https://alveoles.fr/atelier">Bureau d'étude</a></li>
+                        <li class=""><a class="" href="https://alveoles.fr/la-ruche">Auberge</a></li>
+                    </ul>
+                </nav>
             </div>
-            <div class="flex none">
-                {% if config('app/return_link') and not config('app/embed') %}
-                    <a class="block ml-4 bg-gray-100 hover:bg-green-700 hover:text-yellow-100 transition-all px-2 py-0.5 rounded" href="{{ config('app/return_link') }}"><i class="mdi mdi-arrow-left"></i> {{ config('app/return_label') }}</a>
-                {% endif %}
-            </div>
-            <div class="flex-grow"></div>
-            <div class="text-right flex-none">
-                {% if not config('app/embed') %}
+        </header>
+        <div class="text-center bg-(--color-green_one) py-8 text-white uppercase font-sans">
+            {{ mdi('home-outline','fill-white inline') }} <a class="inline-block hover:underline" href="{{ base_url }}">Accueil base plantes </a> | {{ mdi('list-box','fill-white inline') }} <a class="inline-block hover:underline" href="{{ path('plant_index') }}">liste des plantes</a>
+        </div>
+        <div class="container-center min-h-screen mx-auto w-full md:w-5/6 lg:1/2">
+            {% block body %}{% endblock %}
+        </div>
+        <footer class="h-10 bg-white w-full border-t text-center p-1">
+            <small>Un bug 🐛 ? Une suggestion 💡 ? 
+                <a class="underline cursor-pointer" ="{{ mailto('contact@plopcom.fr', 'Base plantes des Alvéoles', '') }}"> 
+                    Envoyer moi un email </a>! | 
                     {% if is_granted('ROLE_USER') %}
                        <b> {% if is_granted('ROLE_ADMIN') %}🌳{% else %}🧘{% endif %} {{ app.user.username }} </b> | {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('app_admin') }}">⚙ admin</a> | {% endif %} <a href="{{ path('app_logout') }}"><i class="mdi mdi-lock-off"></i>déconnexion</a>
                     {% else %}
-                        <a href="{{ path('app_login') }}">connexion</a> | <a href="{{ path('app_register') }}">s'inscrire</a>
+                        <a href="{{ path('app_login') }}">admin</a>
                     {% endif %}
-                {% endif %}
-            </div>
-        </div>
-        <div class="container-center min-h-screen mx-auto w-full md:w-3/4 lg:1/2">
-            {% block body %}{% endblock %}
-        </div>
-        <footer class="h-10 bg-white w-full border-t text-center p-1">
-            <small>Un bug 🐛 ? Une suggestion 💡 ? Utilise <a href="{{ path('contact') }}" class="underline">ce formulaire</a> !</small>
         </footer>
         {% if app.session.flashBag.peekAll|length > 0 %}
             <div id="flash" class="px-10 flex flex-col space-y-3 fixed w-full top-14">
@@ -119,9 +127,10 @@
             </ul>
         </div>
         {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
+            {# {% block importmap %}{{ importmap('app') }}{% endblock %} #}
+                {{ encore_entry_script_tags('app') }}
             {% if config('app/embed') %}
-                {{ encore_entry_script_tags('embed') }}
+                <script href="{{ asset('embed.js') }}">
             {% endif %}
         {% endblock %}
         {% if config('app/embed') %}

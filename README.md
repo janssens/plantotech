@@ -1,16 +1,19 @@
-# plantotech
-A plants 🌱 database to make the planet eden again
+# 🌱 plantoteque
 
+A plants database
 
-running at https://plantes.universite-alveoles.fr
-
+running at https://plantes.alveoles.fr
 
 ## Run dev server using docker
 
 ```bash
 docker compose build
 docker compose up -d
-docker compose exec fpm composer install
-docker compose exec fpm yarn install
-docker compose exec fpm yarn build
+docker compose exec php composer install
+docker compose exec php yarn install
+docker compose exec php yarn build
+```
+
+```
+dc exec php yarn encore dev
 ```

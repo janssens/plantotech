@@ -5,158 +5,106 @@ namespace App\Entity;
 use App\Repository\PlantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PlantRepository::class)
- * @ORM\Table(name="plant", indexes={@ORM\Index(columns={"latin_name", "name"}, flags={"fulltext"})})
- */
+#[ORM\Entity(repositoryClass: PlantRepository::class)]
+#[ORM\Table(name: 'plant')]
+#[ORM\Index(columns:["latin_name", "name"], flags:["fulltext"])]
 class Plant
 {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $latin_name;
+    #[ORM\Column(length: 50)]
+    private string $latin_name;
 
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
-    private $name;
+    #[ORM\Column(length: 50)]
+    private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $rusticity;
+    #[ORM\Column]
+    private ?int $rusticity = null;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $rusticity_comment;
+    #[ORM\Column(length: 100)]
+    private ?string $rusticity_comment = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $temperature;
+    #[ORM\Column]
+    private ?int $temperature = null;
 
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     */
-    private $woody;
+    #[ORM\Column(type:Types::SMALLINT)]
+    private ?int $woody = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $min_height;
+    #[ORM\Column()]
+    private ?int $min_height = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $max_height;
+    #[ORM\Column()]
+    private ?int $max_height = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $min_width;
+    #[ORM\Column()]
+    private ?int $min_width = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $max_width;
+    #[ORM\Column()]
+    private ?int $max_width = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $min_sexual_maturity;
+    #[ORM\Column()]
+    private ?int $min_sexual_maturity = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $max_sexual_maturity;
+    #[ORM\Column()]
+    private ?int $max_sexual_maturity = null;
 
-    /**
-     * @ORM\Column(type="string", length=200, nullable=true)
-     */
-    private $native_place;
+    #[ORM\Column(length:200)]
+    private ?string $native_place = null;
 
-    /**
-     * @ORM\Column(type="string", length=500, nullable=true)
-     */
-    private $botany_leaf;
+    #[ORM\Column(length:500)]
+    private ?string $botany_leaf = null;
 
-    /**
-     * @ORM\Column(type="string", length=500, nullable=true)
-     */
-    private $botany_branch;
+    #[ORM\Column(length:500)]
+    private ?string $botany_branch = null;
 
-    /**
-     * @ORM\Column(type="string", length=500, nullable=true)
-     */
-    private $botany_root;
+    #[ORM\Column(length:500)]
+    private ?string $botany_root = null;
 
-    /**
-     * @ORM\Column(type="string", length=500, nullable=true)
-     */
-    private $botany_flower;
+    #[ORM\Column(length:500)]
+    private ?string $botany_flower = null;
 
-    /**
-     * @ORM\Column(type="string", length=500, nullable=true)
-     */
-    private $botany_fruit;
+    #[ORM\Column(length:500)]
+    private ?string $botany_fruit = null;
 
-    /**
-     * @ORM\Column(type="string", length=500, nullable=true)
-     */
-    private $botany_seed;
+    #[ORM\Column(length:500)]
+    private ?string $botany_seed = null;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     */
-    private $density;
+    #[ORM\Column(length:20)]
+    private ?string $density = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $interest;
+    #[ORM\Column(type:Types::TEXT)]
+    private ?string $interest = null;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $specificity;
+    #[ORM\Column(length:100)]
+    private ?string $specificity = null;
 
     /**
      * todo: user real user or entity
-     * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $author;
+    #[ORM\Column(length: 100)]
+    private ?string $author = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=PlantFamily::class, inversedBy="plants")
-     */
+    #[ORM\ManyToOne(targetEntity: PlantFamily::class,inversedBy : "plants")]
     private $family;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Source::class, mappedBy="plant", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Source::class,mappedBy : "plant",orphanRemoval: true)]
     private $sources;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=AttributeValue::class, mappedBy="plants")
-     */
+
+    #[ORM\ManyToMany(targetEntity: AttributeValue::class,mappedBy : "plants")]
     private $attributes_values;
 
     private $_attributes_by_code;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Image::class, mappedBy="Plant", orphanRemoval=true,cascade={"persist"})
-     */
+    
+    #[ORM\OneToMany(targetEntity: Image::class,mappedBy : "plant",orphanRemoval: true,cascade: ['persist'])]
     private $images;
 
     public function __construct()

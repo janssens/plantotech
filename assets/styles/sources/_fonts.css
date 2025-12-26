@@ -28,3 +28,15 @@ font-black	font-weight: 900;
     font-weight: 800;
     font-style: normal;
 }
+@font-face {
+    font-family: 'FrancoisOne';
+    src: url('../../fonts/Francois_One/FrancoisOne-Regular.ttf') format('ttf');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'JosefinSans_local';
+    src: url('../../fonts/Josefin_Sans/static/JosefinSans-Regular.ttf') format('ttf');
+    font-weight: 400;
+    font-style: normal;
+}

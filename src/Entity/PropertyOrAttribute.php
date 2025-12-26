@@ -4,50 +4,37 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\InheritanceType;
 
-/**
- * @Entity
- * @InheritanceType("JOINED")
- * @DiscriminatorColumn(name="discr", type="string")
- */
+#[ORM\Entity]
+#[ORM\InheritanceType('JOINED')]
+#[ORM\DiscriminatorColumn(name:'discr',type:Types::STRING)]
 class PropertyOrAttribute
 {
 
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $code;
+    #[ORM\Column(length:50)]
+    private string $code;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $name;
+    #[ORM\Column(length:50)]
+    private string $name;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $position;
+    #[ORM\Column]
+    private ?int $position;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=FilterCategory::class, inversedBy="propertyOrAttributes")
-     */
+    #[ORM\ManyToOne(targetEntity: FilterCategory::class,inversedBy : "propertyOrAttributes")]
     private $filterCategory;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AttributeFamily::class, inversedBy="propertyOrAttributes")
-     */
+    #[ORM\ManyToOne(targetEntity: AttributeFamily::class,inversedBy : "propertyOrAttributes")]
     private $family;
 
     public function __construct()

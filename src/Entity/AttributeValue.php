@@ -7,42 +7,29 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AttributeValuesRepository::class)
- */
+#[ORM\Entity(repositoryClass: AttributeValuesRepository::class)]
+#[ORM\Table(name: 'attribute_value')]
 class AttributeValue
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Attribute::class, inversedBy="availableValues")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity:Attribute::class,inversedBy:"availableValues")]
+    #[ORM\JoinColumn(nullable:false)]
     private $attribute;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $value;
+    #[ORM\Column(length: 255)]
+    private ?string $value;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Plant::class, inversedBy="attributes",cascade={"persist"})
-     */
+    #[ORM\ManyToMany(targetEntity: Plant::class,inversedBy : "attributes",cascade:['persist'])]
     private $plants;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $code;
+    #[ORM\Column(length:50)]
+    private string $code;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=MainValue::class, inversedBy="attribute_values")
-     */
+    #[ORM\ManyToOne(targetEntity: MainValue::class,inversedBy : "attribute_values")]
     private $main_value;
 
     public function __construct()

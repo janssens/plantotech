@@ -6,9 +6,8 @@ use App\Repository\PropertyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PropertyRepository::class)
- */
+#[ORM\Entity(repositoryClass: PropertyRepository::class)]
+#[ORM\Table(name: 'property')]
 class Property extends PropertyOrAttribute
 {
 

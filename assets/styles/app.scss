@@ -1,14 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@tailwind forms;
+// @import "~@mdi/font/scss/materialdesignicons";
+@use "tailwindcss" as *;
+@use "sources/vars" as *;
+@use "sources/edit" as *;
+@use "sources/fonts" as *;
 
-@import "~@mdi/font/scss/materialdesignicons";
-@import "~dropzone/dist/dropzone.css";
+@theme {
+ --font-sans: "Josefin Sans", 'JosefinSans_local', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', "Segoe UI", "Helvetica Neue", 'Arial', "Noto Sans", 'sans-serif', "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
 
-@import "sources/vars";
-@import "sources/edit";
-@import "sources/fonts";
 
 /* Add the lines below */
 @layer utilities {
@@ -22,9 +21,12 @@
     }
   }
 }
+html{
+  @apply font-sans;
+}
 
 body{
-  background: $bg_color cover no-repeat;
+  background: var(--color-bg-one);
 }
 p > a{
   @apply text-gray-900 underline hover:no-underline hover:text-black;
@@ -33,17 +35,16 @@ h1{
   @apply w-full text-center font-sans font-black;
 }
 .btn{
-  @apply focus:outline-none text-white text-sm py-2.5 px-5 border-b-4  rounded-md
+  @apply focus:outline-none text-white text-sm py-2.5 px-5  rounded-md
 }
 .btn--primary{
-  @apply border-blue-600 bg-blue-500 hover:bg-blue-400
+  @apply bg-(--color-green_two) hover:bg-(--color-green_one)
 }
 .btn--secondary{
   @apply border-gray-600 bg-gray-500 hover:bg-gray-400
 }
 .btn--success{
-  background: #86a45e;
-  @apply border-green-900 hover:bg-green-500
+  @apply bg-(--color-green_one) hover:bg-(--color-green_two)
 }
 .btn--danger{
   @apply border-red-600 bg-red-500 hover:bg-red-400
@@ -105,11 +106,11 @@ form:not(.seamless){
 }
 
 $themeColours: (
-  "1": #b8e994,
-  "2": #78e08f,
-  "3": #38ada9,
-  "4": #82ccdd,
-  "5": #60a3bc,
+  "1": var(--color-theme-limo),
+  "2": var(--color-theme-fresh),
+  "3": var(--color-theme-leaf),
+  "4": var(--color-theme-morning),
+  "5": var(--color-theme-mid)
 );
 
 @each $i, $color in $themeColours {
@@ -135,10 +136,10 @@ $themeColours: (
 }
 #filters_list{
   .cat{
-    @apply block w-4/5 py-3 px-6 text-left relative overflow-hidden bg-white;
+    @apply block w-4/5 py-3 px-6 relative overflow-hidden bg-white transition-opacity text-right hover:opacity-65;
   }
   .cat.active{
-    @apply w-full;
+    @apply w-full pr-16 text-right;
     &::after,&::before {
       position: absolute;
       display: block;
@@ -150,13 +151,13 @@ $themeColours: (
       right:0;
       top:0;
       border-width: 0 50px 50px 0;
-      border-color: transparent $bg_color transparent transparent;
+      border-color: transparent var(--color-bg-one) transparent transparent;
     }
     &::before {
       right:0;
       bottom:0;
       border-width: 0 0 50px 50px;
-      border-color: transparent transparent $bg_color transparent;
+      border-color: transparent transparent var(--color-bg-one) transparent;
     }
   }
   .cat--all{

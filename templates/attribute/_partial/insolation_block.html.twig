@@ -1,10 +1,11 @@
+<span class="attrtitle">Exposition</span>
 {% if (plant.attributeValuesByCode(element.code) | length) %}
     {% if plant.getMainAttributeValuesByCode('insolation').first %}
         {% set insolation = plant.getMainAttributeValuesByCode('insolation').first.code %}
     {% else %}
         {% set insolation = plant.getAttributeValuesByCode('insolation').first.code %}
     {% endif %}
-    <div class="bg-contain bg-center bg-no-repeat py-6 text-yellow-900 show bg-img h-30 w-30 text-center m-auto" data-code="insolation" data-type="attribute" data-id="{{ element.id }}" style="--bg-image: url({{ asset('build/img/picto/insolation_'~insolation~'.png') }})">
+    <div class="bg-contain bg-center bg-no-repeat py-6 text-yellow-900 show bg-img h-25 w-25 text-center m-auto" data-code="insolation" data-type="attribute" data-id="{{ element.id }}" style="--bg-image: url({{ asset('build/img/picto/insolation_'~insolation~'.png') }})">
             {% for attribute_value in plant.mainAttributeValuesByCode('insolation') %}
                 {% if attribute_value.mainValue is not null %}
                     {% if element.typeUnique %}

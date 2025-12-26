@@ -1,0 +1,5 @@
+{
+    "tailwindCSS.includeLanguages": {
+        "twig": "html"
+    }
+}

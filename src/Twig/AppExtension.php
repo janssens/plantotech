@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Mdi\Mdi;
 
 class AppExtension extends AbstractExtension
 {
@@ -50,7 +51,8 @@ class AppExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('config',[$this,'config'])
+            new TwigFunction('config',[$this,'config']),
+            new TwigFunction('mdi', [Mdi::class, 'mdi'], ['is_safe' => ['html']])
         ];
     }
 
