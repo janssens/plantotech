@@ -7,7 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+        APP_ENV: prod
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
@@ -42,3 +44,5 @@ jobs:
             **/.github/**
             **/var/**
             **/.env
+            **/node_modules/**
+            !**/node_modules/@mdi/svg/**
