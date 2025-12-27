@@ -12,15 +12,18 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
+      - name: 🛠️ yarn install
+        run: |
+          yarn install
+
       - name: 🛠️ composer install
         uses: ramsey/composer-install@v2
         with:
           php-version: '8.3'
           composer-options: '--ignore-platform-reqs'
 
-      - name: 🛠️ yarn install && 🔥 build
+      - name: 🔥 yarn build
         run: |
-          yarn install
           yarn build
 
       # Déploiement FTP
