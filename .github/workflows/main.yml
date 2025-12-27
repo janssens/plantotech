@@ -3,71 +3,41 @@ on:
   push:
     branches: [ master ]
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{secrets.SSH_KEY}}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          cat >> ~/.ssh/config << EOF
-          Host production
-            HostName ${{ secrets.SSH_HOST }}
-            User ${{ secrets.SSH_USER }}
-            IdentityFile ~/.ssh/id_rsa
-            StrictHostKeyChecking=no
-          EOF
-      - name: test ssh
-        run: scp production:${{ secrets.SSH_ROOT_PATH }}index.html /tmp/
       - name: 🚚 Get latest code
-        uses: actions/checkout@v2
-      - name: 🛠️ composer-php
+        uses: actions/checkout@v4
+
+      - name: 🛠️ composer install
         uses: ramsey/composer-install@v2
         with:
           php-version: '8.3'
           composer-options: '--ignore-platform-reqs'
+
       - name: 🛠️ yarn install && 🔥 build
         run: |
           yarn install
           yarn build
-      - name: 🚀 deploy src 📁
-        uses: up9cloud/action-rsync@master
-        env:
-          HOST: ${{ secrets.SSH_HOST }}
-          USER: ${{ secrets.SSH_USER }}
-          PORT: ${{ secrets.SSH_PORT }}
-          KEY: ${{secrets.SSH_KEY}}
-          SOURCE: ./src
-          TARGET: ${{ secrets.SSH_ROOT_PATH }}
-      - name: 🚀 deploy config ⚙️
-        uses: up9cloud/action-rsync@master
-        env:
-          HOST: ${{ secrets.SSH_HOST }}
-          USER: ${{ secrets.SSH_USER }}
-          PORT: ${{ secrets.SSH_PORT }}
-          KEY: ${{secrets.SSH_KEY}}
-          SOURCE: ./config
-          TARGET: ${{ secrets.SSH_ROOT_PATH }}
-      - name: 🚀 deploy templates 📄
-        uses: up9cloud/action-rsync@master
-        env:
-          HOST: ${{ secrets.SSH_HOST }}
-          USER: ${{ secrets.SSH_USER }}
-          PORT: ${{ secrets.SSH_PORT }}
-          KEY: ${{secrets.SSH_KEY}}
-          SOURCE: ./templates
-          TARGET: ${{ secrets.SSH_ROOT_PATH }}
-      - name: 🚀 deploy builds 📐📏
-        uses: up9cloud/action-rsync@master
-        env:
-          HOST: ${{ secrets.SSH_HOST }}
-          USER: ${{ secrets.SSH_USER }}
-          PORT: ${{ secrets.SSH_PORT }}
-          KEY: ${{secrets.SSH_KEY}}
-          SOURCE: ./public/build
-          TARGET: ${{ secrets.SSH_ROOT_PATH }}public
-          POST_SCRIPT: |
-            cd ${{ secrets.SSH_ROOT_PATH }} 
-            php bin/console cache:clear
+
+      # Déploiement FTP
+      - name: 🚀 FTP deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          protocol: ftp
+          local-dir: ./
+          server-dir: / # ou le chemin cible sur ton serveur
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/node_modules/**
+            **/var/**
+            **/vendor/**
+            **/.env
