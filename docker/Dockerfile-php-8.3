@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libpng-dev \
         libzip-dev \
         libicu-dev \
+        libjpeg62-turbo-dev \
+        libfreetype6-dev \
         pkg-config \
         vim curl debconf subversion git apt-transport-https apt-utils \
         build-essential locales acl mailutils wget zip unzip \
@@ -17,8 +19,9 @@ RUN docker-php-ext-install \
         soap \
         zip \
         opcache \
-        gd \
         intl
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install gd
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION v22.14.0

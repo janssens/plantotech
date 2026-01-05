@@ -38,7 +38,7 @@
                 {% if plant is not null %}
                     {% if plant.images|length > 1 %}
                         {% set image = plant.images.first %}
-                        <div class="w-full h-56 bg-black bg-img bg-cover bg-center relative" style="--bg-image: url({{ asset(image.src) }})">
+                        <div class="w-full h-56 bg-black bg-img bg-cover bg-center relative" style="--bg-image: url({{ asset(image.src)|imagine_filter('card') }})">
                             <div class="w-full absolute bottom-0 flex justify-end">
                                 {% if plant is not null %}
                                     {% if plant.images|length > 1 %}

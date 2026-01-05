@@ -35,7 +35,14 @@
             </div>
         </header>
         <div class="text-center bg-(--color-green_one) py-8 text-white uppercase font-sans">
-            {{ mdi('home-outline','fill-white inline') }} <a class="inline-block hover:underline" href="{{ base_url }}">Accueil base plantes </a> | {{ mdi('list-box','fill-white inline') }} <a class="inline-block hover:underline" href="{{ path('plant_index') }}">liste des plantes</a>
+            <ul class="md:list-none md:flex justify-center gap-6">
+                <li>
+                    {{ mdi('home-outline','fill-white inline') }}&nbsp;<a class="inline-block hover:underline" href="{{ base_url }}">Accueil base plantes</a>
+                </li>
+                <li>
+                    {{ mdi('list-box','fill-white inline') }}&nbsp<a class="inline-block hover:underline" href="{{ path('plant_index') }}">liste des plantes</a>
+                </li>
+            </ul>
         </div>
         <div class="container-center min-h-screen mx-auto w-full md:w-5/6 lg:1/2">
             {% block body %}{% endblock %}
