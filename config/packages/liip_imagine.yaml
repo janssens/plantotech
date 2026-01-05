@@ -14,5 +14,5 @@ liip_imagine:
             quality: 90
             filters:
                 resize:
-                    size: [ 600, 600 ]
+                    size: [ 1024, 224 ]
                     mode: outbound

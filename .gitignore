@@ -38,5 +38,7 @@ yarn-error.log
 
 ###> symfony/asset-mapper ###
 /public/assets/
+/public/media/uploads
+/public/media/square
 /assets/vendor/
 ###< symfony/asset-mapper ###

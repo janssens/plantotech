@@ -16,7 +16,7 @@
 {% block title %}{{ plant.LatinName }} - {{ plant.name }}{% endblock %}
 
 {% block body %}
-    <div class="min-h-screen flex items-center justify-center md:py-5">
+    <div class="min-h-screen flex items-center justify-center py-5 px-2 md:px-0">
         <div class="mx-auto md:w-full">
             <div class="bg-white shadow w-full max-w-screen-lg mx-auto md:rounded-xl overflow-hidden">
                 <div class="w-full bg-(--color-green_two) text-white p-2 relative">
@@ -42,7 +42,7 @@
                             <div class="w-full absolute bottom-0 flex justify-end">
                                 {% if plant is not null %}
                                     {% if plant.images|length > 1 %}
-                                        {% include properties_and_attributes['gallery'].templates('line') with {'element': properties_and_attributes['gallery'],'plant' : plant,'hide_first' : 1} %}
+                                        {% include properties_and_attributes['gallery'].templates('line') with {'element': properties_and_attributes['gallery'],'plant' : plant,'hide_first' : 0} %}
                                     {% endif %}
                                 {% endif %}
                             </div>
@@ -50,7 +50,7 @@
                    {% endif %}
                 {% endif %}
                 <div class="px-5 py-7">
-                    <div class="flex justify-between item-bottom">
+                    <div class="grid grid-cols-2 md:flex justify-between item-bottom">
                         <div>
 {#         TODO:                   "life_cycle"#}
                             {% include properties_and_attributes['stratum'].templates('line') with {'element': properties_and_attributes['stratum'],'plant' : plant} %}
@@ -91,7 +91,7 @@
                     <div class="my-5">
 
                     </div>
-                    <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                         <div class="rounded bg-(--color-card-block) p-4">
                             <div class="text-center mb-4">
                                 <h3 class="uppercase font-bold"><span class="text-xl">Services</span> <br>écosystèmiques</h3>

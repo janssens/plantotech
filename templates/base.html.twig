@@ -18,15 +18,18 @@
     <body>
         <header class="bg-(--color-bg-two)">
             <div class="container-center mx-auto w-full md:w-5/6 lg:1/2">
-                <nav>
-                    <ul class="list-none flex gap-4 items-center text-(--color-head)">
-                        <li class=""><a href="https://alveoles.fr" title="Site des alvéoles" class="block h-20 mr-8"><img class="fit-contain max-h-full" src="{{ asset('build/img/logo_alveoles.png') }}" alt="logo les alvéoles"></a></li>
-                        <li class=""><a class="" href="https://alveoles.fr/event">Agenda</a></li>
-                        <li class=""><a class="" href="https://alveoles.fr/catalogue-de-formations">Formations</a></li>
-                        <li class=""><a class="" href="https://alveoles.fr/permatheque">Permathèque</a></li>
-                        <li class=""><a class="" href="https://alveoles.fr/pepiniere">Pépinière</a></li>
-                        <li class=""><a class="" href="https://alveoles.fr/atelier">Bureau d'étude</a></li>
-                        <li class=""><a class="" href="https://alveoles.fr/la-ruche">Auberge</a></li>
+                <a href="https://alveoles.fr" title="Site des alvéoles" class="block md:hidden h-20 mr-8 text-center">
+                    <img class="fit-contain max-h-full inline" src="{{ asset('build/img/logo_alveoles.png') }}" alt="logo les alvéoles">
+                </a>
+                <nav class="pb-8 md:pb-2">
+                    <ul class="list-none flex flex-wrap justify-center gap-4 items-center text-(--color-head)">
+                        <li class="hidden md:block lg:w-auto w-full text-center"><a href="https://alveoles.fr" title="Site des alvéoles" class="h-20 mr-8 hover:text-black p-4 md:p-0"><img class="fit-contain max-h-full" src="{{ asset('build/img/logo_alveoles.png') }}" alt="logo les alvéoles"></a></li>
+                        <li class=""><a class=" hover:text-black p-4 md:p-0" href="https://alveoles.fr/event">Agenda</a></li>
+                        <li class=""><a class=" hover:text-black p-4 md:p-0" href="https://alveoles.fr/catalogue-de-formations">Formations</a></li>
+                        <li class=""><a class=" hover:text-black p-4 md:p-0" href="https://alveoles.fr/permatheque">Permathèque</a></li>
+                        <li class=""><a class=" hover:text-black p-4 md:p-0" href="https://alveoles.fr/pepiniere">Pépinière</a></li>
+                        <li class=""><a class=" hover:text-black p-4 md:p-0" href="https://alveoles.fr/atelier">Bureau d'étude</a></li>
+                        <li class=""><a class=" hover:text-black p-4 md:p-0" href="https://alveoles.fr/la-ruche">Auberge</a></li>
                     </ul>
                 </nav>
             </div>
@@ -98,34 +101,7 @@
                 {% endfor %}
             </div>
         {% endif %}
-        <a href="#" data-toggle="#menu_mobile" class="fixed -top-10 -left-10 text-2xl text-white rounded-full bg-gray-900 w-20 h-20 block pl-10 pt-10 md:hidden"><i class="mdi mdi-menu"></i></a>
-        <div class="md:hidden w-full h-screen bg-gray-900 text-gray-100 p-1 fixed top-0 left-0 right-0 hidden z-50" id="menu_mobile">
-            <a href="#" class="fixed top-1 right-1 text-2xl" data-toggle="#menu_mobile"><i class="mdi mdi-close"></i></a>
-            <ul class="text-xl">
-                <li class="mb-1"><i class="mdi mdi-home"></i><a class="h-10 pl-10 inline-block hover:underline" href="{{ base_url }}">Accueil</a></li>
-                <li class="mb-1"><i class="mdi mdi-view-list"></i><a class="h-10 pl-10 inline-block hover:underline" href="{{ path('plant_index') }}">Liste des plantes</a></li>
-                <li class="mb-1"><i class="mdi mdi-mail"></i><a class="h-10 pl-10 inline-block hover:underline" href="{{ path('contact') }}">Contact</a></li>
-                {% if config('app/return_link') %}
-                    <li class="mb-1">
-                        <a class="inline bg-green-900 hover:bg-green-700 hover:text-yellow-100 transition-all py-0.5 px-2 rounded" href="{{ config('app/return_link') }}"><i class="mdi mdi-arrow-left"></i> {{ config('app/return_label') }}</a>
-                    </li>
-                {% endif %}
-            </ul>
-            <hr class="mt-10">
-            <ul class="text-center">
-                {% if config('app/embed') %}
-                    {% if is_granted('ROLE_USER') %}
-                        <li> {% if is_granted('ROLE_ADMIN') %}🌳{% else %}🧘{% endif %} {{ app.user.username }} </li>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <li>⚙ <a href="{{ path('app_admin') }}" class="inline-block hover:underline">admin</a></li>
-                        {% endif %}
-                        <li><a href="{{ path('app_logout') }}" class="inline-block hover:underline"><i class="mdi mdi-lock-off"></i>déconnexion</a></li>
-                    {% else %}
-                        <li><a href="{{ path('app_login') }}" class="inline-block hover:underline">connexion</a> | <a href="{{ path('app_register') }}">s'inscrire</a></li>
-                    {% endif %}
-                {% endif %}
-            </ul>
-        </div>
+        {# <a href="#" data-toggle="#menu_mobile" class="fixed -top-10 -left-10 text-2xl text-white rounded-full bg-(--color-green_two) w-20 h-20 block pl-10 pt-10 md:hidden">{{ mdi("menu",'fill-white') }}</a> #}
         {% block javascripts %}
             {# {% block importmap %}{{ importmap('app') }}{% endblock %} #}
                 {{ encore_entry_script_tags('app') }}
