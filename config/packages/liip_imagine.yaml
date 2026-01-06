@@ -16,15 +16,13 @@ liip_imagine:
             quality: 75 # Compression quality, this image will be 75% the quality
             filters: # These are the filters of the filter set, many filters can be applied
                 # Scale and shrink the image to the given size, with a possible crop of the image
-                thumbnail:
+                fixed:
                     size: [200, 200]
-                    mode: outbound
         card:
             quality: 90
             filters:
-                resize:
+                fixed:
                     size: [ 1024, 224 ]
-                    mode: outbound
         big:
             quality: 90
             filters:
