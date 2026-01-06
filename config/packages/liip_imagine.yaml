@@ -28,6 +28,6 @@ liip_imagine:
         big:
             quality: 90
             filters:
-                fixed:
-                    width: 1200
-                    height: 900
+                thumbnail:
+                    size: [1200, 900]
+                    mode: outbound
