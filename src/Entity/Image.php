@@ -73,28 +73,88 @@ class Image
         }
     }
 
-    static function grab_image($url,$save_to_dir){
+    static function grab_image($url, $save_to_dir)
+    {
+        $path      = parse_url($url, PHP_URL_PATH);
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $new_filename = md5($url) . '_' . preg_replace(
+            "/[^A-Za-z0-9]/",
+            '',
+            pathinfo($path, PATHINFO_FILENAME)
+        );
 
-        $path      = parse_url($url, PHP_URL_PATH);       // get path from url
-        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION)); // get ext from path
-        $new_filename  = md5($url).'_'.preg_replace("/[^A-Za-z0-9]/", '', pathinfo($path, PATHINFO_FILENAME));  // get name from path
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true, // important pour Wikimedia
+            CURLOPT_USERAGENT => 'PlopcomBot/1.0 (https://plopcom.fr; contact@plopcom.fr)',
+            CURLOPT_TIMEOUT => 20,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_HTTPHEADER => [
+                'Accept: image/*,*/*;q=0.8'
+            ],
+        ]);
 
-        $ch = curl_init ($url);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        //curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
-        $raw=curl_exec($ch);
-        curl_close ($ch);
-        $save_to = $save_to_dir.'/'.$new_filename.'.'.$extension;
-        if(file_exists($save_to)){
+        $raw = curl_exec($ch);
+
+        if ($raw === false) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new \Exception('cURL error: ' . $error);
+        }
+
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            throw new \Exception('HTTP error: ' . $httpCode. ' '. $url);
+        }
+
+        $save_to = $save_to_dir . '/' . $new_filename . '.' . $extension;
+
+        if (file_exists($save_to)) {
             unlink($save_to);
         }
-        $fp = fopen($save_to,'x');
-        fwrite($fp, $raw);
-        fclose($fp);
 
-        return $new_filename.'.'.$extension;
+        file_put_contents($save_to, $raw);
+
+        return $new_filename . '.' . $extension;
     }
+
+    static function image_exists_locally(string $url, string $save_to_dir): bool
+    {
+        $path = parse_url($url, PHP_URL_PATH);
+        if (!$path) {
+            return false;
+        }
+
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+            return false;
+        }
+
+        $filename = md5($url) . '_' . preg_replace(
+            "/[^A-Za-z0-9]/",
+            '',
+            pathinfo($path, PATHINFO_FILENAME)
+        );
+
+        $filePath = rtrim($save_to_dir, '/') . '/' . $filename . '.' . $extension;
+
+        if (!file_exists($filePath) || !is_file($filePath)) {
+            return false;
+        }
+
+        $imageInfo = @getimagesize($filePath);
+        if ($imageInfo === false) {
+            return false;
+        }
+
+        return true;
+    }
+
+
 
     public function getOrigin(): ?string
     {

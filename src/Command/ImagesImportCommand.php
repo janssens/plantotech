@@ -27,6 +27,7 @@ use App\Entity\Soil;
 use App\Entity\Source;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -131,9 +132,9 @@ class ImagesImportCommand extends CsvCommand
                 $start = $this->getNeededFields()['first_image']['index'];
                 $end = $this->getNeededFields()['last_image']['index'];
 
-                $data = array_map("utf8_encode", $data); //utf8
+                //$data = array_map("utf8_encode", $data); //utf8
                 if ($row > 0) { //skip first line
-                    $nom_latin = utf8_decode($this->getField('latin_name', $data));
+                    $nom_latin = $this->getField('latin_name', $data);
                     $plant = $this->getEntityManager()->getRepository(Plant::class)->findOneBy(array('latin_name'=>$nom_latin));
                     if ($plant){
                         $output->writeln("Yes found ".$plant->getName(), OutputInterface::VERBOSITY_VERBOSE);
@@ -143,7 +144,14 @@ class ImagesImportCommand extends CsvCommand
                                 $output->writeln($data[$i], OutputInterface::VERBOSITY_VERBOSE);
 
                                 if ($u = Image::urlOk($data[$i])){
-                                    $name = Image::grab_image($u,$this->getParameterBag()->get('app_images_directory'));
+                                    if (Image::image_exists_locally($u,$this->getParameterBag()->get('app_images_directory')))
+                                        continue;
+                                    try {
+                                        $name = Image::grab_image($u,$this->getParameterBag()->get('app_images_directory'));
+                                    } catch( Exception $e){
+                                        $output->writeln($e->getMessage(), OutputInterface::VERBOSITY_DEBUG);
+                                        continue;
+                                    }
                                     $img = new Image();
                                     $img->setName($name);
                                     $img->setOrigin($u);
