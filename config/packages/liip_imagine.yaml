@@ -17,14 +17,17 @@ liip_imagine:
             filters: # These are the filters of the filter set, many filters can be applied
                 # Scale and shrink the image to the given size, with a possible crop of the image
                 fixed:
-                    size: [200, 200]
+                    width: 200
+                    height: 200
         card:
             quality: 90
             filters:
                 fixed:
-                    size: [ 1024, 224 ]
+                    width: 1024
+                    height: 224
         big:
             quality: 90
             filters:
                 fixed:
-                    size: [ 1200,900 ]
+                    width: 1200
+                    height: 900
