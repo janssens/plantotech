@@ -22,9 +22,9 @@ liip_imagine:
         card:
             quality: 90
             filters:
-                fixed:
-                    width: 1024
-                    height: 224
+                thumbnail:
+                    size: [1024, 224]
+                    mode: outbound
         big:
             quality: 90
             filters:
